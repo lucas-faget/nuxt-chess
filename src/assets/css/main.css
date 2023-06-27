@@ -1,0 +1,18 @@
+:root {
+	--color-light: hsl(0,0%,95%);
+	--color-dark: hsl(0,0%,15%);
+
+	--mobile-nav-max-width: 600px;
+}
+
+body {
+	color: var(--color-light);
+	background-color: var(--color-dark);
+
+	padding: 0;
+	margin: 0;
+	padding-top: 80px;
+	overflow-x: hidden;
+
+	font-family: Roboto;
+}
