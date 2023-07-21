@@ -1,5 +1,6 @@
 :root {
 	--color-light: hsl(0,0%,95%);
+	--color-gray: hsl(0,0%,75%);
 	--color-dark: hsl(0,0%,15%);
 
 	--mobile-nav-max-width: 600px;

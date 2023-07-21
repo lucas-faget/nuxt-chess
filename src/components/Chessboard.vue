@@ -62,6 +62,7 @@
     }
 
     .chessboard {
+        background: #000;
         display: grid;
         grid-template-columns: repeat(8, var(--square-size));
         grid-template-rows: repeat(8, var(--square-size));

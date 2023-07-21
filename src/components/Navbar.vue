@@ -47,7 +47,7 @@
             </RouterLink>
             <RouterLink v-for="route in routes" :key="route.name" :to="route.path">
                 <li class="nav-li">
-                    {{ route.name }}
+                    {{ route.text }}
                 </li>
             </RouterLink>
         </ul>
@@ -60,11 +60,9 @@
         position: absolute;
         background-color: hsla(0, 0%, 0%, 0);
         display: flex;
-        justify-content: space-between;
         align-items: center;
-        height: 80px;
+        height: 70px;
         width: 100vw;
-        border-bottom: 2px solid var(--color-light);
     }
 
     .logo
@@ -101,40 +99,39 @@
 
     .nav-li
     {
-        /* background: red; */
         color: var(--color-light);
         display: flex;
         justify-content: center;
         align-items: center;
-        height: 80px;
-        width: 120px;
-        text-transform: uppercase;
-        animation: from-light-to-dark 300ms ease-in-out;
+        height: 100%;
+        text-transform: capitalize;
     }
 
     .nav-li:hover
     {
-        color: var(--color-dark);
-        background-color: var(--color-light);
-        animation: from-dark-to-light 300ms ease-in-out;
+        color: var(--color-gray);
         cursor: pointer;
     }
 
     @media (min-width: 601px)
     {
-        .nav-ul
+        nav
         {
-            border-right: 2px solid var(--color-light);
+            gap: 40px;
         }
 
-        .nav-li
+        .nav-ul
         {
-            border-left: 2px solid var(--color-light);
+            gap: 40px;
         }
     }
 
     @media (max-width: 600px)
     {
+        nav {
+            justify-content: space-between;
+        }
+        
         .nav-ul
         {
             background-color: hsla(0, 0%, 15%, 0.5);
@@ -142,13 +139,13 @@
             position: fixed;
             top: -100%;
             left: 0;
+            gap: 10px;
             width: 100%;
             height: 100%;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             z-index: 10;
-            transition: transform 250ms ease-in-out;
             transform: translateY(0%);
         }
 
@@ -160,8 +157,7 @@
         .nav-li
         {
             width: 100vw;
-            text-decoration: none;
-            font-size: 30px;
+            font-size: 40px;
         }
     }
 

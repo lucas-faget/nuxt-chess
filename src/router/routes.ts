@@ -1,33 +1,20 @@
-import ChessView from '../views/ChessView.vue'
-import ErrorView from '../views/ErrorView.vue'
+import ChessLocalView from '../views/ChessLocalView.vue'
+import LearnView from '../views/LearnView.vue'
 
 export const routes = [
 	{
-		path: '/local',
-		name: 'local',
-        homeText: 'Play Locally',
-		component: ChessView,
+		path: '/chess-local',
+		name: 'chess-local',
+        text: 'Play',
+		component: ChessLocalView,
 		props: {
-			isLocal: true,
+
 		}
 	},
 	{
-		path: '/online',
-		name: 'online',
-        homeText: 'Play Online',
-		component: ChessView,
-		props: {
-			isLocal: false,
-		}
-	},
-	{
-		path: '/ai',
-		name: 'ai',
-        homeText: 'Play Against AI',
-		component: ErrorView,
-		props: {
-			code: '404',
-			message: 'Not Found'
-		}
+		path: '/learn',
+		name: 'learn',
+        text: 'Learn',
+		component: LearnView
 	}
 ]

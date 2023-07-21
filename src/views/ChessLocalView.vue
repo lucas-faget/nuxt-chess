@@ -6,14 +6,12 @@
 	import Options from '@/components/Options.vue'
 	import { SquareColor } from '../components/enums/SquareColor';
 	import { ChessLocal } from '../chess/ChessLocal'
-	import { ChessSocket } from '../chess/ChessSocket'
 
 	export default {
 		components: { Chessboard, Buttons, PlayerBar, Options, Background },
-		props: ['isLocal'],
 		data() {
 			return {
-				chess: this.isLocal ? new ChessLocal() : new ChessSocket(),
+				chess: new ChessLocal(),
 				squareColor: this.isLocal ? SquareColor.Brown : SquareColor.Gray,
 			}
 		},
