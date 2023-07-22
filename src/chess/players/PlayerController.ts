@@ -97,9 +97,13 @@ export class PlayerController
 
     isChecked(chessboard: Chessboard): boolean
     {
-        return this.isCheckedByMobilePiece(chessboard)
-            || this.isCheckedByKnight(chessboard)
-            || this.isCheckedByPawn(chessboard)
+        if (this.kingSquare) {
+            return this.isCheckedByMobilePiece(chessboard)
+                || this.isCheckedByKnight(chessboard)
+                || this.isCheckedByPawn(chessboard)
+        }
+
+        return false;
     }
 
     isCheckedByMobilePiece(chessboard: Chessboard): boolean
