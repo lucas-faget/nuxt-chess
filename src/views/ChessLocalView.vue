@@ -6,12 +6,13 @@
 	import Options from '@/components/Options.vue'
 	import { SquareColor } from '../components/enums/SquareColor';
 	import { ChessLocal } from '../chess/ChessLocal'
+	import json from "@/assets/json/classic-chessboard.json";
 
 	export default {
 		components: { Chessboard, Buttons, PlayerBar, Options, Background },
 		data() {
 			return {
-				chess: new ChessLocal(),
+				chess: new ChessLocal(json),
 				squareColor: this.isLocal ? SquareColor.Brown : SquareColor.Gray,
 			}
 		},

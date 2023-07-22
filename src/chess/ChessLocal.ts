@@ -1,11 +1,10 @@
 import type { Move } from "./moves/Move";
-import { PlayerController } from "./players/PlayerController";
 import { Chess } from "./Chess";
 
 export class ChessLocal extends Chess
 {
-    constructor() {
-        super();
+    constructor(json: any) {
+        super(json);
         this.controller.calculateMoves(this);
     }
 

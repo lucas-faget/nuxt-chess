@@ -11,37 +11,38 @@ import { PlayerController } from "./players/PlayerController";
 const Whites = new Player(PlayerColor.White, "Whites");
 const Blacks = new Player(PlayerColor.Black, "Blacks");
 
-const Rows = [
-    new Row(0, '1', false, true, PlayerColor.White),
-    new Row(1, '2', true, false, PlayerColor.White),
-    new Row(2, '3', false, false),
-    new Row(3, '4', false, false),
-    new Row(4, '5', false, false),
-    new Row(5, '6', false, false),
-    new Row(6, '7', true, false, PlayerColor.Black),
-    new Row(7, '8', false, true, PlayerColor.Black),
-];
-const Columns = [
-    new Column(0, 'a', PieceName.Rook),
-    new Column(1, 'b', PieceName.Knight),
-    new Column(2, 'c', PieceName.Bishop),
-    new Column(3, 'd', PieceName.Queen),
-    new Column(4, 'e', PieceName.King),
-    new Column(5, 'f', PieceName.Bishop),
-    new Column(6, 'g', PieceName.Knight),
-    new Column(7, 'h', PieceName.Rook),
-];
+// const Rows = [
+//     new Row(0, '1', false, true, PlayerColor.White),
+//     new Row(1, '2', true, false, PlayerColor.White),
+//     new Row(2, '3', false, false),
+//     new Row(3, '4', false, false),
+//     new Row(4, '5', false, false),
+//     new Row(5, '6', false, false),
+//     new Row(6, '7', true, false, PlayerColor.Black),
+//     new Row(7, '8', false, true, PlayerColor.Black),
+// ];
+// const Columns = [
+//     new Column(0, 'a', PieceName.Rook),
+//     new Column(1, 'b', PieceName.Knight),
+//     new Column(2, 'c', PieceName.Bishop),
+//     new Column(3, 'd', PieceName.Queen),
+//     new Column(4, 'e', PieceName.King),
+//     new Column(5, 'f', PieceName.Bishop),
+//     new Column(6, 'g', PieceName.Knight),
+//     new Column(7, 'h', PieceName.Rook),
+// ];
 
 export abstract class Chess
 {
     players: Player[] = [Whites, Blacks];
     controller: PlayerController;
-    chessboard: Chessboard = new Chessboard(Rows, Columns);
+    chessboard: Chessboard;
     savedMoves: Move[] = [];
     currentMoveIndex: number = 0;
     isChessboardSpun: boolean = false;
 
-    constructor() {
+    constructor(json: any) {
+        this.chessboard = new Chessboard(json);
         this.controller = new PlayerController(this.players[0]);
     }
 

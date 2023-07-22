@@ -1,8 +1,6 @@
 import type { Position } from "./coordinates/Position";
 import type { PlayerColor } from "./enums/PlayerColor";
 import { PieceName } from "./enums/PieceName";
-import type { Row } from "./lines/Row";
-import type { Column } from "./lines/Column";
 import { Square } from "./Square";
 
 export class Chessboard
@@ -13,32 +11,30 @@ export class Chessboard
     reverseFiles: string[];
     squares: Map<string, Square> = new Map();
 
-    constructor(rows: Row[], columns: Column[])
+    constructor(json: any)
     {
-        this.ranks = rows.map((row) => row.name);
-        this.files = columns.map((column) => column.name);
+        this.ranks = json.ranks;
+        this.files = json.files;
 
         this.reverseRanks = [...this.ranks].reverse();
         this.reverseFiles = [...this.files].reverse();
 
         // Fill the chessboard
-        for (const row of rows) {
-            for (const column of columns)
+        for (const [rankIndex, rank] of this.ranks.entries()) {
+            for (const [fileIndex, file] of this.files.entries())
             {
                 let square: Square = new Square(
-                    column.name + row.name, 
-                    { x: row.index, y: column.index }
+                    file + rank, 
+                    { x: rankIndex, y: fileIndex }
                 );
 
-                if (row.isPawnRow) {
-                    square.setPiece(PieceName.Pawn, row.color!);
-                } else {
-                    if (row.isPieceRow) {
-                        square.setPiece(column.pieceName, row.color!);
-                    }
+                if (json.pieces[square.name]) {
+                    let pieceName : PieceName = json.pieces[square.name].name;
+                    let playerColor: PlayerColor = json.pieces[square.name].color;
+                    square.setPiece(pieceName, playerColor);
                 }
 
-                this.squares.set(column.name + row.name, square);
+                this.squares.set(square.name, square);
             }
         }
     }

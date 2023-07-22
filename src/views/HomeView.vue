@@ -14,9 +14,7 @@
 
 <template>
 	<div class="home">
-		<!-- <RouterLink v-for="route in routes" :key="route.name" :to="route.path">
-
-		</RouterLink> -->
+		
 	</div>
 </template>
 

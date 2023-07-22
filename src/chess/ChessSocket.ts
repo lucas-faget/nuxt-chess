@@ -10,8 +10,8 @@ export class ChessSocket extends Chess
     myPlayerIndex: number;
     socket: Socket;
 
-    constructor() {
-        super();
+    constructor(json: any) {
+        super(json);
         this.myPlayerIndex = 0;
 
         this.socket = io("http://localhost:8000");

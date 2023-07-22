@@ -2,6 +2,12 @@
     import Chessboard from '@/components/Chessboard.vue'
     import { SquareColor } from '@/components/enums/SquareColor';
     import { ChessLocal } from '@/chess/ChessLocal';
+    import PawnJson from "@/assets/json/pawn-chessboard.json";
+    import KnightJson from "@/assets/json/knight-chessboard.json";
+    import BishopJson from "@/assets/json/bishop-chessboard.json";
+    import RookJson from "@/assets/json/rook-chessboard.json";
+    import QueenJson from "@/assets/json/queen-chessboard.json";
+    import KingJson from "@/assets/json/king-chessboard.json";
 
 	export default {
         components: { Chessboard },
@@ -10,42 +16,42 @@
                 articles: [
                     {
                         index: 0,
-                        chess: new ChessLocal(),
+                        chess: new ChessLocal(PawnJson),
                         title: "Pawn",
                         text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor.",
                         squareColor: SquareColor.Brown
                     },
                     {
                         index: 1,
-                        chess: new ChessLocal(),
+                        chess: new ChessLocal(KnightJson),
                         title: "Knight",
                         text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor.",
                         squareColor: SquareColor.Gray
                     },
                     {
                         index: 2,
-                        chess: new ChessLocal(),
+                        chess: new ChessLocal(BishopJson),
                         title: "Bishop",
                         text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor.",
                         squareColor: SquareColor.Blue
                     },
                     {
                         index: 3,
-                        chess: new ChessLocal(),
+                        chess: new ChessLocal(RookJson),
                         title: "Rook",
                         text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor.",
                         squareColor: SquareColor.Green
                     },
                     {
                         index: 4,
-                        chess: new ChessLocal(),
+                        chess: new ChessLocal(QueenJson),
                         title: "Queen",
                         text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor.",
                         squareColor: SquareColor.Red
                     },
                     {
                         index: 5,
-                        chess: new ChessLocal(),
+                        chess: new ChessLocal(KingJson),
                         title: "King",
                         text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor.",
                         squareColor: SquareColor.Brown
