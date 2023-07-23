@@ -1,5 +1,6 @@
 <script lang="ts">
     import Square from '@/components/Square.vue'
+import type { Style } from 'util';
 
     export default {
         components: { Square },
@@ -15,6 +16,12 @@
             },
             files(): string[] {
                 return this.chess.isChessboardSpun ? this.chess.chessboard.reverseFiles : this.chess.chessboard.files;
+            },
+            gridStyle(): any {
+                return {
+                    'gridTemplateColumns': `repeat(${this.chess.chessboard.files.length}, ${100 / this.chess.chessboard.files.length}%)`,
+                    'gridTemplateRows': `repeat(${this.chess.chessboard.files.length}, ${100 / this.chess.chessboard.files.length}%)`
+                }
             }
         },
         methods: {
@@ -37,13 +44,13 @@
             isLegal(squareName: string): boolean
             {
                 return this.chess.canPlay() && this.chess.controller.hasLegalMove(this.fromSquareName, squareName);
-            },
+            }
         }
     }
 </script>
 
 <template>
-	<div class="chessboard">
+	<div class="chessboard" :style="gridStyle">
 		<template v-for="rank in ranks" :key="rank">
             <template v-for="file in files" :key="file">
                 <Square :square="chess.chessboard.getSquareByName(file + rank)" 
@@ -56,15 +63,9 @@
 	</div>
 </template>
 
-<style>
-    :root {
-        --square-size: min(calc(100vw / 8), 65px);
-    }
-
+<style scoped>
     .chessboard {
-        background: #000;
+        background: red;
         display: grid;
-        grid-template-columns: repeat(8, var(--square-size));
-        grid-template-rows: repeat(8, var(--square-size));
     }
 </style>

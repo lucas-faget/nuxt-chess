@@ -4,14 +4,15 @@ import type { Socket } from "socket.io-client";
 import { PlayerColor } from "./enums/PlayerColor";
 import type { Move } from "./moves/Move";
 import { Chess } from "./Chess";
+import type { Player } from "./players/Player";
 
 export class ChessSocket extends Chess
 {
     myPlayerIndex: number;
     socket: Socket;
 
-    constructor(json: any) {
-        super(json);
+    constructor(json: any, players: Player[]) {
+        super(json, players);
         this.myPlayerIndex = 0;
 
         this.socket = io("http://localhost:8000");

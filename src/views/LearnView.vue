@@ -8,6 +8,7 @@
     import RookJson from "@/assets/json/rook-chessboard.json";
     import QueenJson from "@/assets/json/queen-chessboard.json";
     import KingJson from "@/assets/json/king-chessboard.json";
+    import { Whites } from '@/chess/players/Players';
 
 	export default {
         components: { Chessboard },
@@ -16,42 +17,42 @@
                 articles: [
                     {
                         index: 0,
-                        chess: new ChessLocal(PawnJson),
+                        chess: new ChessLocal(PawnJson, [Whites]),
                         title: "Pawn",
                         text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor.",
                         squareColor: SquareColor.Brown
                     },
                     {
                         index: 1,
-                        chess: new ChessLocal(KnightJson),
+                        chess: new ChessLocal(KnightJson, [Whites]),
                         title: "Knight",
                         text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor.",
                         squareColor: SquareColor.Gray
                     },
                     {
                         index: 2,
-                        chess: new ChessLocal(BishopJson),
+                        chess: new ChessLocal(BishopJson, [Whites]),
                         title: "Bishop",
                         text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor.",
                         squareColor: SquareColor.Blue
                     },
                     {
                         index: 3,
-                        chess: new ChessLocal(RookJson),
+                        chess: new ChessLocal(RookJson, [Whites]),
                         title: "Rook",
                         text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor.",
                         squareColor: SquareColor.Green
                     },
                     {
                         index: 4,
-                        chess: new ChessLocal(QueenJson),
+                        chess: new ChessLocal(QueenJson, [Whites]),
                         title: "Queen",
                         text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor.",
                         squareColor: SquareColor.Red
                     },
                     {
                         index: 5,
-                        chess: new ChessLocal(KingJson),
+                        chess: new ChessLocal(KingJson, [Whites]),
                         title: "King",
                         text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor.",
                         squareColor: SquareColor.Brown
@@ -89,9 +90,21 @@
 
 	article {
         width: 85vw;
-        height: 100vh;
+        min-height: 100vh;
         display: flex;
+        flex-direction: column;
         gap: 60px;
+    }
+
+    @media screen and (max-width: 1000px) {
+        .learn {
+            margin-block: 60px;
+            gap: 60px;
+        }
+
+        article {
+            flex-direction: column !important;
+        }
     }
 
     .flex-row {
@@ -114,6 +127,11 @@
         display: flex;
         flex-direction: column;
         gap: 30px;
+    }
+
+    .chessboard {
+        width: min(100%, 520px);
+        aspect-ratio: 1 / 1;
     }
 
     .title {

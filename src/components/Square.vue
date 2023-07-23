@@ -28,7 +28,7 @@
 	</div>
 </template>
 
-<style>
+<style scoped>
     .light-brown {
         background-color: wheat;
     }

@@ -4,6 +4,8 @@
 	--color-dark-gray: hsl(0,0%,50%);
 	--color-dark: hsl(0,0%,15%);
 
+	--max-square-size: 65px;
+
 	--mobile-nav-max-width: 600px;
 }
 

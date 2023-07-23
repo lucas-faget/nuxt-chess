@@ -7,12 +7,13 @@
 	import { SquareColor } from '../components/enums/SquareColor';
 	import { ChessLocal } from '../chess/ChessLocal'
 	import json from "@/assets/json/classic-chessboard.json";
+	import { Blacks, Whites } from '@/chess/players/Players'
 
 	export default {
 		components: { Chessboard, Buttons, PlayerBar, Options, Background },
 		data() {
 			return {
-				chess: new ChessLocal(json),
+				chess: new ChessLocal(json, [Whites, Blacks]),
 				squareColor: this.isLocal ? SquareColor.Brown : SquareColor.Gray,
 			}
 		},
