@@ -17,7 +17,7 @@ import type { Style } from 'util';
             files(): string[] {
                 return this.chess.isChessboardSpun ? this.chess.chessboard.reverseFiles : this.chess.chessboard.files;
             },
-            gridStyle(): any {
+            gridStyle() {
                 return {
                     'gridTemplateColumns': `repeat(${this.chess.chessboard.files.length}, ${100 / this.chess.chessboard.files.length}%)`,
                     'gridTemplateRows': `repeat(${this.chess.chessboard.files.length}, ${100 / this.chess.chessboard.files.length}%)`
@@ -65,7 +65,7 @@ import type { Style } from 'util';
 
 <style scoped>
     .chessboard {
-        background: red;
+        background: #000;
         display: grid;
     }
 </style>

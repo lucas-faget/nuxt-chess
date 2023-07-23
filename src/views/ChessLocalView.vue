@@ -47,7 +47,7 @@
 			<div>
 				<PlayerBar :name="topPlayerName" :advantage="topAdvantage" />
 			</div>
-			<div>
+			<div class="chessboard">
 				<Chessboard :chess="chess" :squareColor="squareColor" />
 			</div>
 			<div>
@@ -63,10 +63,19 @@
 	</div>
 </template>
 
-<style>
+<style scoped>
 	.chess {
+		padding-block: 30px;
 		display: flex;
 		justify-content: center;
-		padding-block: 30px;
+
+	}
+
+	.chess > div {
+		width: min(100vw, 520px);
+	}
+
+	.chessboard {
+        aspect-ratio: 1 / 1;
 	}
 </style>
