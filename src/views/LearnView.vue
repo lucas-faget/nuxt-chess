@@ -60,6 +60,12 @@
                 ]
             };
         },
+        methods: {
+            resetChessboard(index: number) {
+                const article = this.articles[index];
+                article.chess.resetChessboard();
+            }
+        }
 }
 </script>
 
@@ -70,6 +76,7 @@
                 <div class="text">
                     <div class="title">{{ article.title }}</div>
                     <div class="description">{{ article.text }}</div>
+                    <button type="button" @click="resetChessboard(article.index)" >Reset</button>
                 </div>
             </div>
             <div class="section">

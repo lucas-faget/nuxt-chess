@@ -36,4 +36,11 @@ export class ChessLocal extends Chess
             this.controller.calculateMoves(this);
         }
     }
+
+    resetChessboard(): void
+    {
+        while (this.savedMoves.length > 0) {
+            this.deleteLastMove();
+        }
+    }
 }
