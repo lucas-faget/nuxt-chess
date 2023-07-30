@@ -33,7 +33,7 @@
     <nav class="nav">
         <RouterLink to="/">
             <div class="logo">
-                <img src="/src/assets/svg/pieces/white/p.svg" alt="Logo" />
+                <img src="/assets/piece/white/p.svg" alt="Logo" />
             </div>
         </RouterLink>
 

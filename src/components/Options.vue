@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { SquareColor } from './enums/SquareColor';
+    import { SquareColor } from '@/enums/SquareColor';
 
     export default {
         components: { },

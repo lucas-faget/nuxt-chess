@@ -1,14 +1,5 @@
 <script lang="ts">
-    type CustomButtonData = {
-        ICONS_DIR: string
-    };
-
     export default {
-        data(): CustomButtonData {
-            return {
-                ICONS_DIR: "assets/icons/"
-            }
-        },
         props: {
             text: String,
             leftIcon: {
@@ -26,13 +17,13 @@
 <template>
     <div class="button">
         <div v-if="leftIcon" class="icon">
-            <img :src="ICONS_DIR + leftIcon" :alt="leftIcon" />
+            <img :src="'/assets/icon/' + leftIcon" :alt="leftIcon" />
         </div>
 
         <span>{{ text }}</span>
 
         <div v-if="rightIcon" class="icon">
-            <img :src="ICONS_DIR + rightIcon" :alt="rightIcon" />
+            <img :src="'/assets/icon/' + rightIcon" :alt="rightIcon" />
         </div>
     </div>
 </template>

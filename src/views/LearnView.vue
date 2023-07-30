@@ -1,14 +1,14 @@
 <script lang="ts">
     import Chessboard from '@/components/Chessboard.vue'
     import CustomButton from '@/components/CustomButton.vue';
-    import { SquareColor } from '@/components/enums/SquareColor';
+    import { SquareColor } from '@/enums/SquareColor';
     import { ChessLocal } from '@/chess/ChessLocal';
-    import PawnJson from "@/assets/json/pawn-chessboard.json";
-    import KnightJson from "@/assets/json/knight-chessboard.json";
-    import BishopJson from "@/assets/json/bishop-chessboard.json";
-    import RookJson from "@/assets/json/rook-chessboard.json";
-    import QueenJson from "@/assets/json/queen-chessboard.json";
-    import KingJson from "@/assets/json/king-chessboard.json";
+    import PawnJson from "@/json/pawn-chessboard.json";
+    import KnightJson from "@/json/knight-chessboard.json";
+    import BishopJson from "@/json/bishop-chessboard.json";
+    import RookJson from "@/json/rook-chessboard.json";
+    import QueenJson from "@/json/queen-chessboard.json";
+    import KingJson from "@/json/king-chessboard.json";
     import { Whites } from '@/chess/players/Players';
 
 	export default {

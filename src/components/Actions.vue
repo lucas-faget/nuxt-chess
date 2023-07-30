@@ -1,6 +1,6 @@
 <script lang="ts">
     import Tooltip from '@/components/Tooltip.vue';
-    import { ActionType } from './enums/ActionType';
+    import { ActionType } from '@/enums/ActionType';
 
     export default {
         components: { Tooltip },
@@ -20,7 +20,7 @@
         methods: {
             src(type: string): string
             {
-                return "/src/assets/png/" + type + ".png";
+                return "/assets/icon/" + type + ".png";
             },
             performAction(type: ActionType): void
             {

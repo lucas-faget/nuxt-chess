@@ -4,13 +4,20 @@
 	import PlayerBar from '@/components/PlayerBar.vue'
 	import Actions from '@/components/Actions.vue'
 	import Options from '@/components/Options.vue'
-	import { SquareColor } from '../components/enums/SquareColor';
+	import { SquareColor } from '@/enums/SquareColor';
 	import { ChessLocal } from '../chess/ChessLocal'
-	import json from "@/assets/json/classic-chessboard.json";
+	import json from "@/json/classic-chessboard.json";
 	import { Blacks, Whites } from '@/chess/players/Players'
+	import { ChessVariant } from '@/enums/ChessVariant'
 
 	export default {
 		components: { Chessboard, Actions, PlayerBar, Options, Background },
+		props: {
+			variant: {
+				type: String as () => ChessVariant,
+				default: ChessVariant.Standard
+			}
+		},
 		data() {
 			return {
 				chess: new ChessLocal(json, [Whites, Blacks]),
@@ -45,6 +52,7 @@
 	<div class="chess">
 		<div>
 			<div>
+				{{ variant }}
 				<PlayerBar :name="topPlayerName" :advantage="topAdvantage" />
 			</div>
 			<div class="chessboard">
