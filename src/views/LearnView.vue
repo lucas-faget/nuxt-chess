@@ -1,5 +1,6 @@
 <script lang="ts">
     import Chessboard from '@/components/Chessboard.vue'
+    import CustomButton from '@/components/CustomButton.vue';
     import { SquareColor } from '@/components/enums/SquareColor';
     import { ChessLocal } from '@/chess/ChessLocal';
     import PawnJson from "@/assets/json/pawn-chessboard.json";
@@ -11,7 +12,7 @@
     import { Whites } from '@/chess/players/Players';
 
 	export default {
-        components: { Chessboard },
+        components: { Chessboard, CustomButton },
         data() {
             return {
                 articles: [
@@ -76,7 +77,13 @@
                 <div class="text">
                     <div class="title">{{ article.title }}</div>
                     <div class="description">{{ article.text }}</div>
-                    <button type="button" @click="resetChessboard(article.index)" >Reset</button>
+                    <div style="display: flex;">  
+                        <CustomButton 
+                            text="Reset chessboard" 
+                            :leftIcon="article.index % 2 === 0 ? '' : 'chevron-left.svg'"
+                            :rightIcon="article.index % 2 === 0 ? 'chevron-right.svg' : ''"
+                            @click="resetChessboard(article.index)" />
+                    </div>
                 </div>
             </div>
             <div class="section">

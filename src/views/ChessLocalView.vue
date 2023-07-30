@@ -2,7 +2,7 @@
 	import Background from '@/components/Background.vue'
 	import Chessboard from '@/components/Chessboard.vue'
 	import PlayerBar from '@/components/PlayerBar.vue'
-	import Buttons from '@/components/Buttons.vue'
+	import Actions from '@/components/Actions.vue'
 	import Options from '@/components/Options.vue'
 	import { SquareColor } from '../components/enums/SquareColor';
 	import { ChessLocal } from '../chess/ChessLocal'
@@ -10,7 +10,7 @@
 	import { Blacks, Whites } from '@/chess/players/Players'
 
 	export default {
-		components: { Chessboard, Buttons, PlayerBar, Options, Background },
+		components: { Chessboard, Actions, PlayerBar, Options, Background },
 		data() {
 			return {
 				chess: new ChessLocal(json, [Whites, Blacks]),
@@ -54,7 +54,7 @@
 				<PlayerBar :name="bottomPlayerName" :advantage="bottomAdvantage" />
 			</div>
 			<div>
-				<Buttons :chess="chess" />
+				<Actions :chess="chess" />
 			</div>
 			<div>
 				<Options :squareColor="squareColor" @change-square-color="setSquareColor" />

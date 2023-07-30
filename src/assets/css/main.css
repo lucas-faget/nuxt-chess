@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Kanit&display=swap');
+
 :root {
 	--color-light: hsl(0,0%,95%);
 	--color-gray: hsl(0,0%,75%);
@@ -18,5 +20,5 @@ body {
 	padding-top: 80px;
 	overflow-x: hidden;
 
-	font-family: Roboto;
+	font-family: 'Kanit';
 }

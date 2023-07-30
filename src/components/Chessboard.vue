@@ -1,6 +1,5 @@
 <script lang="ts">
     import Square from '@/components/Square.vue'
-import type { Style } from 'util';
 
     export default {
         components: { Square },
