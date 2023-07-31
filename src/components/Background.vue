@@ -6,7 +6,7 @@
 
 <style scoped>
     .background {
-        background-image: url("assets/background.png");
+        background-image: url("/assets/background/background.png");
         background-position: top;
         position: fixed;
         top: 0;

@@ -13,7 +13,7 @@
             },
             bgPiece() {
                 return this.square.isEmpty() ? '' : { 
-                    backgroundImage: 'url(assets/piece/' + this.color + '/' + this.square.getPiece().getName() + '.svg)',
+                    backgroundImage: 'url(/assets/piece/' + this.color + '/' + this.square.getPiece().getName() + '.svg)',
                     backgroundRepeat: 'no-repeat',
                     backgroundSize: 'contain',
                 };

@@ -42,7 +42,7 @@
     }
 
     .button:hover {
-        background-color: var(--color-gray);
+        background-color: var(--color-light-gray);
     }
 
     .icon {

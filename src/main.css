@@ -1,10 +1,13 @@
 @import url('https://fonts.googleapis.com/css2?family=Kanit&display=swap');
 
 :root {
-	--color-light: hsl(0,0%,95%);
-	--color-gray: hsl(0,0%,75%);
-	--color-dark-gray: hsl(0,0%,50%);
+	--color-white: hsl(0,0%,95%);
+	--color-light: hsl(0,0%,85%);
+	--color-light-gray: hsl(0,0%,75%);
+	--color-gray: hsl(0,0%,50%);
+	--color-dark-gray: hsl(0,0%,25%);
 	--color-dark: hsl(0,0%,15%);
+	--color-black: hsl(0,0%,5%);
 
 	--max-square-size: 65px;
 
@@ -12,8 +15,8 @@
 }
 
 body {
-	color: var(--color-light);
-	background-color: var(--color-dark);
+	color: var(--color-white);
+	background-color: var(--color-black);
 
 	padding: 0;
 	margin: 0;

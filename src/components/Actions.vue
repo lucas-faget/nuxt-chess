@@ -70,7 +70,7 @@
 <style scoped>
     .buttons
     {
-        background-color: var(--color-light);
+        background-color: var(--color-white);
         display: flex;
         justify-content: center;
     }

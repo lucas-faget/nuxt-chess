@@ -38,8 +38,8 @@
 <style scoped>
     .options
     {
-        color: #000;
-        background-color: var(--color-light);
+        color: var(--color-dark);
+        background-color: var(--color-white);
         display: flex;
         flex-direction: column;
         justify-content: center;

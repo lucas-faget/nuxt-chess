@@ -1,12 +1,17 @@
 <script lang="ts">
     import MobileNavToggle from '@/components/MobileNavToggle.vue';
-    import { routes } from '@/router/routes'
+    import { routesPlay } from '@/router/routes/routesPlay'
+    import Dropdown from './Dropdown.vue';
 
     export default {
-        components: { MobileNavToggle },
+        components: { MobileNavToggle, Dropdown },
         data() {
             return {
-                routes: routes,
+                menuItemsPlay: routesPlay.map((route) => ({
+                    text: route.text,
+                    path: route.path
+                })),
+                isDropdownPlayOpen: false,
                 currentRoute: this.$route.path,
                 isMobileNavOpen: false
             }
@@ -16,12 +21,32 @@
                 this.currentRoute = to.path;
                 next();
             });
+
+            document.addEventListener('click', this.handleDocumentClick);
+        },
+        beforeDestroy() {
+            // Supprimez le gestionnaire d'événement lorsque le composant est détruit
+            document.removeEventListener('click', this.handleDocumentClick);
         },
         beforeRouteUpdate(to, from, next) {
             this.currentRoute = to.path;
             next();
         },
         methods: {
+            handleDocumentClick(event: Event) {
+                const dropdownToggle = this.$refs.dropdownTogglePlay;
+
+                if (dropdownToggle && dropdownToggle == event.target) {
+                    this.toggleDropdownPlay();
+                } else {
+                    if (this.isDropdownPlayOpen) {
+                        this.isDropdownPlayOpen = false;
+                    }
+                }
+            },
+            toggleDropdownPlay() {
+                this.isDropdownPlayOpen = !this.isDropdownPlayOpen;
+            },
             toggleMobileNav() {
                 this.isMobileNavOpen = !this.isMobileNavOpen;
             }
@@ -39,18 +64,34 @@
 
         <MobileNavToggle :isMobileNavOpen="isMobileNavOpen" @click="toggleMobileNav" />
 
-        <ul class="nav-ul" :aria-expanded="isMobileNavOpen">
-            <RouterLink to="/">
+        <div class="nav-menu" :aria-expanded="isMobileNavOpen">
+            <ul class="nav-ul">
                 <li class="nav-li">
-                    home
+                    <RouterLink to="/">
+                        <span class="nav-item">
+                            home
+                        </span>
+                    </RouterLink>
                 </li>
-            </RouterLink>
-            <RouterLink v-for="route in routes" :key="route.name" :to="route.path">
+
                 <li class="nav-li">
-                    {{ route.text }}
+                    <span class="nav-item" ref="dropdownTogglePlay">
+                        Play
+                    </span>
+                    <div class="dropdown" v-if="isDropdownPlayOpen">
+                        <Dropdown :items="menuItemsPlay"></Dropdown>
+                    </div>
                 </li>
-            </RouterLink>
-        </ul>
+
+                <li class="nav-li">
+                    <RouterLink to="/learn">
+                        <li class="nav-item">
+                            learn
+                        </li>
+                    </RouterLink>
+                </li>
+            </ul>
+        </div>
     </nav>
 </template>
 
@@ -83,39 +124,62 @@
         margin-right: 30px;
     }
 
+    .nav-menu
+    {
+        height: 100%;
+        display: flex;
+    }
+
     .nav-ul
     {
         display: flex;
-        height: 100%;
         padding: 0;
         margin: 0;
         list-style: none;
     }
 
-    .nav-ul > a
+    .nav-li
+    {
+        position: relative;
+    }
+
+    .nav-li > a
     {
         text-decoration: none;
     }
 
-    .nav-li
+    .nav-item
     {
         color: var(--color-light);
         display: flex;
-        justify-content: center;
         align-items: center;
-        height: 100%;
         text-transform: capitalize;
     }
 
-    .nav-li:hover
+    .nav-item:hover
     {
         color: var(--color-gray);
         cursor: pointer;
     }
 
+    .dropdown
+    {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        z-index: 1000;
+    }
+
+    .dropdown
+    {
+        position: absolute;
+        left: 0;
+        bottom: 100;
+    }
+
     @media (min-width: 601px)
     {
-        nav
+        .nav
         {
             gap: 40px;
         }
@@ -123,40 +187,51 @@
         .nav-ul
         {
             gap: 40px;
+        }
+
+        .nav-li
+        {
+            height: 100%;
+            display: flex;
+            align-items: center;
         }
     }
 
     @media (max-width: 600px)
     {
-        nav {
+        nav
+        {
             justify-content: space-between;
         }
         
-        .nav-ul
+        .nav-menu
         {
             background-color: hsla(0, 0%, 15%, 0.5);
             backdrop-filter: blur(20px);
             position: fixed;
             top: -100%;
             left: 0;
-            gap: 10px;
             width: 100%;
             height: 100%;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
             z-index: 10;
             transform: translateY(0%);
         }
 
-        .nav-ul[aria-expanded="true"]
+        .nav-menu[aria-expanded="true"]
         {
             transform: translateY(100%);
         }
 
-        .nav-li
+        .nav-ul
         {
-            width: 100vw;
+            position: relative;
+            left: 100px;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .nav-item
+        {
             font-size: 40px;
         }
     }

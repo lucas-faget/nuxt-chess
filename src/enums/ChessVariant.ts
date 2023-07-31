@@ -1,5 +1,5 @@
 export enum ChessVariant {
     Standard = 'std',
-    Chess360 = '360',
-    FourPlayerChess = '4pc'
+    Chess960 = '960',
+    FourPlayerChess = '4players'
 }

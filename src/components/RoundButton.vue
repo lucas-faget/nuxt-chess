@@ -1,5 +1,4 @@
 <script lang="ts">
-
     export default {
         props: ['text', 'fontSize', 'paddingBlock', 'borderWidth', 'isBorderVisible'],
         data() {

@@ -29,12 +29,12 @@
 	}
 
 	.code, .message {
-		color: var(--color-light);
+		color: var(--color-white);
 		padding: 10px 20px;
 		font-size: 35px;
 	}
 
 	.code {
-		border-right: 2px solid var(--color-light);
+		border-right: 2px solid var(--color-white);
 	}
 </style>
