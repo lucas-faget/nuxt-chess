@@ -85,4 +85,9 @@ export class Square
 
         return false;
     }
+
+    isDark(): boolean {
+        return (this.position.y % 2 === 0) ? (this.position.x % 2 === 0) : (this.position.x % 2 !== 0);
+    }
+      
 }

@@ -22,6 +22,8 @@ export abstract class Chess
             case ChessVariant.Chess960:
                 this.players = [Whites, Blacks];
                 this.chessboard = new Chessboard(standardJson);
+                this.chessboard.shuffleRow(standardJson.ranks[0]);
+                this.chessboard.shuffleRow(standardJson.ranks[standardJson.ranks.length-1]);
                 break;
             case ChessVariant.FourPlayerChess:
                 this.players = [Whites, Blacks];

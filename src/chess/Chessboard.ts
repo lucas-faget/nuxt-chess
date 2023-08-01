@@ -2,6 +2,13 @@ import type { Position } from "./coordinates/Position";
 import type { PlayerColor } from "./enums/PlayerColor";
 import { PieceName } from "./enums/PieceName";
 import { Square } from "./Square";
+import type { Piece } from "./pieces/Piece";
+
+type PieceMove = {
+    from: string,
+    to: string,
+    piece: Piece|null
+}
 
 export class Chessboard
 {
@@ -70,5 +77,66 @@ export class Chessboard
         }
 
         return null;
+    }
+
+    shuffleRow(rank: string): void
+    {
+        const pieceMoves: PieceMove[] = [];
+
+        const lightFiles: string[] = this.files.filter((file) => {
+            const square = this.getSquareByName(file + rank);
+            return square?.isDark() ?? false;
+        });
+          
+        const darkFiles: string[] = this.files.filter((file) => {
+            const square = this.getSquareByName(file + rank);
+            return !square?.isDark() ?? false;
+        });
+
+        for (const file of this.files) {
+            let square: Square|null = this.getSquareByName(file + rank);
+            if (square?.getPiece()?.getName() === PieceName.Bishop) {
+                let file: string|undefined = Chessboard.getRandomElement(square.isDark() ? darkFiles : lightFiles);
+                if (file) {
+                    pieceMoves.push({
+                        from: square.name,
+                        to: file + rank,
+                        piece: square.getPiece()
+                    })
+                }
+            }
+        }
+
+        const files = [...lightFiles, ...darkFiles];
+
+        for (const file of this.files) {
+            let square: Square|null = this.getSquareByName(file + rank);
+            if (square && square?.getPiece()?.getName() !== PieceName.Bishop) {
+                let file: string|undefined = Chessboard.getRandomElement(files);
+                if (file) {
+                    pieceMoves.push({
+                        from: square.name,
+                        to: file + rank,
+                        piece: square.getPiece()
+                    })
+                }
+            }
+        }
+
+        console.log(pieceMoves);
+
+        for (const move of pieceMoves) {
+            this.squares.get(move.to)!.piece = move.piece;
+        }
+    }
+
+    static getRandomElement<T>(array: T[]): T|undefined {
+        if (array.length === 0) {
+            return undefined;
+        }
+      
+        return array.splice(Math.floor(
+            Math.random() * array.length), 1
+        )[0];
     }
 }
