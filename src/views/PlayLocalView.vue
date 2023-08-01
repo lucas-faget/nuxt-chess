@@ -6,8 +6,6 @@
 	import Options from '@/components/Options.vue'
 	import { SquareColor } from '@/enums/SquareColor';
 	import { ChessLocal } from '../chess/ChessLocal'
-	import json from "@/json/classic-chessboard.json";
-	import { Blacks, Whites } from '@/chess/players/Players'
 	import { ChessVariant } from '@/enums/ChessVariant'
 
 	export default {
@@ -20,7 +18,7 @@
 		},
 		data() {
 			return {
-				chess: new ChessLocal(json, [Whites, Blacks]),
+				chess: new ChessLocal(this.variant),
 				squareColor: this.isLocal ? SquareColor.Brown : SquareColor.Gray,
 			}
 		},

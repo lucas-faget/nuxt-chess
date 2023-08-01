@@ -3,6 +3,9 @@ import type { Move } from "./moves/Move";
 import { Chessboard } from "./Chessboard";
 import { PlayerController } from "./players/PlayerController";
 import type { Player } from "./players/Player";
+import { ChessVariant } from "@/enums/ChessVariant";
+import { Blacks, Whites } from "./players/Players";
+import standardJson from "@/json/standard.json";
 
 export abstract class Chess
 {
@@ -13,9 +16,27 @@ export abstract class Chess
     currentMoveIndex: number = 0;
     isChessboardSpun: boolean = false;
 
-    constructor(json: any, players: Player[]) {
-        this.players = players;
-        this.chessboard = new Chessboard(json);
+    constructor(variant: ChessVariant, customJson?: Object, players?: Player[])
+    {
+        switch (variant) {
+            case ChessVariant.Chess960:
+                this.players = [Whites, Blacks];
+                this.chessboard = new Chessboard(standardJson);
+                break;
+            case ChessVariant.FourPlayerChess:
+                this.players = [Whites, Blacks];
+                this.chessboard = new Chessboard(standardJson);
+                break;
+            case ChessVariant.Custom:
+                this.players = players ?? [Whites, Blacks];
+                this.chessboard = new Chessboard(customJson ?? standardJson);
+                break;
+            default:
+                this.players = [Whites, Blacks];
+                this.chessboard = new Chessboard(standardJson);
+                break;
+        }
+
         this.controller = new PlayerController(this.players[0]);
     }
 

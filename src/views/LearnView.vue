@@ -3,13 +3,14 @@
     import CustomButton from '@/components/CustomButton.vue';
     import { SquareColor } from '@/enums/SquareColor';
     import { ChessLocal } from '@/chess/ChessLocal';
-    import PawnJson from "@/json/pawn-chessboard.json";
-    import KnightJson from "@/json/knight-chessboard.json";
-    import BishopJson from "@/json/bishop-chessboard.json";
-    import RookJson from "@/json/rook-chessboard.json";
-    import QueenJson from "@/json/queen-chessboard.json";
-    import KingJson from "@/json/king-chessboard.json";
+    import PawnJson from "@/json/pawn.json";
+    import KnightJson from "@/json/knight.json";
+    import BishopJson from "@/json/bishop.json";
+    import RookJson from "@/json/rook.json";
+    import QueenJson from "@/json/queen.json";
+    import KingJson from "@/json/king.json";
     import { Whites } from '@/chess/players/Players';
+    import { ChessVariant } from '@/enums/ChessVariant';
 
 	export default {
         components: { Chessboard, CustomButton },
@@ -18,42 +19,42 @@
                 articles: [
                     {
                         index: 0,
-                        chess: new ChessLocal(PawnJson, [Whites]),
+                        chess: new ChessLocal(ChessVariant.Custom, PawnJson, [Whites]),
                         title: "Pawn",
                         text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor.",
                         squareColor: SquareColor.Brown
                     },
                     {
                         index: 1,
-                        chess: new ChessLocal(KnightJson, [Whites]),
+                        chess: new ChessLocal(ChessVariant.Custom, KnightJson, [Whites]),
                         title: "Knight",
                         text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor.",
                         squareColor: SquareColor.Gray
                     },
                     {
                         index: 2,
-                        chess: new ChessLocal(BishopJson, [Whites]),
+                        chess: new ChessLocal(ChessVariant.Custom, BishopJson, [Whites]),
                         title: "Bishop",
                         text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor.",
                         squareColor: SquareColor.Blue
                     },
                     {
                         index: 3,
-                        chess: new ChessLocal(RookJson, [Whites]),
+                        chess: new ChessLocal(ChessVariant.Custom, RookJson, [Whites]),
                         title: "Rook",
                         text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor.",
                         squareColor: SquareColor.Green
                     },
                     {
                         index: 4,
-                        chess: new ChessLocal(QueenJson, [Whites]),
+                        chess: new ChessLocal(ChessVariant.Custom, QueenJson, [Whites]),
                         title: "Queen",
                         text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor.",
                         squareColor: SquareColor.Red
                     },
                     {
                         index: 5,
-                        chess: new ChessLocal(KingJson, [Whites]),
+                        chess: new ChessLocal(ChessVariant.Custom, KingJson, [Whites]),
                         title: "King",
                         text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor.",
                         squareColor: SquareColor.Brown

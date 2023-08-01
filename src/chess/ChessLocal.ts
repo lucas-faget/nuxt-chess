@@ -1,11 +1,12 @@
 import type { Move } from "./moves/Move";
 import { Chess } from "./Chess";
+import type { ChessVariant } from "@/enums/ChessVariant";
 import type { Player } from "./players/Player";
 
 export class ChessLocal extends Chess
 {
-    constructor(json: any, players: Player[]) {
-        super(json, players);
+    constructor(variant: ChessVariant, customJson?: Object, players?: Player[]) {
+        super(variant, customJson, players);
         this.controller.calculateMoves(this);
     }
 
