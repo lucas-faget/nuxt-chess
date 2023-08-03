@@ -44,6 +44,12 @@ export class Chessboard
                 this.squares.set(square.name, square);
             }
         }
+
+        if (json.voidSquares) {
+            for (const squareName of json.voidSquares) {
+                this.squares.delete(squareName);
+            }
+        }
     }
 
     getSquareByName(squareName: string): Square|null

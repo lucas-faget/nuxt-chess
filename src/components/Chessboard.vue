@@ -52,10 +52,10 @@
 	<div class="chessboard" :style="gridStyle">
 		<template v-for="rank in ranks" :key="rank">
             <template v-for="file in files" :key="file">
-                <Square :square="chess.chessboard.getSquareByName(file + rank)" 
+                <Square :square="chess.chessboard.getSquareByName(file + rank)"
                         :squareColor="squareColor"
-                        :isLegal="isLegal(file + rank)" 
-                        @click="clickSquare(file + rank)" 
+                        :isLegal="isLegal(file + rank)"
+                        @click="clickSquare(file + rank)"
                 />
             </template>
         </template>

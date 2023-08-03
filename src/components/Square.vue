@@ -5,14 +5,18 @@
         props: ['square', 'squareColor', 'isLegal'],
         computed: {
             bgColor(): string {
-                return this.square.position.y % 2 === 0 ? this.square.position.x % 2 === 0 ? 'dark-' + this.squareColor : 'light-' + this.squareColor : 
-                       this.square.position.x % 2 === 0 ? 'light-' + this.squareColor : 'dark-' + this.squareColor;
+                return this.square ?
+                       this.square.position.y % 2 === 0 ? this.square.position.x % 2 === 0 ? 'dark-' + this.squareColor : 'light-' + this.squareColor : 
+                       this.square.position.x % 2 === 0 ? 'light-' + this.squareColor : 'dark-' + this.squareColor
+                       : 'void';
             },
-            color(): string {
-                return this.square.getPiece()?.color === PlayerColor.White ? 'white' : 'black' ?? '';
+            color(): string|undefined {
+                return this.square ? 
+                    this.square.getPiece()?.color === PlayerColor.White ? 'white' : 'black' ?? ''
+                    : undefined;
             },
             bgPiece() {
-                return this.square.isEmpty() ? '' : { 
+                return !this.square || this.square.isEmpty() ? '' : { 
                     backgroundImage: 'url(/assets/piece/' + this.color + '/' + this.square.getPiece().getName() + '.svg)',
                     backgroundRepeat: 'no-repeat',
                     backgroundSize: 'contain',
@@ -29,6 +33,11 @@
 </template>
 
 <style scoped>
+    .void {
+        background-color: var(--color-white);
+        opacity: 0;
+    }
+    
     .light-brown {
         background-color: wheat;
     }
