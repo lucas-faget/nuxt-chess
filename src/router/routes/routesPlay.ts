@@ -21,8 +21,8 @@ export const routesPlay = [
 		}
     },
     {
-        path: '/play/4players',
-        name: 'play-4players',
+        path: '/play/4player',
+        name: 'play-4player',
         text: 'Four Player Chess',
         component: PlayLocalView,
         props: {

@@ -56,22 +56,22 @@
 
 <template>
     <nav class="nav">
-        <RouterLink to="/">
+        <router-link to="/">
             <div class="logo">
                 <img src="/assets/piece/white/p.svg" alt="Logo" />
             </div>
-        </RouterLink>
+        </router-link>
 
         <MobileNavToggle :isMobileNavOpen="isMobileNavOpen" @click="toggleMobileNav" />
 
         <div class="nav-menu" :aria-expanded="isMobileNavOpen">
             <ul class="nav-ul">
                 <li class="nav-li">
-                    <RouterLink to="/">
+                    <router-link to="/">
                         <span class="nav-item">
                             home
                         </span>
-                    </RouterLink>
+                    </router-link>
                 </li>
 
                 <li class="nav-li">
@@ -84,11 +84,11 @@
                 </li>
 
                 <li class="nav-li">
-                    <RouterLink to="/learn">
+                    <router-link to="/learn">
                         <li class="nav-item">
                             learn
                         </li>
-                    </RouterLink>
+                    </router-link>
                 </li>
             </ul>
         </div>
@@ -141,11 +141,6 @@
     .nav-li
     {
         position: relative;
-    }
-
-    .nav-li > a
-    {
-        text-decoration: none;
     }
 
     .nav-item

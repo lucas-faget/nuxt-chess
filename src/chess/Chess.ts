@@ -6,7 +6,7 @@ import type { Player } from "./players/Player";
 import { ChessVariant } from "@/enums/ChessVariant";
 import { Blacks, Whites } from "./players/Players";
 import standardJson from "@/json/standard.json";
-import fourPlayersJson from "@/json/four-players.json";
+import fourPlayerJson from "@/json/four-player.json";
 
 export abstract class Chess
 {
@@ -28,7 +28,7 @@ export abstract class Chess
                 break;
             case ChessVariant.FourPlayerChess:
                 this.players = [Whites, Blacks];
-                this.chessboard = new Chessboard(fourPlayersJson);
+                this.chessboard = new Chessboard(fourPlayerJson);
                 break;
             case ChessVariant.Custom:
                 this.players = players ?? [Whites, Blacks];

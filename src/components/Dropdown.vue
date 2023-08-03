@@ -1,13 +1,10 @@
 <script lang="ts">
-    import { RouterLink } from 'vue-router';
-
     export type Item = {
         text: string,
         path: string
     }
 
     export default {
-        components: { RouterLink },
         props: {
             items: Array<Item>
         }
@@ -17,11 +14,11 @@
 <template v-if="items">
     <div class="dropdown-menu">
         <template v-for="(item, index) in items" :key="index">
-            <RouterLink :to="item.path">
+            <router-link :to="item.path">
                 <div class="dropdown-item">
                     {{ item.text }}
                 </div>
-            </RouterLink>
+            </router-link>
         </template>
     </div>
 </template>
@@ -33,10 +30,6 @@
         display: flex;
         flex-direction: column;
         border-radius: 8px;
-    }
-
-    .dropdown-menu > a {
-        text-decoration: none;
     }
 
     .dropdown-item {

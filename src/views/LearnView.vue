@@ -18,45 +18,39 @@
             return {
                 articles: [
                     {
-                        index: 0,
-                        chess: new ChessLocal(ChessVariant.Custom, PawnJson, [Whites]),
                         title: "Pawn",
                         text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor.",
+                        chess: new ChessLocal(ChessVariant.Custom, PawnJson, [Whites]),
                         squareColor: SquareColor.Brown
                     },
                     {
-                        index: 1,
-                        chess: new ChessLocal(ChessVariant.Custom, KnightJson, [Whites]),
                         title: "Knight",
                         text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor.",
+                        chess: new ChessLocal(ChessVariant.Custom, KnightJson, [Whites]),
                         squareColor: SquareColor.Gray
                     },
                     {
-                        index: 2,
-                        chess: new ChessLocal(ChessVariant.Custom, BishopJson, [Whites]),
                         title: "Bishop",
                         text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor.",
+                        chess: new ChessLocal(ChessVariant.Custom, BishopJson, [Whites]),
                         squareColor: SquareColor.Blue
                     },
                     {
-                        index: 3,
-                        chess: new ChessLocal(ChessVariant.Custom, RookJson, [Whites]),
                         title: "Rook",
                         text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor.",
+                        chess: new ChessLocal(ChessVariant.Custom, RookJson, [Whites]),
                         squareColor: SquareColor.Green
                     },
                     {
-                        index: 4,
-                        chess: new ChessLocal(ChessVariant.Custom, QueenJson, [Whites]),
                         title: "Queen",
                         text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor.",
+                        chess: new ChessLocal(ChessVariant.Custom, QueenJson, [Whites]),
                         squareColor: SquareColor.Red
                     },
                     {
-                        index: 5,
-                        chess: new ChessLocal(ChessVariant.Custom, KingJson, [Whites]),
                         title: "King",
                         text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor.",
+                        chess: new ChessLocal(ChessVariant.Custom, KingJson, [Whites]),
                         squareColor: SquareColor.Brown
                     }
                 ]
@@ -73,7 +67,7 @@
 
 <template>
 	<div class="learn">
-		<article v-for="article in articles" :key="article.index" :class="[article.index % 2 === 0 ? 'flex-row' : 'flex-row-reverse']">
+		<article v-for="(article, index) in articles" :key="index">
             <div class="section">
                 <div class="text">
                     <div class="title">{{ article.title }}</div>
@@ -81,9 +75,9 @@
                     <div style="display: flex;">  
                         <CustomButton 
                             text="Reset chessboard" 
-                            :leftIcon="article.index % 2 === 0 ? '' : 'chevron-left.svg'"
-                            :rightIcon="article.index % 2 === 0 ? 'chevron-right.svg' : ''"
-                            @click="resetChessboard(article.index)" />
+                            :leftIcon="index % 2 === 0 ? '' : 'chevron-left.svg'"
+                            :rightIcon="index % 2 === 0 ? 'chevron-right.svg' : ''"
+                            @click="resetChessboard(index)" />
                     </div>
                 </div>
             </div>
@@ -111,14 +105,24 @@
         gap: 60px;
     }
 
-    @media screen and (max-width: 1000px) {
+    @media screen and (min-width: 1000px) {
+        article:nth-child(2n+1) {
+			flex-direction: row;
+		}
+
+		article:nth-child(2n) {
+			flex-direction: row-reverse;
+		}
+    }
+
+    @media screen and (max-width: 999px) {
         .learn {
             margin-block: 60px;
             gap: 60px;
         }
 
         article {
-            flex-direction: column !important;
+            flex-direction: column;
         }
     }
 

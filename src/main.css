@@ -25,3 +25,7 @@ body {
 
 	font-family: 'Kanit';
 }
+
+a {
+	text-decoration: none;
+}
