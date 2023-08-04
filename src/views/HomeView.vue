@@ -7,22 +7,23 @@
             return {
                 articles: [
                     {
-                        title: "Standard chess",
+                        title: "Standard Chess",
                         text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor.",
 						path: "/play",
-                        image: "/assets/background/background.png"
+                        image: "/assets/image/chessboard.jpg",
+						imageClass: "image-class-1"
                     },
                     {
                         title: "Fischer Random Chess",
                         text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor.",
 						path: "/play/960",
-                        image: "/assets/background/background.png"
+                        image: "/assets/image/chess.png"
                     },
                     {
-                        title: "Four-player chess",
+                        title: "Four-player Chess",
                         text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor.",
 						path: "/play/4player",
-						image: "/assets/background/background.png"
+						image: "/assets/image/chess.png"
                     }
                 ]
             };
@@ -45,7 +46,7 @@
                 </div>
             </div>
             <div class="section">
-                <img class="image" :src="article.image" alt="image" />
+                <img :class="['image', article.imageClass ?? '']" :src="article.image" alt="image" />
             </div>
         </article>
 	</div>
@@ -103,8 +104,12 @@
 
     .image {
         width: min(100%, 520px);
-        aspect-ratio: 1 / 1;
     }
+
+	.image-class-1 {
+		border-radius: 50%;
+		box-shadow: 0 0 10px 10px rgba(255, 255, 255, 0.3);
+	}
 
     .title {
         font-size: 50px;
