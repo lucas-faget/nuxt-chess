@@ -14,12 +14,10 @@
         methods: {
             handleDocumentClick(event: Event) {
                 this.isDropdownOpen = false;
-                console.log('handleDocumentClick')
             },
             handleDropdownToogleClick(event: Event) {
                 event.stopPropagation();
                 this.toggleDropdown();
-                console.log('handleDropdownToogleClick')
             },
             toggleDropdown() {
                 this.isDropdownOpen = !this.isDropdownOpen;

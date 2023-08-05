@@ -129,8 +129,6 @@ export class Chessboard
             }
         }
 
-        console.log(pieceMoves);
-
         for (const move of pieceMoves) {
             this.squares.get(move.to)!.piece = move.piece;
         }

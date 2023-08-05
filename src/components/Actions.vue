@@ -8,19 +8,19 @@
         data() {
             return {
                 actionList: [
-                    { index: 0, type: ActionType.Spin, tooltipText: "Spin chessboard", isTooltipVisible: false },
-                    { index: 1, type: ActionType.First, tooltipText: "First move", isTooltipVisible: false },
-                    { index: 2, type: ActionType.Previous, tooltipText: "Previous move", isTooltipVisible: false },
-                    { index: 3, type: ActionType.Next, tooltipText: "Next move", isTooltipVisible: false },
-                    { index: 4, type: ActionType.Last, tooltipText: "Last move", isTooltipVisible: false },
-                    { index: 5, type: ActionType.Cancel, tooltipText: "Cancel move", isTooltipVisible: false }
+                    { index: 0, type: ActionType.Spin, tooltipText: "Spin chessboard", isHovered: false },
+                    { index: 1, type: ActionType.First, tooltipText: "First move", isHovered: false },
+                    { index: 2, type: ActionType.Previous, tooltipText: "Previous move", isHovered: false },
+                    { index: 3, type: ActionType.Next, tooltipText: "Next move", isHovered: false },
+                    { index: 4, type: ActionType.Last, tooltipText: "Last move", isHovered: false },
+                    { index: 5, type: ActionType.Cancel, tooltipText: "Cancel move", isHovered: false }
                 ]
             }
         },
         methods: {
-            src(type: string): string
+            src(type: string, isHovered: boolean): string
             {
-                return "/assets/icon/" + type + ".png";
+                return `/assets/icon/${isHovered ? 'black' : 'white'}/${type}.svg`;
             },
             performAction(type: ActionType): void
             {
@@ -45,9 +45,9 @@
                         break;
                 }
             },
-            isBlinking(actionType: ActionType): boolean
+            isBlinking(actionType: ActionType, isHovered: boolean): boolean
             {
-                return actionType === ActionType.Last && !this.chess.isCurrentMoveTheLast();
+                return !isHovered && actionType === ActionType.Last && !this.chess.isCurrentMoveTheLast();
             }
         }
     }
@@ -56,13 +56,13 @@
 <template>
     <div class="buttons">
         <div v-for="action in actionList" :key="action.index" 
-                    @mouseover="action.isTooltipVisible = true" 
-                    @mouseout="action.isTooltipVisible = false" 
+                    @mouseover="action.isHovered = true" 
+                    @mouseout="action.isHovered = false" 
                     @click="performAction(action.type)" 
-                    :class="['button', { 'blink': isBlinking(action.type) }]"
+                    :class="['button', { 'blink': isBlinking(action.type, action.isHovered) }]"
         >
-            <img v-bind:src="src(action.type)" draggable="false" />
-            <Tooltip :text="action.tooltipText" :isVisible="action.isTooltipVisible" />
+            <img class="icon" v-bind:src="src(action.type, action.isHovered)" draggable="false" />
+            <Tooltip :text="action.tooltipText" :isVisible="action.isHovered" />
         </div>
     </div>
 </template>
@@ -70,7 +70,7 @@
 <style scoped>
     .buttons
     {
-        background-color: var(--color-gray);
+        background-color: var(--color-dark);
         display: flex;
         justify-content: center;
     }
@@ -88,7 +88,13 @@
     .button:hover
     {
         cursor: pointer;
-        background: hsl(240, 50%, 80%);
+        background: var(--color-gray);
+    }
+
+    .icon
+    {
+        width: 35px;
+        aspect-ratio: 1/1;
     }
 
     .blink
@@ -102,10 +108,10 @@
 
     @keyframes blink {
         0% {
-            background: hsla(240, 50%, 80%, 0);
+            background-color: hsla(0, 0%, 50%, 0);
         }
         100% {
-            background: hsla(240, 50%, 80%, 1);
+            background: hsla(0, 0%, 50%, 1);
         }
     }
 </style>
