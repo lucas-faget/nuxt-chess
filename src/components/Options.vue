@@ -1,31 +1,35 @@
 <script lang="ts">
     import { SquareColor } from '@/enums/SquareColor';
+    import Dropdown from './Dropdown.vue';
+    import DropdownItems from './DropdownItems.vue';
+    import DropdownItem from './DropdownItem.vue';
 
     export default {
-        props: {
-            lightSquareColor: {
-                type: String as () => SquareColor,
-                default: SquareColor.Gray
-            },
-            darkSquareColor: {
-                type: String as () => SquareColor,
-                default: SquareColor.Gray
-            }
+    props: {
+        lightSquareColor: {
+            type: String as () => SquareColor,
+            default: SquareColor.Gray
         },
-        data() {
-            return {
-                squareColors: Object.values(SquareColor)
-            }
-        },
-        methods: {
-            changeLightColor(squareColor: SquareColor): void {
-                this.$emit('change-light-square-color', squareColor);
-            },
-            changeDarkColor(squareColor: SquareColor): void {
-                this.$emit('change-dark-square-color', squareColor);
-            }
+        darkSquareColor: {
+            type: String as () => SquareColor,
+            default: SquareColor.Gray
         }
-    }
+    },
+    data() {
+        return {
+            squareColors: Object.values(SquareColor)
+        };
+    },
+    methods: {
+        changeLightColor(squareColor: SquareColor): void {
+            this.$emit('change-light-square-color', squareColor);
+        },
+        changeDarkColor(squareColor: SquareColor): void {
+            this.$emit('change-dark-square-color', squareColor);
+        }
+    },
+    components: { DropdownItem, DropdownItems, Dropdown }
+}
 </script>
 
 <template>
@@ -36,28 +40,61 @@
         <div class="option">
             <div>Change square color :</div>
             <div class="color-squares">
-                <div style="position: relative">
-                    <div :class="['color-square', 'light-' + lightSquareColor]"></div>
-                    <div class="dropdown">
-                        <div 
-                            v-for="squareColor in squareColors"
-                            :key="squareColor"
-                            :class="['color-square', 'light-' + squareColor]"
-                            @click="changeLightColor(squareColor)"
-                        ></div>
-                    </div>
-                </div>
-                <div style="position: relative">
-                    <div :class="['color-square', 'dark-' + darkSquareColor]"></div>
-                    <div class="dropdown">
-                        <div 
-                            v-for="squareColor in squareColors"
-                            :key="squareColor"
-                            :class="['color-square', 'dark-' + squareColor]"
-                            @click="changeDarkColor(squareColor)"
-                        ></div>
-                    </div>
-                </div>
+                <!-- Light Square Color Dropdown -->
+                <Dropdown>
+                    <!-- Dropdown Toggle Slot -->
+                    <template #dropdown-toggle>
+                        <div :class="['color-square', 'light-' + lightSquareColor]"></div>
+                    </template>
+
+                    <!-- Dropdown Content Slot -->
+                    <template #dropdown-content>
+                        <DropdownItems>
+                            <!-- Dropdown Items Slot -->
+                            <template #dropdown-items>
+                                <template v-for="(squareColor, index) in squareColors" :key="index">
+                                    <DropdownItem>
+                                        <!-- Dropdown Item Slot -->
+                                        <template #dropdown-item>
+                                            <div 
+                                                :class="['color-square', 'light-' + squareColor]"
+                                                @click="changeLightColor(squareColor)"
+                                            ></div>
+                                        </template>
+                                    </DropdownItem>
+                                </template>
+                            </template>
+                        </DropdownItems>
+                    </template>
+                </Dropdown>
+
+                <!-- Dark Square Color Dropdown -->
+                <Dropdown>
+                    <!-- Dropdown Toggle Slot -->
+                    <template #dropdown-toggle>
+                        <div :class="['color-square', 'dark-' + darkSquareColor]"></div>
+                    </template>
+
+                    <!-- Dropdown Content Slot -->
+                    <template #dropdown-content>
+                        <DropdownItems>
+                            <!-- Dropdown Items Slot -->
+                            <template #dropdown-items>
+                                <template v-for="(squareColor, index) in squareColors" :key="index">
+                                    <DropdownItem>
+                                        <!-- Dropdown Item Slot -->
+                                        <template #dropdown-item>
+                                            <div 
+                                                :class="['color-square', 'dark-' + squareColor]"
+                                                @click="changeDarkColor(squareColor)"
+                                            ></div>
+                                        </template>
+                                    </DropdownItem>
+                                </template>
+                            </template>
+                        </DropdownItems>
+                    </template>
+                </Dropdown>
             </div>
         </div>
     </div>
@@ -99,15 +136,5 @@
         width: 30px;
         aspect-ratio: 1/1;
         cursor: pointer;
-    }
-
-    .dropdown
-    {
-        position: absolute;
-        top: 100%;
-        left: 0;
-        z-index: 1000;
-        display: flex;
-        flex-direction: column;
     }
 </style>

@@ -2,16 +2,17 @@
     import MobileNavToggle from '@/components/MobileNavToggle.vue';
     import { routesPlay } from '@/router/routes/routesPlay'
     import Dropdown from './Dropdown.vue';
+    import DropdownItems from './DropdownItems.vue';
+    import DropdownItem from './DropdownItem.vue';
 
     export default {
-        components: { MobileNavToggle, Dropdown },
+        components: { MobileNavToggle, Dropdown, DropdownItems, DropdownItem },
         data() {
             return {
-                menuItemsPlay: routesPlay.map((route) => ({
+                menuPlayItems: routesPlay.map((route) => ({
                     text: route.text,
                     path: route.path
                 })),
-                isDropdownPlayOpen: false,
                 currentRoute: this.$route.path,
                 isMobileNavOpen: false
             }
@@ -21,32 +22,12 @@
                 this.currentRoute = to.path;
                 next();
             });
-
-            document.addEventListener('click', this.handleDocumentClick);
-        },
-        beforeDestroy() {
-            // Supprimez le gestionnaire d'événement lorsque le composant est détruit
-            document.removeEventListener('click', this.handleDocumentClick);
         },
         beforeRouteUpdate(to, from, next) {
             this.currentRoute = to.path;
             next();
         },
         methods: {
-            handleDocumentClick(event: Event) {
-                const dropdownToggle = this.$refs.dropdownTogglePlay;
-
-                if (dropdownToggle && dropdownToggle == event.target) {
-                    this.toggleDropdownPlay();
-                } else {
-                    if (this.isDropdownPlayOpen) {
-                        this.isDropdownPlayOpen = false;
-                    }
-                }
-            },
-            toggleDropdownPlay() {
-                this.isDropdownPlayOpen = !this.isDropdownPlayOpen;
-            },
             toggleMobileNav() {
                 this.isMobileNavOpen = !this.isMobileNavOpen;
             }
@@ -75,12 +56,31 @@
                 </li>
 
                 <li class="nav-li">
-                    <span class="nav-item" ref="dropdownTogglePlay">
-                        Play
-                    </span>
-                    <div class="dropdown" v-if="isDropdownPlayOpen">
-                        <Dropdown :items="menuItemsPlay"></Dropdown>
-                    </div>
+                    <Dropdown>
+                        <!-- Dropdown Toggle Slot -->
+                        <template #dropdown-toggle>
+                            <span class="nav-item">Play</span>
+                        </template>
+
+                        <!-- Dropdown Content Slot -->
+                        <template #dropdown-content>
+                            <DropdownItems>
+                                <!-- Dropdown Items Slot -->
+                                <template #dropdown-items>
+                                    <template v-for="(item, index) in menuPlayItems" :key="index">
+                                        <DropdownItem>
+                                            <!-- Dropdown Item Slot -->
+                                            <template #dropdown-item>
+                                                <router-link :to="item.path">
+                                                    {{ item.text }}
+                                                </router-link>
+                                            </template>
+                                        </DropdownItem>
+                                    </template>
+                                </template>
+                            </DropdownItems>
+                        </template>
+                    </Dropdown>
                 </li>
 
                 <li class="nav-li">
@@ -141,11 +141,6 @@
         list-style: none;
     }
 
-    .nav-li
-    {
-        position: relative;
-    }
-
     .nav-item
     {
         color: var(--color-light);
@@ -158,21 +153,6 @@
     {
         color: var(--color-gray);
         cursor: pointer;
-    }
-
-    .dropdown
-    {
-        position: absolute;
-        top: 100%;
-        left: 0;
-        z-index: 1000;
-    }
-
-    .dropdown
-    {
-        position: absolute;
-        left: 0;
-        bottom: 100;
     }
 
     @media (min-width: 601px)
@@ -192,6 +172,10 @@
             height: 100%;
             display: flex;
             align-items: center;
+        }
+
+        .nav-item {
+            height: var(--navbar-height);
         }
     }
 

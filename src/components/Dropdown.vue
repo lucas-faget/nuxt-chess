@@ -1,27 +1,44 @@
 <script lang="ts">
-    export type Item = {
-        text: string,
-        path: string
-    }
-
     export default {
-        props: {
-            items: Array<Item>
+        data() {
+            return {
+                isDropdownOpen: false
+            }
+        },
+        mounted() {
+            document.addEventListener('click', this.handleDocumentClick);
+        },
+        beforeDestroy() {
+            document.removeEventListener('click', this.handleDocumentClick);
+        },
+        methods: {
+            handleDocumentClick(event: Event) {
+                this.isDropdownOpen = false;
+                console.log('handleDocumentClick')
+            },
+            handleDropdownToogleClick(event: Event) {
+                event.stopPropagation();
+                this.toggleDropdown();
+                console.log('handleDropdownToogleClick')
+            },
+            toggleDropdown() {
+                this.isDropdownOpen = !this.isDropdownOpen;
+            },
         }
     }
 </script>
 
-<template v-if="items">
-    <div class="dropdown-menu">
-        <template v-for="(item, index) in items" :key="index">
-            <router-link :to="item.path">
-                <div class="dropdown-item">
-                    {{ item.text }}
-                </div>
-            </router-link>
-        </template>
+<template>
+    <div class="position-relative">
+        <div @click="handleDropdownToogleClick">
+            <slot name="dropdown-toggle"></slot>
+        </div>
+        <div class="position-absolute" v-if="isDropdownOpen">
+            <slot name="dropdown-content"></slot>
+        </div>
     </div>
 </template>
+
 
 <style scoped>
     .dropdown-menu {
@@ -43,5 +60,16 @@
     .dropdown-item:hover {
         background-color: var(--color-dark-gray);
         color: var(--color-light);
+    }
+
+    .position-relative {
+        position: relative;
+    }
+
+    .position-absolute {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        z-index: 1000;
     }
 </style>
