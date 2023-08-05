@@ -1,27 +1,43 @@
 <script lang="ts">
+    import type { Square } from '@/chess/Square';
     import { PlayerColor } from '../chess/enums/PlayerColor'
+    import { SquareColor } from '@/enums/SquareColor';
 
     export default {
-        props: ['square', 'squareColor', 'isLegal'],
+        props: {
+			square: {
+                type: Object as () => (Square|null),
+                required: true,
+            },
+            lightSquareColor: {
+                type: String as () => SquareColor,
+                default: SquareColor.Gray
+            },
+            darkSquareColor: {
+                type: String as () => SquareColor,
+                default: SquareColor.Gray
+            },
+            isLegal: {
+                type: Boolean,
+                default: false
+            }
+		},
         computed: {
             bgColor(): string {
                 return this.square ?
-                       this.square.position.y % 2 === 0 ? this.square.position.x % 2 === 0 ? 'dark-' + this.squareColor : 'light-' + this.squareColor : 
-                       this.square.position.x % 2 === 0 ? 'light-' + this.squareColor : 'dark-' + this.squareColor
+                       this.square.isDark() ? 'dark-' + this.darkSquareColor : 'light-' + this.lightSquareColor
                        : 'void';
             },
             color(): string|undefined {
-                return this.square ? 
-                    this.square.getPiece()?.color === PlayerColor.White ? 'white' : 'black' ?? ''
-                    : undefined;
+                return this.square?.getPiece()?.color === PlayerColor.White ? 'white' : 'black' ?? undefined;
             },
             bgPiece() {
-                return !this.square || this.square.isEmpty() ? '' : { 
-                    backgroundImage: 'url(/assets/piece/' + this.color + '/' + this.square.getPiece().getName() + '.svg)',
-                    backgroundRepeat: 'no-repeat',
-                    backgroundSize: 'contain',
-                };
-            }
+            return this.square && !this.square.isEmpty() ? {
+                backgroundImage: this.color ? `url(/assets/piece/${this.color}/${this.square.getPiece()?.getName()}.svg)` : 'none',
+                backgroundRepeat: 'no-repeat',
+                backgroundSize: 'contain',
+            } : '';
+        }
         }
     }
 </script>
@@ -36,46 +52,6 @@
     .void {
         background-color: var(--color-white);
         opacity: 0;
-    }
-    
-    .light-brown {
-        background-color: wheat;
-    }
-
-    .dark-brown {
-        background-color: burlywood;
-    }
-
-    .light-gray {
-        background-color: lightgray;
-    }
-
-    .dark-gray {
-        background-color: darkgray;
-    }
-
-    .light-blue {
-        background-color: hsl(240,100%,90%);
-    }
-
-    .dark-blue {
-        background-color: hsl(240,100%,70%);
-    }
-
-    .light-green {
-        background-color: hsl(120,50%,90%);
-    }
-
-    .dark-green {
-        background-color: hsl(120,50%,70%);
-    }
-
-    .light-red {
-        background-color: hsl(0,100%,90%);
-    }
-
-    .dark-red {
-        background-color: hsl(0,100%,70%);
     }
 
     .is-legal {

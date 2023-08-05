@@ -9,6 +9,8 @@
 	--color-dark: hsl(0,0%,15%);
 	--color-black: hsl(0,0%,5%);
 
+	--navbar-height: 70px;
+
 	--max-square-size: 65px;
 
 	--mobile-nav-max-width: 600px;
@@ -20,7 +22,7 @@ body {
 
 	padding: 0;
 	margin: 0;
-	padding-top: 80px;
+	padding-top: var(--navbar-height);
 	overflow-x: hidden;
 
 	font-family: 'Kanit';
@@ -28,4 +30,46 @@ body {
 
 a {
 	text-decoration: none;
+}
+
+/* Square Colors */
+
+.light-brown {
+	background-color: wheat;
+}
+
+.dark-brown {
+	background-color: burlywood;
+}
+
+.light-gray {
+	background-color: lightgray;
+}
+
+.dark-gray {
+	background-color: darkgray;
+}
+
+.light-blue {
+	background-color: hsl(240,100%,90%);
+}
+
+.dark-blue {
+	background-color: hsl(240,100%,70%);
+}
+
+.light-green {
+	background-color: hsl(120,50%,90%);
+}
+
+.dark-green {
+	background-color: hsl(120,50%,70%);
+}
+
+.light-red {
+	background-color: hsl(0,100%,90%);
+}
+
+.dark-red {
+	background-color: hsl(0,100%,70%);
 }

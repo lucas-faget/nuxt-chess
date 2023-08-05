@@ -1,9 +1,24 @@
 <script lang="ts">
     import Square from '@/components/Square.vue'
+    import type { Chess } from '@/chess/Chess';
+    import { SquareColor } from '@/enums/SquareColor';
 
     export default {
         components: { Square },
-        props: ['chess', 'squareColor'],
+        props: {
+			chess: {
+                type: Object as () => Chess,
+                required: true,
+            },
+            lightSquareColor: {
+                type: String as () => SquareColor,
+                default: SquareColor.Gray
+            },
+            darkSquareColor: {
+                type: String as () => SquareColor,
+                default: SquareColor.Gray
+            }
+		},
         data() {
             return {
                 fromSquareName: ""
@@ -53,7 +68,8 @@
 		<template v-for="rank in ranks" :key="rank">
             <template v-for="file in files" :key="file">
                 <Square :square="chess.chessboard.getSquareByName(file + rank)"
-                        :squareColor="squareColor"
+                        :lightSquareColor="lightSquareColor"
+                        :darkSquareColor="darkSquareColor"
                         :isLegal="isLegal(file + rank)"
                         @click="clickSquare(file + rank)"
                 />

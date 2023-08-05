@@ -19,7 +19,8 @@
 		data() {
 			return {
 				chess: new ChessLocal(this.variant),
-				squareColor: this.isLocal ? SquareColor.Brown : SquareColor.Gray,
+				lightSquareColor: SquareColor.Gray,
+				darkSquareColor: SquareColor.Gray,
 			}
 		},
 		computed: {
@@ -37,24 +38,28 @@
 			}
 		},
 		methods: {
-			setSquareColor(squareColor: SquareColor) {
-				this.squareColor = squareColor;
+			setLightSquareColor(squareColor: SquareColor) {
+				this.lightSquareColor = squareColor;
+			},
+			setDarkSquareColor(squareColor: SquareColor) {
+				this.darkSquareColor = squareColor;
 			}
 		}
 	}
 </script>
 
 <template>
-	<Background />
-
 	<div class="chess">
 		<div>
 			<div>
-				{{ variant }}
 				<PlayerBar :name="topPlayerName" :advantage="topAdvantage" />
 			</div>
 			<div class="chessboard">
-				<Chessboard :chess="chess" :squareColor="squareColor" />
+				<Chessboard 
+					:chess="chess"
+					:lightSquareColor="lightSquareColor"
+					:darkSquareColor="darkSquareColor"
+				/>
 			</div>
 			<div>
 				<PlayerBar :name="bottomPlayerName" :advantage="bottomAdvantage" />
@@ -63,7 +68,12 @@
 				<Actions :chess="chess" />
 			</div>
 			<div>
-				<Options :squareColor="squareColor" @change-square-color="setSquareColor" />
+				<Options 
+					:lightSquareColor="lightSquareColor"
+					:darkSquareColor="darkSquareColor"
+					@change-light-square-color="setLightSquareColor"
+					@change-dark-square-color="setDarkSquareColor"
+				/>
 			</div>
 		</div>
 	</div>
@@ -74,7 +84,6 @@
 		padding-block: 30px;
 		display: flex;
 		justify-content: center;
-
 	}
 
 	.chess > div {

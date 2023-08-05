@@ -56,11 +56,11 @@
 
 <template>
     <nav class="nav">
-        <router-link to="/">
-            <div class="logo">
-                <img src="/assets/piece/white/p.svg" alt="Logo" />
-            </div>
-        </router-link>
+        <div class="logo">
+            <router-link to="/">
+                <img src="/assets/icon/chess.svg" alt="Logo" />
+            </router-link>
+        </div>
 
         <MobileNavToggle :isMobileNavOpen="isMobileNavOpen" @click="toggleMobileNav" />
 
@@ -99,10 +99,9 @@
     .nav
     {
         position: absolute;
-        background-color: hsla(0, 0%, 0%, 0);
         display: flex;
         align-items: center;
-        height: 70px;
+        height: var(--navbar-height);
         width: 100vw;
     }
 
@@ -110,12 +109,16 @@
     {
         position: relative;
         z-index: 1000;
-        padding-inline: 10px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-inline: 10px;
     }
 
-    .logo > img
+    .logo img
     {
-        height: 60px;
+        width: 40px;
+        aspect-ratio: 10px;
     }
 
     .mobile-nav-toggle

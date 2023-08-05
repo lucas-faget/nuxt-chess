@@ -17,13 +17,14 @@
                         title: "Fischer Random Chess",
                         text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor.",
 						path: "/play/960",
-                        image: "/assets/image/chess.png"
+                        image: "/assets/image/chess.png",
                     },
                     {
                         title: "Four-player Chess",
                         text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor.",
 						path: "/play/4player",
-						image: "/assets/image/chess.png"
+						image: "/assets/image/chess-hogwarts-removebg.png",
+                        imageClass: "image-class-2"
                     }
                 ]
             };
@@ -109,6 +110,10 @@
 	.image-class-1 {
 		border-radius: 50%;
 		box-shadow: 0 0 10px 10px rgba(255, 255, 255, 0.3);
+	}
+
+    .image-class-2 {
+		border-radius: 50%;
 	}
 
     .title {
