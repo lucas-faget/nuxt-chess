@@ -1,6 +1,5 @@
 <script lang="ts">
     import type { Square } from '@/chess/Square';
-    import { PlayerColor } from '../chess/enums/PlayerColor'
     import { SquareColor } from '@/enums/SquareColor';
 
     export default {
@@ -25,19 +24,19 @@
         computed: {
             bgColor(): string {
                 return this.square ?
-                       this.square.isDark() ? 'dark-' + this.darkSquareColor : 'light-' + this.lightSquareColor
+                       this.square.isDark() ? 'square-dark-' + this.darkSquareColor : 'square-light-' + this.lightSquareColor
                        : 'void';
             },
             color(): string|undefined {
-                return this.square?.getPiece()?.color === PlayerColor.White ? 'white' : 'black' ?? undefined;
+                return this.square?.getPiece()?.color ?? undefined;
             },
             bgPiece() {
-            return this.square && !this.square.isEmpty() ? {
-                backgroundImage: this.color ? `url(/assets/piece/${this.color}/${this.square.getPiece()?.getName()}.svg)` : 'none',
-                backgroundRepeat: 'no-repeat',
-                backgroundSize: 'contain',
-            } : '';
-        }
+                return this.square && !this.square.isEmpty() ? {
+                    backgroundImage: this.color ? `url(/assets/piece/${this.color}/${this.square.getPiece()?.getName()}.svg)` : 'none',
+                    backgroundRepeat: 'no-repeat',
+                    backgroundSize: 'contain',
+                } : '';
+            }
         }
     }
 </script>

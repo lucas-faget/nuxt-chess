@@ -7,6 +7,8 @@
 	import { SquareColor } from '@/enums/SquareColor';
 	import { ChessLocal } from '../chess/ChessLocal'
 	import { ChessVariant } from '@/enums/ChessVariant'
+	import type { PlayerColor } from '@/chess/enums/PlayerColor'
+import type { PieceName } from '@/chess/enums/PieceName'
 
 	export default {
 		components: { Chessboard, Actions, PlayerBar, Options, Background },
@@ -30,11 +32,29 @@
 			bottomPlayerName(): string {
 				return this.chess.isChessboardSpun ? this.chess.players[1].name : this.chess.players[0].name;
 			},
+			topPlayerColor(): PlayerColor {
+				return this.chess.isChessboardSpun ? this.chess.players[0].color : this.chess.players[1].color;
+			},
+			bottomPlayerColor(): PlayerColor {
+				return this.chess.isChessboardSpun ? this.chess.players[1].color : this.chess.players[0].color;
+			},
+			topOpponentPlayerColor(): PlayerColor {
+				return this.chess.isChessboardSpun ? this.chess.players[1].color : this.chess.players[0].color;
+			},
+			bottomOpponentPlayerColor(): PlayerColor {
+				return this.chess.isChessboardSpun ? this.chess.players[0].color : this.chess.players[1].color;
+			},
 			topAdvantage(): number {
 				return this.chess.isChessboardSpun ? this.chess.players[0].advantage : this.chess.players[1].advantage;
 			},
 			bottomAdvantage(): number {
 				return this.chess.isChessboardSpun ? this.chess.players[1].advantage : this.chess.players[0].advantage;
+			},
+			topCapturedPieces(): Map<PieceName, number> {
+				return this.chess.isChessboardSpun ? this.chess.players[1].capturedPieces : this.chess.players[0].capturedPieces;
+			},
+			bottomCapturedPieces(): Map<PieceName, number> {
+				return this.chess.isChessboardSpun ? this.chess.players[0].capturedPieces : this.chess.players[1].capturedPieces;
 			}
 		},
 		methods: {
@@ -52,7 +72,14 @@
 	<div class="chess">
 		<div>
 			<div>
-				<PlayerBar :name="topPlayerName" :advantage="topAdvantage" />
+				<PlayerBar 
+					:name="topPlayerName"
+					:playerColor="topPlayerColor"
+					:opponentPlayerColor="topOpponentPlayerColor"
+					:capturedPieces="topCapturedPieces"
+					:advantage="topAdvantage"
+					style="border-radius: 10px 10px 0 0;"
+				/>
 			</div>
 			<div class="chessboard">
 				<Chessboard 
@@ -62,7 +89,13 @@
 				/>
 			</div>
 			<div>
-				<PlayerBar :name="bottomPlayerName" :advantage="bottomAdvantage" />
+				<PlayerBar 
+					:name="bottomPlayerName"
+					:playerColor="bottomPlayerColor"
+					:opponentPlayerColor="bottomOpponentPlayerColor"
+					:capturedPieces="bottomCapturedPieces"
+					:advantage="bottomAdvantage"
+				/>
 			</div>
 			<div>
 				<Actions :chess="chess" />
@@ -73,6 +106,7 @@
 					:darkSquareColor="darkSquareColor"
 					@change-light-square-color="setLightSquareColor"
 					@change-dark-square-color="setDarkSquareColor"
+					style="border-radius: 0 0 10px 10px;"
 				/>
 			</div>
 		</div>

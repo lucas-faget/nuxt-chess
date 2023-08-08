@@ -44,7 +44,7 @@
                 <Dropdown>
                     <!-- Dropdown Toggle Slot -->
                     <template #dropdown-toggle>
-                        <div :class="['color-square', 'light-' + lightSquareColor]"></div>
+                        <div :class="['color-square', 'square-light-' + lightSquareColor]"></div>
                     </template>
 
                     <!-- Dropdown Content Slot -->
@@ -57,7 +57,7 @@
                                         <!-- Dropdown Item Slot -->
                                         <template #dropdown-item>
                                             <div 
-                                                :class="['color-square', 'light-' + squareColor]"
+                                                :class="['color-square', 'square-light-' + squareColor]"
                                                 @click="changeLightColor(squareColor)"
                                             ></div>
                                         </template>
@@ -72,7 +72,7 @@
                 <Dropdown>
                     <!-- Dropdown Toggle Slot -->
                     <template #dropdown-toggle>
-                        <div :class="['color-square', 'dark-' + darkSquareColor]"></div>
+                        <div :class="['color-square', 'square-dark-' + darkSquareColor]"></div>
                     </template>
 
                     <!-- Dropdown Content Slot -->
@@ -85,7 +85,7 @@
                                         <!-- Dropdown Item Slot -->
                                         <template #dropdown-item>
                                             <div 
-                                                :class="['color-square', 'dark-' + squareColor]"
+                                                :class="['color-square', 'square-dark-' + squareColor]"
                                                 @click="changeDarkColor(squareColor)"
                                             ></div>
                                         </template>

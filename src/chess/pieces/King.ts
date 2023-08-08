@@ -10,7 +10,6 @@ import { Castling } from "../moves/Castling";
 import type { Chessboard } from "../Chessboard";
 import type { PlayerController } from "../players/PlayerController";
 
-
 export class King extends Piece
 {
     static Directions: Position[] = Queen.Directions;

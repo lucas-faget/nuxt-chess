@@ -20,6 +20,7 @@ export class ChessLocal extends Chess
         move.carryoutMove();
         this.savedMoves.push(move);
         this.currentMoveIndex = this.savedMoves.length;
+        this.updateCapturedPieces(move, false);
         this.updateAdvantage(move);
         this.updateCurrentPlayer();
         this.controller.calculateMoves(this);
@@ -32,6 +33,7 @@ export class ChessLocal extends Chess
             let lastMove: Move = this.savedMoves.pop()!;
             lastMove.undoMove();
             this.currentMoveIndex = this.savedMoves.length;
+            this.updateCapturedPieces(lastMove, true);
             this.updateAdvantage(lastMove);
             this.updateCurrentPlayer();
             this.controller.calculateMoves(this);

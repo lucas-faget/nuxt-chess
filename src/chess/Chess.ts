@@ -55,16 +55,24 @@ export abstract class Chess
         this.controller.setPlayer(this.players[this.savedMoves.length % this.players.length]);
     }
 
-    updateAdvantage(move: Move): void
+    updateCapturedPieces(move: Move, isUndoing: boolean): void
     {
         if (move.capturedPiece) {
-            this.controller.player!.advantage += Piece.valueByPieceName.get(move.capturedPiece.getName())!;
             for (const player of this.players) {
                 if (player.color === move.capturedPiece.color) {
-                    player.advantage -= Piece.valueByPieceName.get(move.capturedPiece.getName())!;
+                    if (isUndoing) {
+                        player.removeCapturedPiece(move.capturedPiece.getName());
+                    } else {
+                        player.addCapturedPiece(move.capturedPiece.getName());
+                    }
                 }
             }
         }
+    }
+
+    updateAdvantage(move: Move): void
+    {
+        
     }
 
     getLastMove(): Move|null

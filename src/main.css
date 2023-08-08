@@ -1,6 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Kanit&display=swap');
 
 :root {
+	/* Square Colors */
 	--color-white: hsl(0,0%,95%);
 	--color-light: hsl(0,0%,85%);
 	--color-light-gray: hsl(0,0%,75%);
@@ -9,11 +10,14 @@
 	--color-dark: hsl(0,0%,15%);
 	--color-black: hsl(0,0%,5%);
 
+	/* Player Colors */
+	--player-color-white: #fff;
+	--player-color-black: #000;
+
+	/* Dimensions */
 	--navbar-height: 70px;
-
-	--max-square-size: 65px;
-
 	--mobile-nav-max-width: 600px;
+	--max-square-size: 65px;
 }
 
 body {
@@ -33,44 +37,54 @@ a {
 	text-decoration: none;
 }
 
+/* Player Colors */
+
+.player-color-white {
+	background-color: var(--player-color-white);
+}
+
+.player-color-black {
+	background-color: var(--player-color-black);
+}
+
 /* Square Colors */
 
-.light-brown {
+.square-light-brown {
 	background-color: wheat;
 }
 
-.dark-brown {
+.square-dark-brown {
 	background-color: burlywood;
 }
 
-.light-gray {
+.square-light-gray {
 	background-color: lightgray;
 }
 
-.dark-gray {
+.square-dark-gray {
 	background-color: darkgray;
 }
 
-.light-blue {
+.square-light-blue {
 	background-color: hsl(240,100%,90%);
 }
 
-.dark-blue {
+.square-dark-blue {
 	background-color: hsl(240,100%,70%);
 }
 
-.light-green {
+.square-light-green {
 	background-color: hsl(120,50%,90%);
 }
 
-.dark-green {
+.square-dark-green {
 	background-color: hsl(120,50%,70%);
 }
 
-.light-red {
+.square-light-red {
 	background-color: hsl(0,100%,90%);
 }
 
-.dark-red {
+.square-dark-red {
 	background-color: hsl(0,100%,70%);
 }
