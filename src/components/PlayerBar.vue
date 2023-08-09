@@ -1,5 +1,6 @@
 <script lang="ts">
     import type { PlayerColor } from '@/chess/enums/PlayerColor'
+    import type { PieceName } from '@/chess/enums/PieceName';
 
     export default {
         props: {
@@ -16,8 +17,8 @@
                 type: String as () => PlayerColor,
                 required: true
             },
-            capturedPieces: {
-                type: Map,
+            capturedPiecesByPieceName: {
+                type: Map<PieceName, number>,
                 required: false
             },
             advantage: {
@@ -27,16 +28,18 @@
             }
         },
         computed: {
-            capturedPiecesArray(): string[] {
-                let capturedPiecesArray: string[] = [];
+            allCapturedPieces(): string[][] {
+                let allCapturedPieces: string[][] = [];
 
-                if (this.capturedPieces) {
-                    for (const [pieceName, count] of this.capturedPieces.entries()) {
-                        capturedPiecesArray = [...capturedPiecesArray, ...Array<string>(count as number).fill(pieceName as string)];
+                if (this.capturedPiecesByPieceName) {
+                    for (const [pieceName, count] of this.capturedPiecesByPieceName.entries()) {
+                        if (count > 0) {
+                            allCapturedPieces.push(Array<string>(count as number).fill(pieceName as string));
+                        }
                     }
                 }
 
-                return capturedPiecesArray
+                return allCapturedPieces;
             }
         },
         methods: {
@@ -55,10 +58,10 @@
                 <span v-if="name">{{ name }}</span>
                 <span v-else>{{ playerColor }}</span>
             </div>
-            <div v-if="capturedPiecesArray && capturedPiecesArray.length > 0" :class="['captured-pieces', 'player-color-' + playerColor]">
-                <template v-for="pieceName in capturedPiecesArray" :key="pieceName">
-                    <img class="piece-image" :src="pieceImageSrc(pieceName)" alt="piece" />
-                </template>
+            <div v-if="allCapturedPieces && allCapturedPieces.length > 0" :class="['captured-pieces', 'player-color-' + playerColor]">
+                <div v-for="(capturedPiecesGroup, index) in allCapturedPieces" :key="index" class="captured-piece-group">
+                    <img v-for="(pieceName, index2) in capturedPiecesGroup" :key="index2" class="piece-image" :src="pieceImageSrc(pieceName)" alt="piece" />
+                </div>
             </div>
             <div v-if="advantage && advantage !== 0"><span>{{ advantage }}</span></div>
         </div>
@@ -93,15 +96,23 @@
     }
 
     .captured-pieces {
-        padding: 5px 5px;
+        padding: 3px;
         display: flex;
         justify-content: center;
         align-items: center;
         border-radius: 5px;
     }
 
+    .captured-piece-group {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-right: 12px;
+    }
+
     .piece-image {
-        width: 20px;
-        height: 20px;
+        width: 25px;
+        height: 25px;
+        margin-right: -12px;
     }
 </style>

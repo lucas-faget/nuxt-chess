@@ -76,7 +76,7 @@ import type { PieceName } from '@/chess/enums/PieceName'
 					:name="topPlayerName"
 					:playerColor="topPlayerColor"
 					:opponentPlayerColor="topOpponentPlayerColor"
-					:capturedPieces="topCapturedPieces"
+					:capturedPiecesByPieceName="topCapturedPieces"
 					:advantage="topAdvantage"
 					style="border-radius: 10px 10px 0 0;"
 				/>
@@ -93,7 +93,7 @@ import type { PieceName } from '@/chess/enums/PieceName'
 					:name="bottomPlayerName"
 					:playerColor="bottomPlayerColor"
 					:opponentPlayerColor="bottomOpponentPlayerColor"
-					:capturedPieces="bottomCapturedPieces"
+					:capturedPiecesByPieceName="bottomCapturedPieces"
 					:advantage="bottomAdvantage"
 				/>
 			</div>
