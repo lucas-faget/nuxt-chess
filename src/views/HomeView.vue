@@ -14,17 +14,23 @@
 						imageClass: "image-class-1"
                     },
                     {
+                        title: "Learn",
+                        text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor.",
+						path: "/learn",
+						image: "/assets/image/chess-hogwarts.png",
+                        imageClass: "image-class-2"
+                    },
+                    {
                         title: "Fischer Random Chess",
                         text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor.",
 						path: "/play/960",
-                        image: "/assets/image/chess.png",
+                        image: "/assets/image/chess.png"
                     },
                     {
                         title: "Four-player Chess",
                         text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor.",
 						path: "/play/4player",
-						image: "/assets/image/chess-hogwarts-removebg.png",
-                        imageClass: "image-class-2"
+						image: "/assets/image/chess.png"
                     }
                 ]
             };

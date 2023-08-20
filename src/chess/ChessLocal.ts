@@ -28,15 +28,17 @@ export class ChessLocal extends Chess
 
     deleteLastMove(): void
     {
-        if (this.savedMoves.length > 0)
-        {
-            let lastMove: Move = this.savedMoves.pop()!;
-            lastMove.undoMove();
-            this.currentMoveIndex = this.savedMoves.length;
-            this.updateCapturedPieces(lastMove, true);
-            this.updateAdvantage(lastMove);
-            this.updateCurrentPlayer();
-            this.controller.calculateMoves(this);
+        if (this.isCurrentMoveTheLast()) {
+            if (this.savedMoves.length > 0)
+            {
+                let lastMove: Move = this.savedMoves.pop()!;
+                lastMove.undoMove();
+                this.currentMoveIndex = this.savedMoves.length;
+                this.updateCapturedPieces(lastMove, true);
+                this.updateAdvantage(lastMove);
+                this.updateCurrentPlayer();
+                this.controller.calculateMoves(this);
+            }
         }
     }
 

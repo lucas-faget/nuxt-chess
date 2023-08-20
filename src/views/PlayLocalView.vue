@@ -121,6 +121,12 @@ import type { PieceName } from '@/chess/enums/PieceName'
 	}
 
 	.chess > div {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
+
+	.chess > div > div {
 		width: min(100vw, 520px);
 	}
 
