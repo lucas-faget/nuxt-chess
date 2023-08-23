@@ -127,7 +127,7 @@ import type { PieceName } from '@/chess/enums/PieceName'
 	}
 
 	.chess > div > div {
-		width: min(100vw, 520px);
+		width: min(95vw, 520px);
 	}
 
 	.chessboard {

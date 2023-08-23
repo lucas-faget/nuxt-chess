@@ -50,7 +50,6 @@
 <style scoped>
     .void {
         background-color: var(--color-white);
-        opacity: 0;
     }
 
     .is-legal {

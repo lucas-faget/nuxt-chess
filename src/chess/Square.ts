@@ -9,6 +9,7 @@ import { Rook } from "./pieces/Rook";
 import { Queen } from "./pieces/Queen";
 import { King } from "./pieces/King";
 import type { Chessboard } from "./Chessboard";
+import { Chess } from "./Chess";
 
 export class Square
 {
@@ -87,7 +88,6 @@ export class Square
     }
 
     isDark(): boolean {
-        return (this.position.y % 2 === 0) ? (this.position.x % 2 === 0) : (this.position.x % 2 !== 0);
+        return Chess.isDarkSquare(this.position.y, this.position.x);
     }
-      
 }

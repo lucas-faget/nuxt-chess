@@ -7,6 +7,10 @@ import { ChessVariant } from "@/enums/ChessVariant";
 import { Blacks, Whites } from "./players/Players";
 import standardJson from "@/json/standard.json";
 import fourPlayerJson from "@/json/four-player.json";
+import { PieceName } from "./enums/PieceName";
+import type { JsonData } from "./types/JsonData";
+
+const standardPieceRow = [PieceName.Rook, PieceName.Knight, PieceName.Bishop, PieceName.Queen, PieceName.King, PieceName.Bishop, PieceName.Knight, PieceName.Rook];
 
 export abstract class Chess
 {
@@ -17,14 +21,13 @@ export abstract class Chess
     currentMoveIndex: number = 0;
     isChessboardSpun: boolean = false;
 
-    constructor(variant: ChessVariant, customJson?: Object, players?: Player[])
+    constructor(variant: ChessVariant, customJson?: JsonData, players?: Player[])
     {
         switch (variant) {
             case ChessVariant.Chess960:
                 this.players = [Whites, Blacks];
+                Chess.shufflePieceRow(standardJson, 0);
                 this.chessboard = new Chessboard(standardJson);
-                this.chessboard.shuffleRow(standardJson.ranks[0]);
-                this.chessboard.shuffleRow(standardJson.ranks[standardJson.ranks.length-1]);
                 break;
             case ChessVariant.FourPlayerChess:
                 this.players = [Whites, Blacks];
@@ -119,5 +122,87 @@ export abstract class Chess
     spinChessboard(): void
     {
         this.isChessboardSpun = !this.isChessboardSpun;
+    }
+
+    shufflePieceRow(pieceRow: PieceName[])
+    {
+        return pieceRow;
+    }
+
+    static getRandomElement<T>(array: T[]): T|undefined {
+        if (array.length === 0) {
+            return undefined;
+        }
+      
+        return array.splice(Math.floor(
+            Math.random() * array.length), 1
+        )[0];
+    }
+
+    static isDarkSquare(y: number, x: number): boolean
+    {
+        return (y % 2 === 0) ? (x % 2 === 0) : (x % 2 !== 0);
+    }
+
+    static getPieceRow(json: JsonData, rank: string): Record<string, PieceName>
+    {
+        const pieceRow: Record<string, PieceName> = {};
+    
+        for (const file of json.files) {
+            if (json.pieces[file + rank].name) {
+                pieceRow[file] = json.pieces[file + rank].name;
+            }
+        }
+    
+        return pieceRow;
+    }
+    
+
+    static shufflePieceRow(json: JsonData, rankIndex: number)
+    {
+        const rank = json.ranks[rankIndex];
+        const reversedRank = json.ranks.reverse()[rankIndex];
+
+        let pieceRow: Record<string, PieceName> = Chess.getPieceRow(json, rank);
+        let shuffledPieceRow: Record<string, PieceName> = {};
+
+        let files = json.files;
+
+        const darkFiles = json.files.filter((_, fileIndex) => Chess.isDarkSquare(fileIndex, rankIndex));
+        const lightFiles = json.files.filter((_, fileIndex) => !Chess.isDarkSquare(fileIndex, rankIndex));
+
+        for (const [file, pieceName] of Object.entries(pieceRow)) {
+            const isDark: boolean = Chess.isDarkSquare(json.files.indexOf(file), rankIndex);
+            if (pieceName === PieceName.Bishop) {
+                let shuffledFile: string|undefined = Chess.getRandomElement(isDark ? darkFiles : lightFiles);
+                if (shuffledFile) {
+                    files = files.filter((file) => file !== shuffledFile);
+                    shuffledPieceRow[shuffledFile] = pieceName;
+                }
+            }
+        }
+
+        for (const [file, pieceName] of Object.entries(pieceRow)) {
+            if (pieceName === PieceName.Knight || pieceName === PieceName.Queen) {
+                let shuffledFile: string|undefined = Chess.getRandomElement(files);
+                if (shuffledFile) {
+                    shuffledPieceRow[shuffledFile] = pieceName;
+                }
+            }
+        }
+
+        for (const [file, pieceName] of Object.entries(pieceRow)) {
+            if (pieceName === PieceName.Rook || pieceName === PieceName.King) {
+                const firstFile = files.shift();
+                if (firstFile) {
+                    shuffledPieceRow[firstFile] = pieceName;
+                }
+            }
+        }
+
+        for (const [file, pieceName] of Object.entries(shuffledPieceRow)) {
+            json.pieces[file + rank].name = pieceName;
+            json.pieces[file + reversedRank].name = pieceName;
+        }
     }
 }

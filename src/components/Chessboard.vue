@@ -26,10 +26,10 @@
         },
         computed: {
             ranks(): string[] {
-                return this.chess.isChessboardSpun ? this.chess.chessboard.ranks : this.chess.chessboard.reverseRanks;
+                return this.chess.isChessboardSpun ? this.chess.chessboard.ranks : this.chess.chessboard.reversedRanks;
             },
             files(): string[] {
-                return this.chess.isChessboardSpun ? this.chess.chessboard.reverseFiles : this.chess.chessboard.files;
+                return this.chess.isChessboardSpun ? this.chess.chessboard.reversedFiles : this.chess.chessboard.files;
             },
             gridStyle() {
                 return {
