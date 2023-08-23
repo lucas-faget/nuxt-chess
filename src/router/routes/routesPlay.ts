@@ -8,16 +8,25 @@ export const routesPlay = [
         text: 'Standard',
         component: PlayLocalView,
         props: {
-			variant: ChessVariant.Standard
-		}
+            variant: ChessVariant.Standard
+        }
     },
     {
         path: '/play/960',
         name: 'play-960',
-        text: 'Chess 960',
+        text: 'Fischer Random Chess',
         component: PlayLocalView,
         props: {
-			variant: ChessVariant.Chess960
+			variant: ChessVariant.FischerRandom
+		}
+    },
+    {
+        path: '/play/fog',
+        name: 'play-fog',
+        text: 'Fog Of War Chess',
+        component: PlayLocalView,
+        props: {
+			variant: ChessVariant.FogOfWar
 		}
     },
     {
@@ -26,7 +35,7 @@ export const routesPlay = [
         text: 'Four Player Chess',
         component: PlayLocalView,
         props: {
-			variant: ChessVariant.FourPlayerChess
+			variant: ChessVariant.FourPlayer
 		}
     }
 ];

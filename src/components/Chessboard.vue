@@ -42,7 +42,7 @@
             clickSquare(squareName: string): void
             {
                 if (this.chess.canPlay()) {
-                    if (this.chess.controller.hasLegalMove(this.fromSquareName, squareName)) {
+                    if (this.chess.controller.isLegalMove(this.fromSquareName, squareName)) {
                         let move = this.chess.controller.getLegalMove(this.fromSquareName, squareName);
                         this.chess.saveMove(move);
                         this.fromSquareName = "";
@@ -57,7 +57,11 @@
             },
             isLegal(squareName: string): boolean
             {
-                return this.chess.canPlay() && this.chess.controller.hasLegalMove(this.fromSquareName, squareName);
+                return this.chess.canPlay() && this.chess.controller.isLegalMove(this.fromSquareName, squareName);
+            },
+            isFogged(squareName: string): boolean
+            {
+                return this.chess.isFoggedSquare(squareName);
             }
         }
     }
@@ -71,6 +75,7 @@
                         :lightSquareColor="lightSquareColor"
                         :darkSquareColor="darkSquareColor"
                         :isLegal="isLegal(file + rank)"
+                        :isFogged="isFogged(file + rank)"
                         @click="clickSquare(file + rank)"
                 />
             </template>

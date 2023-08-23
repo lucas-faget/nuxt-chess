@@ -2,7 +2,6 @@ import type { Position } from "./coordinates/Position";
 import type { PlayerColor } from "./enums/PlayerColor";
 import { PieceName } from "./enums/PieceName";
 import { Square } from "./Square";
-import type { Piece } from "./pieces/Piece";
 import type { JsonData } from "./types/JsonData";
 
 export class Chessboard

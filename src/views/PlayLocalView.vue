@@ -8,7 +8,7 @@
 	import { ChessLocal } from '../chess/ChessLocal'
 	import { ChessVariant } from '@/enums/ChessVariant'
 	import type { PlayerColor } from '@/chess/enums/PlayerColor'
-import type { PieceName } from '@/chess/enums/PieceName'
+	import type { PieceName } from '@/chess/enums/PieceName'
 
 	export default {
 		components: { Chessboard, Actions, PlayerBar, Options, Background },

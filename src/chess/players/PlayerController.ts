@@ -37,7 +37,18 @@ export class PlayerController
         this.kingSquare = kingSquare;
     }
 
-    hasLegalMove(fromSquareName: string, toSquareName: string): boolean
+    isLegalSquare(squareName: string): boolean
+    {
+        for (const fromSquareName in this.legalMoves) {
+            if (squareName in this.legalMoves[fromSquareName]) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    isLegalMove(fromSquareName: string, toSquareName: string): boolean
     {
         return fromSquareName in this.legalMoves && toSquareName in this.legalMoves[fromSquareName];
     }

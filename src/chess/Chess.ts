@@ -1,4 +1,3 @@
-import { Piece } from "./pieces/Piece";
 import type { Move } from "./moves/Move";
 import { Chessboard } from "./Chessboard";
 import { PlayerController } from "./players/PlayerController";
@@ -10,10 +9,9 @@ import fourPlayerJson from "@/json/four-player.json";
 import { PieceName } from "./enums/PieceName";
 import type { JsonData } from "./types/JsonData";
 
-const standardPieceRow = [PieceName.Rook, PieceName.Knight, PieceName.Bishop, PieceName.Queen, PieceName.King, PieceName.Bishop, PieceName.Knight, PieceName.Rook];
-
 export abstract class Chess
 {
+    variant: ChessVariant;
     players: Player[];
     controller: PlayerController;
     chessboard: Chessboard;
@@ -23,13 +21,14 @@ export abstract class Chess
 
     constructor(variant: ChessVariant, customJson?: JsonData, players?: Player[])
     {
+        this.variant = variant;
         switch (variant) {
-            case ChessVariant.Chess960:
+            case ChessVariant.FischerRandom:
                 this.players = [Whites, Blacks];
                 Chess.shufflePieceRow(standardJson, 0);
                 this.chessboard = new Chessboard(standardJson);
                 break;
-            case ChessVariant.FourPlayerChess:
+            case ChessVariant.FourPlayer:
                 this.players = [Whites, Blacks];
                 this.chessboard = new Chessboard(fourPlayerJson);
                 break;
@@ -124,9 +123,12 @@ export abstract class Chess
         this.isChessboardSpun = !this.isChessboardSpun;
     }
 
-    shufflePieceRow(pieceRow: PieceName[])
+    isFoggedSquare(squareName: string): boolean
     {
-        return pieceRow;
+        console.log(this.variant)
+        return this.variant === ChessVariant.FogOfWar
+            && this.chessboard.getSquareByName(squareName)?.getPiece()?.color !== this.controller.player.color
+            && !this.controller.isLegalSquare(squareName);
     }
 
     static getRandomElement<T>(array: T[]): T|undefined {
@@ -157,7 +159,6 @@ export abstract class Chess
         return pieceRow;
     }
     
-
     static shufflePieceRow(json: JsonData, rankIndex: number)
     {
         const rank = json.ranks[rankIndex];

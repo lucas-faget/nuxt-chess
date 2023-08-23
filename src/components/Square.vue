@@ -19,6 +19,10 @@
             isLegal: {
                 type: Boolean,
                 default: false
+            },
+            isFogged: {
+                type: Boolean,
+                default: false
             }
 		},
         computed: {
@@ -42,7 +46,7 @@
 </script>
 
 <template>
-	<div :style="bgPiece" :class="['square', bgColor, { 'is-legal': isLegal }]">
+	<div :style="bgPiece" :class="['square', bgColor, { 'is-legal': isLegal, 'is-fogged': isFogged }]">
 		
 	</div>
 </template>
@@ -50,6 +54,10 @@
 <style scoped>
     .void {
         background-color: var(--color-white);
+    }
+
+    .is-fogged {
+        background-color: #000;
     }
 
     .is-legal {
