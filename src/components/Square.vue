@@ -27,9 +27,7 @@
 		},
         computed: {
             bgColor(): string {
-                return this.square ?
-                       this.square.isDark() ? 'square-dark-' + this.darkSquareColor : 'square-light-' + this.lightSquareColor
-                       : 'void';
+                return this.square?.isDark() ? 'square-dark-' + this.darkSquareColor : 'square-light-' + this.lightSquareColor;
             },
             color(): string|undefined {
                 return this.square?.getPiece()?.color ?? undefined;
@@ -46,9 +44,9 @@
 </script>
 
 <template>
-	<div :style="bgPiece" :class="['square', bgColor, { 'is-legal': isLegal, 'is-fogged': isFogged }]">
-		
-	</div>
+    <div v-if="square && isFogged" class="fogged"></div>
+	<div v-else-if="square" :style="bgPiece" :class="[bgColor, { 'legal': isLegal }]"></div>
+    <div v-else class="void"></div>
 </template>
 
 <style scoped>
@@ -56,11 +54,11 @@
         background-color: var(--color-white);
     }
 
-    .is-fogged {
-        background-color: #000;
+    .fogged {
+        background: #000;
     }
 
-    .is-legal {
+    .legal {
         opacity: 0.7;
     }
 </style>
