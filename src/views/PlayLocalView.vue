@@ -64,6 +64,12 @@
 			setDarkSquareColor(squareColor: SquareColor) {
 				this.darkSquareColor = squareColor;
 			}
+		},
+		watch: {
+			variant(newVariant, oldVariant) {
+				this.chess = new ChessLocal(newVariant);
+				console.log("test")
+			}
 		}
 	}
 </script>

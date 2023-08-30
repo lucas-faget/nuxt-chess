@@ -44,7 +44,9 @@
                 if (this.chess.canPlay()) {
                     if (this.chess.controller.isLegalMove(this.fromSquareName, squareName)) {
                         let move = this.chess.controller.getLegalMove(this.fromSquareName, squareName);
-                        this.chess.saveMove(move);
+                        if (move) {
+                            this.chess.saveMove(move);
+                        }
                         this.fromSquareName = "";
                     } else {
                         if (this.fromSquareName !== squareName) {

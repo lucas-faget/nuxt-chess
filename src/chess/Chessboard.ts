@@ -2,7 +2,7 @@ import type { Position } from "./coordinates/Position";
 import type { PlayerColor } from "./enums/PlayerColor";
 import { PieceName } from "./enums/PieceName";
 import { Square } from "./Square";
-import type { JsonData } from "./types/JsonData";
+import type { JsonObject } from "./types/JsonObject";
 
 export class Chessboard
 {
@@ -12,10 +12,10 @@ export class Chessboard
     reversedFiles: string[];
     squares: Map<string, Square> = new Map();
 
-    constructor(json: JsonData)
+    constructor(jsonObject: JsonObject)
     {
-        this.ranks = json.ranks;
-        this.files = json.files;
+        this.ranks = jsonObject.ranks;
+        this.files = jsonObject.files;
 
         this.reversedRanks = [...this.ranks].reverse();
         this.reversedFiles = [...this.files].reverse();
@@ -29,9 +29,9 @@ export class Chessboard
                     { x: rankIndex, y: fileIndex }
                 );
 
-                if (json.pieces[square.name]) {
-                    let pieceName : PieceName = json.pieces[square.name].name;
-                    let playerColor: PlayerColor = json.pieces[square.name].color;
+                if (jsonObject.pieces[square.name]) {
+                    let pieceName : PieceName = jsonObject.pieces[square.name].name;
+                    let playerColor: PlayerColor = jsonObject.pieces[square.name].color;
                     square.setPiece(pieceName, playerColor);
                 }
 
@@ -39,8 +39,8 @@ export class Chessboard
             }
         }
 
-        if (json.voidSquares) {
-            for (const squareName of json.voidSquares) {
+        if (jsonObject.voidSquares) {
+            for (const squareName of jsonObject.voidSquares) {
                 this.squares.delete(squareName);
             }
         }

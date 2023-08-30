@@ -5,14 +5,14 @@ import type { Move } from "./moves/Move";
 import { Chess } from "./Chess";
 import type { ChessVariant } from "@/enums/ChessVariant";
 import type { Player } from "./players/Player";
-import type { JsonData } from "./types/JsonData";
+import type { JsonObject } from "./types/JsonObject";
 
 export class ChessSocket extends Chess
 {
     myPlayerIndex: number;
     socket: Socket;
 
-    constructor(variant: ChessVariant, customJson?: JsonData, players?: Player[]) {
+    constructor(variant: ChessVariant, customJson?: JsonObject, players?: Player[]) {
         super(variant, customJson, players);
         this.myPlayerIndex = 0;
 

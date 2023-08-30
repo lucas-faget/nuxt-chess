@@ -6,7 +6,7 @@
         props: {
 			square: {
                 type: Object as () => (Square|null),
-                required: true,
+                default: null
             },
             lightSquareColor: {
                 type: String as () => SquareColor,
