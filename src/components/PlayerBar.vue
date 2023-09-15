@@ -1,50 +1,51 @@
 <script lang="ts">
-    import type { PlayerColor } from '@/chess/enums/PlayerColor'
+    import type { Player } from '@/chess/players/Player';
     import type { PieceName } from '@/chess/enums/PieceName';
+    import { PlayerColor } from '@/chess/enums/PlayerColor';
 
     export default {
         props: {
-            name: {
-                type: String,
-                default: "",
+            leftPlayer: {
+                type: Object as () => Player|null,
                 required: false
             },
-            playerColor: {
-                type: String as () => PlayerColor,
-                required: true
-            },
-            opponentPlayerColor: {
-                type: String as () => PlayerColor,
-                required: true
-            },
-            capturedPiecesByPieceName: {
-                type: Map<PieceName, number>,
+            rightPlayer: {
+                type: Object as () => Player|null,
                 required: false
             },
-            advantage: {
-                type: Number,
-                default: 0,
-                required: false
-            }
         },
         computed: {
-            allCapturedPieces(): string[][] {
-                let allCapturedPieces: string[][] = [];
+            allCapturedPieces(): string[][]|null {
+                if (this.leftPlayer === null || this.rightPlayer === null) {
+                    let allCapturedPieces: string[][] = [];
 
-                if (this.capturedPiecesByPieceName) {
-                    for (const [pieceName, count] of this.capturedPiecesByPieceName.entries()) {
+                    let capturedPieces: Map<PieceName, number> = this.leftPlayer ? this.leftPlayer.capturedPieces : this.rightPlayer ? this.rightPlayer.capturedPieces : new Map();
+
+                    for (const [pieceName, count] of capturedPieces.entries()) {
                         if (count > 0) {
                             allCapturedPieces.push(Array<string>(count as number).fill(pieceName as string));
                         }
                     }
-                }
 
-                return allCapturedPieces;
+                    return allCapturedPieces;
+
+                } else {
+                    return null;
+                }
             }
         },
         methods: {
-            pieceImageSrc(pieceName: any): string {
-                return `/assets/piece/${this.opponentPlayerColor}/${pieceName}.svg`;
+            pieceImageSrc(pieceName: string, color: PlayerColor): string {
+                return `/assets/piece/${color}/${pieceName}.svg`;
+            },
+            contrastColor(color: PlayerColor): PlayerColor {
+                switch (color) {
+                    case PlayerColor.White:
+                    case PlayerColor.Silver:
+                        return PlayerColor.Black;
+                    default:
+                        return PlayerColor.White;
+                }
             }
         }
     }
@@ -52,21 +53,29 @@
 
 <template>
 	<div class="player-bar">
-        <div class="left">
-            <div :class="['sphere', 'player-color-' +  playerColor]"></div>
-            <div v-if="name || playerColor">
-                <span v-if="name">{{ name }}</span>
-                <span v-else>{{ playerColor }}</span>
+        <div v-if="leftPlayer" class="left">
+            <div :class="['sphere', 'player-color-' +  leftPlayer.color]"></div>
+            <div v-if="leftPlayer.name || leftPlayer.color">
+                <span v-if="leftPlayer.name">{{ leftPlayer.name }}</span>
+                <span v-else>{{ leftPlayer.color }}</span>
             </div>
-            <div v-if="allCapturedPieces && allCapturedPieces.length > 0" :class="['captured-pieces', 'player-color-' + playerColor]">
+            <div v-if="allCapturedPieces && allCapturedPieces.length > 0" :class="['captured-pieces', 'player-color-' + leftPlayer.color]">
                 <div v-for="(capturedPiecesGroup, index) in allCapturedPieces" :key="index" class="captured-piece-group">
-                    <img v-for="(pieceName, index2) in capturedPiecesGroup" :key="index2" class="piece-image" :src="pieceImageSrc(pieceName)" alt="piece" />
+                    <img v-for="(pieceName, index2) in capturedPiecesGroup" :key="index2" class="piece-image" :src="pieceImageSrc(pieceName, contrastColor(leftPlayer.color))" alt="piece" />
                 </div>
             </div>
-            <div v-if="advantage && advantage !== 0"><span>{{ advantage }}</span></div>
         </div>
-        <div class="right">
-
+        <div v-if="rightPlayer" class="right">
+            <div :class="['sphere', 'player-color-' +  rightPlayer.color]"></div>
+            <div v-if="rightPlayer.name || rightPlayer.color">
+                <span v-if="rightPlayer.name">{{ rightPlayer.name }}</span>
+                <span v-else>{{ rightPlayer.color }}</span>
+            </div>
+            <div v-if="allCapturedPieces && allCapturedPieces.length > 0" :class="['captured-pieces', 'player-color-' + rightPlayer.color]">
+                <div v-for="(capturedPiecesGroup, index) in allCapturedPieces" :key="index" class="captured-piece-group">
+                    <img v-for="(pieceName, index2) in capturedPiecesGroup" :key="index2" class="piece-image" :src="pieceImageSrc(pieceName, contrastColor(rightPlayer.color))" alt="piece" />
+                </div>
+            </div>
         </div>
 	</div>
 </template>
@@ -85,6 +94,13 @@
 
     .left {
         display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .right {
+        display: flex;
+        flex-direction: row-reverse;
         align-items: center;
         gap: 20px;
     }

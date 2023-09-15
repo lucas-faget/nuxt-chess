@@ -8,7 +8,7 @@
 	import { ChessLocal } from '../chess/ChessLocal'
 	import { ChessVariant } from '@/enums/ChessVariant'
 	import type { PlayerColor } from '@/chess/enums/PlayerColor'
-	import type { PieceName } from '@/chess/enums/PieceName'
+	import type { Player } from '@/chess/players/Player'
 
 	export default {
 		components: { Chessboard, Actions, PlayerBar, Options, Background },
@@ -26,35 +26,17 @@
 			}
 		},
 		computed: {
-			topPlayerName(): string {
-				return this.chess.isChessboardSpun ? this.chess.players[0].name : this.chess.players[1].name;
+			bottomRightPlayer(): Player|null {
+				return this.chess.players.length === 4 ? this.chess.players[0] : null;
 			},
-			bottomPlayerName(): string {
-				return this.chess.isChessboardSpun ? this.chess.players[1].name : this.chess.players[0].name;
+			bottomLeftPlayer(): Player|null {
+				return this.chess.players.length === 4 ? this.chess.players[1] : this.chess.players[0];
 			},
-			topPlayerColor(): PlayerColor {
-				return this.chess.isChessboardSpun ? this.chess.players[0].color : this.chess.players[1].color;
+			topLeftPlayer(): Player|null {
+				return this.chess.players.length === 4 ? this.chess.players[2] : this.chess.players[1];
 			},
-			bottomPlayerColor(): PlayerColor {
-				return this.chess.isChessboardSpun ? this.chess.players[1].color : this.chess.players[0].color;
-			},
-			topOpponentPlayerColor(): PlayerColor {
-				return this.chess.isChessboardSpun ? this.chess.players[1].color : this.chess.players[0].color;
-			},
-			bottomOpponentPlayerColor(): PlayerColor {
-				return this.chess.isChessboardSpun ? this.chess.players[0].color : this.chess.players[1].color;
-			},
-			topAdvantage(): number {
-				return this.chess.isChessboardSpun ? this.chess.players[0].advantage : this.chess.players[1].advantage;
-			},
-			bottomAdvantage(): number {
-				return this.chess.isChessboardSpun ? this.chess.players[1].advantage : this.chess.players[0].advantage;
-			},
-			topCapturedPieces(): Map<PieceName, number> {
-				return this.chess.isChessboardSpun ? this.chess.players[1].capturedPieces : this.chess.players[0].capturedPieces;
-			},
-			bottomCapturedPieces(): Map<PieceName, number> {
-				return this.chess.isChessboardSpun ? this.chess.players[0].capturedPieces : this.chess.players[1].capturedPieces;
+			topRightPlayer(): Player|null {
+				return this.chess.players.length === 4 ? this.chess.players[3] : null;
 			}
 		},
 		methods: {
@@ -68,7 +50,6 @@
 		watch: {
 			variant(newVariant, oldVariant) {
 				this.chess = new ChessLocal(newVariant);
-				console.log("test")
 			}
 		}
 	}
@@ -79,11 +60,8 @@
 		<div>
 			<div>
 				<PlayerBar 
-					:name="topPlayerName"
-					:playerColor="topPlayerColor"
-					:opponentPlayerColor="topOpponentPlayerColor"
-					:capturedPiecesByPieceName="topCapturedPieces"
-					:advantage="topAdvantage"
+					:leftPlayer="topLeftPlayer"
+					:rightPlayer="topRightPlayer"
 					style="border-radius: 10px 10px 0 0;"
 				/>
 			</div>
@@ -96,11 +74,8 @@
 			</div>
 			<div>
 				<PlayerBar 
-					:name="bottomPlayerName"
-					:playerColor="bottomPlayerColor"
-					:opponentPlayerColor="bottomOpponentPlayerColor"
-					:capturedPiecesByPieceName="bottomCapturedPieces"
-					:advantage="bottomAdvantage"
+					:leftPlayer="bottomLeftPlayer"
+					:rightPlayer="bottomRightPlayer"
 				/>
 			</div>
 			<div>

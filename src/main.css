@@ -11,8 +11,10 @@
 	--color-black: hsl(0,0%,5%);
 
 	/* Player Colors */
-	--player-color-white: #fff;
-	--player-color-black: #000;
+	--player-color-white: #ffffff;
+	--player-color-black: #000000;
+	--player-color-silver: #C0C0C0;
+	--player-color-gold: #FFD700;
 
 	/* Dimensions */
 	--navbar-height: 70px;
@@ -45,6 +47,14 @@ a {
 
 .player-color-black {
 	background-color: var(--player-color-black);
+}
+
+.player-color-silver {
+	background-color: var(--player-color-silver);
+}
+
+.player-color-gold {
+	background-color: var(--player-color-gold);
 }
 
 /* Square Colors */
