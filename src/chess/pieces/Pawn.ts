@@ -15,7 +15,9 @@ export class Pawn extends Piece
 {
     static AdvanceDirection = new Map([
         [PlayerColor.White, Direction.Up],
-        [PlayerColor.Black, Direction.Down]
+        [PlayerColor.Black, Direction.Down],
+        [PlayerColor.Silver, Direction.Right],
+        [PlayerColor.Gold, Direction.Left]
     ]);
 
     static captureDirections = new Map([
@@ -24,6 +26,12 @@ export class Pawn extends Piece
         ],
         [PlayerColor.Black, 
             [Direction.DownLeft, Direction.DownRight]
+        ],
+        [PlayerColor.Silver, 
+            [Direction.UpRight, Direction.DownRight]
+        ],
+        [PlayerColor.Gold, 
+            [Direction.UpLeft, Direction.DownLeft]
         ]
     ]);
 

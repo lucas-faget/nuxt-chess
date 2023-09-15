@@ -21,8 +21,8 @@
 		data() {
 			return {
 				chess: new ChessLocal(this.variant),
-				lightSquareColor: SquareColor.Gray,
-				darkSquareColor: SquareColor.Gray,
+				lightSquareColor: SquareColor.Brown,
+				darkSquareColor: SquareColor.Brown,
 			}
 		},
 		computed: {

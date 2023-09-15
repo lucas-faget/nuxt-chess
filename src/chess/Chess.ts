@@ -3,7 +3,7 @@ import { Chessboard } from "./Chessboard";
 import { PlayerController } from "./players/PlayerController";
 import type { Player } from "./players/Player";
 import { ChessVariant } from "@/enums/ChessVariant";
-import { Blacks, Whites } from "./players/Players";
+import { Blacks, Golds, Silvers, Whites } from "./players/Players";
 import standardJson from "@/json/standard.json";
 import fourPlayerJson from "@/json/four-player.json";
 import { PieceName } from "./enums/PieceName";
@@ -30,7 +30,7 @@ export abstract class Chess
                 this.chessboard = new Chessboard(fischerRandomJsonObject);
                 break;
             case ChessVariant.FourPlayer:
-                this.players = [Whites, Blacks];
+                this.players = [Whites, Silvers, Blacks, Golds];
                 const fourPlayerJsonObject: JsonObject = JSON.parse(JSON.stringify(fourPlayerJson));
                 this.chessboard = new Chessboard(fourPlayerJsonObject);
                 break;
