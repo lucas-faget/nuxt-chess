@@ -8,6 +8,7 @@ import standardJson from "@/json/standard.json";
 import fourPlayerJson from "@/json/four-player.json";
 import { PieceName } from "./enums/PieceName";
 import type { JsonObject } from "./types/JsonObject";
+import type { Position } from "./coordinates/Position";
 
 export abstract class Chess
 {
@@ -209,5 +210,10 @@ export abstract class Chess
             jsonObject.pieces[file + rank].name = pieceName;
             jsonObject.pieces[file + reversedRank].name = pieceName;
         }
+    }
+
+    static areEqualCoordinates(corrdinates1: Position, coordinates2: Position): boolean
+    {
+        return corrdinates1.x === coordinates2.x && coordinates2.y === coordinates2.y;
     }
 }

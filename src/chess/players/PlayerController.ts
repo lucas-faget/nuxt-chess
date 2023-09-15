@@ -162,18 +162,18 @@ export class PlayerController
 
     isCheckedByPawn(chessboard: Chessboard): boolean
     {
-        let square: Square|null = null;
+        // let square: Square|null = null;
 
-        for (const [playerColor, directions] of Pawn.captureDirections.entries()) {
-            if (playerColor !== this.player.color) {
-                for (const direction of directions) {
-                    square = chessboard.getNextSquare(this.kingSquare!, direction);
-                    if (square && square.isOccupiedByPieceName(PieceName.Pawn) && square.isOccupiedByOpponent(this.player.color)) {
-                        return true;
-                    }
-                }
-            }
-        }
+        // for (const [playerColor, directions] of Pawn.captureDirections.entries()) {
+        //     if (playerColor !== this.player.color) {
+        //         for (const direction of directions) {
+        //             square = chessboard.getNextSquare(this.kingSquare!, direction);
+        //             if (square && square.isOccupiedByPieceName(PieceName.Pawn) && square.isOccupiedByOpponent(this.player.color)) {
+        //                 return true;
+        //             }
+        //         }
+        //     }
+        // }
 
         return false;
     }
