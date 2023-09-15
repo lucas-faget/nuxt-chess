@@ -166,7 +166,7 @@ export abstract class Chess
     static shufflePieceRow(jsonObject: JsonObject, rankIndex: number)
     {
         const rank = jsonObject.ranks[rankIndex];
-        const reversedRank = jsonObject.ranks.reverse()[rankIndex];
+        const reversedRank = [...jsonObject.ranks].reverse()[rankIndex];
 
         let pieceRow: Record<string, PieceName> = Chess.getPieceRow(jsonObject, rank);
         let shuffledPieceRow: Record<string, PieceName> = {};
