@@ -27,6 +27,12 @@
                         image: "/assets/image/chess.png"
                     },
                     {
+                        title: "Fog of War",
+                        text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor.",
+						path: "/play/fog",
+                        image: "/assets/image/chess-fog.jpg"
+                    },
+                    {
                         title: "Four-player Chess",
                         text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor.",
 						path: "/play/4player",
