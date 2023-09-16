@@ -13,6 +13,10 @@
                 type: Object as () => Player|null,
                 required: false
             },
+            currentPlayer: {
+                type: Object as () => Player|null,
+                required: true
+            }
         },
         computed: {
             allCapturedPieces(): string[][]|null {
@@ -46,6 +50,9 @@
                     default:
                         return PlayerColor.White;
                 }
+            },
+            isBlinking(player: Player): boolean {
+                return this.currentPlayer && this.currentPlayer === player;
             }
         }
     }
@@ -54,10 +61,12 @@
 <template>
 	<div class="player-bar">
         <div v-if="leftPlayer" class="left">
-            <div :class="['sphere', 'player-color-' +  leftPlayer.color]"></div>
-            <div v-if="leftPlayer.name || leftPlayer.color">
-                <span v-if="leftPlayer.name">{{ leftPlayer.name }}</span>
-                <span v-else>{{ leftPlayer.color }}</span>
+            <div :class="['left', 'sphere-and-name', {'blink': isBlinking(leftPlayer)}]">
+                <div :class="['sphere', 'player-color-' +  leftPlayer.color]"></div>
+                <div v-if="leftPlayer.name || leftPlayer.color">
+                    <span v-if="leftPlayer.name">{{ leftPlayer.name }}</span>
+                    <span v-else>{{ leftPlayer.color }}</span>
+                </div>
             </div>
             <div v-if="allCapturedPieces && allCapturedPieces.length > 0" :class="['captured-pieces', 'player-color-' + leftPlayer.color]">
                 <div v-for="(capturedPiecesGroup, index) in allCapturedPieces" :key="index" class="captured-piece-group">
@@ -66,10 +75,12 @@
             </div>
         </div>
         <div v-if="rightPlayer" class="right">
-            <div :class="['sphere', 'player-color-' +  rightPlayer.color]"></div>
-            <div v-if="rightPlayer.name || rightPlayer.color">
-                <span v-if="rightPlayer.name">{{ rightPlayer.name }}</span>
-                <span v-else>{{ rightPlayer.color }}</span>
+            <div :class="['right', 'sphere-and-name', {'blink': isBlinking(rightPlayer)}]">
+                <div :class="['sphere', 'player-color-' +  rightPlayer.color]"></div>
+                <div v-if="rightPlayer.name || rightPlayer.color">
+                    <span v-if="rightPlayer.name">{{ rightPlayer.name }}</span>
+                    <span v-else>{{ rightPlayer.color }}</span>
+                </div>
             </div>
             <div v-if="allCapturedPieces && allCapturedPieces.length > 0" :class="['captured-pieces', 'player-color-' + rightPlayer.color]">
                 <div v-for="(capturedPiecesGroup, index) in allCapturedPieces" :key="index" class="captured-piece-group">
@@ -103,6 +114,11 @@
         flex-direction: row-reverse;
         align-items: center;
         gap: 20px;
+    }
+
+    .sphere-and-name {
+        padding: 5px 10px;
+        border-radius: 10px;
     }
 
     .sphere {

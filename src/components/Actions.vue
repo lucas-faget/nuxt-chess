@@ -59,7 +59,7 @@
                     @mouseover="action.isHovered = true" 
                     @mouseout="action.isHovered = false" 
                     @click="performAction(action.type)" 
-                    :class="['button', { 'blink': isBlinking(action.type, action.isHovered) }]"
+                    :class="['button', {'blink': isBlinking(action.type, action.isHovered)}]"
         >
             <img class="icon" v-bind:src="src(action.type, action.isHovered)" draggable="false" />
             <Tooltip :text="action.tooltipText" :isVisible="action.isHovered" />
@@ -95,23 +95,5 @@
     {
         width: 35px;
         aspect-ratio: 1/1;
-    }
-
-    .blink
-    {
-        animation-name: blink;
-        animation-duration: 1s;
-        animation-timing-function: ease-in-out;
-        animation-iteration-count: infinite;
-        animation-direction: alternate;
-    }
-
-    @keyframes blink {
-        0% {
-            background-color: hsla(0, 0%, 50%, 0);
-        }
-        100% {
-            background: hsla(0, 0%, 50%, 1);
-        }
     }
 </style>

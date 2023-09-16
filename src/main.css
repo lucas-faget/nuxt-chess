@@ -98,3 +98,20 @@ a {
 .square-dark-red {
 	background-color: hsl(0,100%,70%);
 }
+
+.blink {
+	animation-name: blink;
+	animation-duration: 1s;
+	animation-timing-function: ease-in-out;
+	animation-iteration-count: infinite;
+	animation-direction: alternate;
+}
+
+@keyframes blink {
+	0% {
+		background-color: hsla(0, 0%, 50%, 0);
+	}
+	100% {
+		background: hsla(0, 0%, 50%, 1);
+	}
+}

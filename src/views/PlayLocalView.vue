@@ -7,7 +7,6 @@
 	import { SquareColor } from '@/enums/SquareColor';
 	import { ChessLocal } from '../chess/ChessLocal'
 	import { ChessVariant } from '@/enums/ChessVariant'
-	import type { PlayerColor } from '@/chess/enums/PlayerColor'
 	import type { Player } from '@/chess/players/Player'
 
 	export default {
@@ -37,6 +36,9 @@
 			},
 			topRightPlayer(): Player|null {
 				return this.chess.players.length === 4 ? this.chess.players[3] : null;
+			},
+			currentPlayer(): Player | null {
+				return this.chess.isCurrentMoveTheLast() ? this.chess.controller.player : null;
 			}
 		},
 		methods: {
@@ -62,6 +64,7 @@
 				<PlayerBar 
 					:leftPlayer="topLeftPlayer"
 					:rightPlayer="topRightPlayer"
+					:currentPlayer="currentPlayer"
 					style="border-radius: 10px 10px 0 0;"
 				/>
 			</div>
@@ -76,6 +79,7 @@
 				<PlayerBar 
 					:leftPlayer="bottomLeftPlayer"
 					:rightPlayer="bottomRightPlayer"
+					:currentPlayer="currentPlayer"
 				/>
 			</div>
 			<div>
