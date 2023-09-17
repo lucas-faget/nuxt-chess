@@ -18,7 +18,7 @@ export abstract class Chess
     chessboard: Chessboard;
     savedMoves: Move[] = [];
     currentMoveIndex: number = 0;
-    isChessboardSpun: boolean = false;
+    playerIndexInFront: number = 0;
 
     constructor(variant: ChessVariant, customJson?: JsonObject, players?: Player[])
     {
@@ -125,7 +125,7 @@ export abstract class Chess
 
     spinChessboard(): void
     {
-        this.isChessboardSpun = !this.isChessboardSpun;
+        this.playerIndexInFront = (this.playerIndexInFront + 1) % this.players.length;
     }
 
     isFoggedSquare(squareName: string): boolean

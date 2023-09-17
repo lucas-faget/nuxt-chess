@@ -2,6 +2,7 @@
     import Square from '@/components/Square.vue'
     import type { Chess } from '@/chess/Chess';
     import { SquareColor } from '@/enums/SquareColor';
+import { ChessVariant } from '@/enums/ChessVariant';
 
     export default {
         components: { Square },
@@ -25,11 +26,34 @@
             }
         },
         computed: {
-            ranks(): string[] {
-                return this.chess.isChessboardSpun ? this.chess.chessboard.ranks : this.chess.chessboard.reversedRanks;
+            rows(): string[] {
+                switch (this.chess.playerIndexInFront) {
+                    case 1:
+                        return this.chess.variant === ChessVariant.FourPlayer ? this.chess.chessboard.reversedFiles : this.chess.chessboard.ranks;
+                    case 2:
+                        return this.chess.chessboard.ranks;
+                    case 3:
+                        return this.chess.chessboard.files;
+                    case 0:
+                    default:
+                        return this.chess.chessboard.reversedRanks;
+                }
             },
-            files(): string[] {
-                return this.chess.isChessboardSpun ? this.chess.chessboard.reversedFiles : this.chess.chessboard.files;
+            columns(): string[] {
+                switch (this.chess.playerIndexInFront) {
+                    case 1:
+                        return this.chess.variant === ChessVariant.FourPlayer ? this.chess.chessboard.reversedRanks : this.chess.chessboard.reversedFiles;
+                    case 2:
+                        return this.chess.chessboard.reversedFiles;
+                    case 3:
+                        return this.chess.chessboard.ranks;
+                    case 0:
+                    default:
+                        return this.chess.chessboard.files;
+                }
+            },
+            isReversed(): boolean {
+                return this.chess.variant === ChessVariant.FourPlayer && this.chess.playerIndexInFront === 1 || this.chess.playerIndexInFront === 3;
             },
             gridStyle() {
                 return {
@@ -71,15 +95,26 @@
 
 <template>
 	<div class="chessboard" :style="gridStyle">
-		<template v-for="rank in ranks" :key="rank">
-            <template v-for="file in files" :key="file">
-                <Square :square="chess.chessboard.getSquareByName(file + rank)"
-                        :lightSquareColor="lightSquareColor"
-                        :darkSquareColor="darkSquareColor"
-                        :isLegal="isLegal(file + rank)"
-                        :isFogged="isFogged(file + rank)"
-                        @click="clickSquare(file + rank)"
-                />
+		<template v-for="row in rows" :key="row">
+            <template v-for="column in columns" :key="column">
+                <template v-if="isReversed">
+                    <Square :square="chess.chessboard.getSquareByName(row + column)"
+                            :lightSquareColor="lightSquareColor"
+                            :darkSquareColor="darkSquareColor"
+                            :isLegal="isLegal(row + column)"
+                            :isFogged="isFogged(row + column)"
+                            @click="clickSquare(row + column)"
+                    />
+                </template>
+                <template v-else>
+                    <Square :square="chess.chessboard.getSquareByName(column + row)"
+                            :lightSquareColor="lightSquareColor"
+                            :darkSquareColor="darkSquareColor"
+                            :isLegal="isLegal(column + row)"
+                            :isFogged="isFogged(column + row)"
+                            @click="clickSquare(column + row)"
+                    />
+                </template>
             </template>
         </template>
 	</div>

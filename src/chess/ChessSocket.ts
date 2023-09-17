@@ -29,7 +29,7 @@ export class ChessSocket extends Chess
             this.myPlayerIndex = playerIndex;
             console.log("I play " + this.players[this.myPlayerIndex].name);
             if (this.players[this.myPlayerIndex].color === PlayerColor.Black) {
-                this.isChessboardSpun = true;
+                this.playerIndexInFront = 1;
             }
             this.controller.calculateMoves(this);
         });

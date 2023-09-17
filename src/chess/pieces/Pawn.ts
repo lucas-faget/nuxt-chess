@@ -50,8 +50,6 @@ export class Pawn extends Piece
             }
         }
 
-        console.log(controller.player.direction)
-        // console.log(Pawn.getCaptureDirections(controller.player.direction))
         for (const direction of Pawn.getCaptureDirections(controller.player.direction)) {
             toSquare = chessboard.getNextSquare(fromSquare, direction);
             if (toSquare && toSquare.isOccupiedByOpponent(this.color) && !toSquare.isOccupiedByPieceName(PieceName.King)) {
