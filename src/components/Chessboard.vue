@@ -52,7 +52,7 @@
                         return this.chess.chessboard.files;
                 }
             },
-            isReversed(): boolean {
+            isPerpendicular(): boolean {
                 return this.chess.variant === ChessVariant.FourPlayer && this.chess.playerIndexInFront === 1 || this.chess.playerIndexInFront === 3;
             },
             gridStyle() {
@@ -63,6 +63,9 @@
             }
         },
         methods: {
+            getSquareName(column: string, row: string): string {
+                return this.isPerpendicular ? row + column : column + row;
+            },
             clickSquare(squareName: string): void
             {
                 if (this.chess.canPlay()) {
@@ -73,11 +76,7 @@
                         }
                         this.fromSquareName = "";
                     } else {
-                        if (this.fromSquareName !== squareName) {
-                            this.fromSquareName = squareName;
-                        } else {
-                            this.fromSquareName = "";
-                        }
+                        this.fromSquareName = this.fromSquareName !== squareName ? squareName : "";
                     }
                 }
             },
@@ -97,24 +96,13 @@
 	<div class="chessboard" :style="gridStyle">
 		<template v-for="row in rows" :key="row">
             <template v-for="column in columns" :key="column">
-                <template v-if="isReversed">
-                    <Square :square="chess.chessboard.getSquareByName(row + column)"
-                            :lightSquareColor="lightSquareColor"
-                            :darkSquareColor="darkSquareColor"
-                            :isLegal="isLegal(row + column)"
-                            :isFogged="isFogged(row + column)"
-                            @click="clickSquare(row + column)"
-                    />
-                </template>
-                <template v-else>
-                    <Square :square="chess.chessboard.getSquareByName(column + row)"
-                            :lightSquareColor="lightSquareColor"
-                            :darkSquareColor="darkSquareColor"
-                            :isLegal="isLegal(column + row)"
-                            :isFogged="isFogged(column + row)"
-                            @click="clickSquare(column + row)"
-                    />
-                </template>
+                <Square :square="chess.chessboard.getSquareByName(getSquareName(column, row))"
+                        :lightSquareColor="lightSquareColor"
+                        :darkSquareColor="darkSquareColor"
+                        :isLegal="isLegal(getSquareName(column, row))"
+                        :isFogged="isFogged(getSquareName(column, row))"
+                        @click="clickSquare(getSquareName(column, row))"
+                />
             </template>
         </template>
 	</div>

@@ -9,6 +9,7 @@ import type { Square } from "../Square";
 import type { Move } from "../moves/Move";
 import type { Chessboard } from "../Chessboard";
 import type { Chess } from "../Chess";
+import { Bishop } from "../pieces/Bishop";
 
 export class PlayerController
 {
@@ -162,18 +163,16 @@ export class PlayerController
 
     isCheckedByPawn(chessboard: Chessboard): boolean
     {
-        // let square: Square|null = null;
+        let square: Square|null = null;
 
-        // for (const [playerColor, directions] of Pawn.captureDirections.entries()) {
-        //     if (playerColor !== this.player.color) {
-        //         for (const direction of directions) {
-        //             square = chessboard.getNextSquare(this.kingSquare!, direction);
-        //             if (square && square.isOccupiedByPieceName(PieceName.Pawn) && square.isOccupiedByOpponent(this.player.color)) {
-        //                 return true;
-        //             }
-        //         }
-        //     }
-        // }
+        for (const direction of Bishop.Directions) {
+            if (direction.x === this.player.direction.x || direction.y === this.player.direction.y) {
+                square = chessboard.getNextSquare(this.kingSquare!, direction);
+                if (square && square.isOccupiedByPieceName(PieceName.Pawn) && square.isOccupiedByOpponent(this.player.color)) {
+                    return true;
+                }
+            }
+        }
 
         return false;
     }
