@@ -2,7 +2,7 @@
     import Square from '@/components/Square.vue'
     import type { Chess } from '@/chess/Chess';
     import { SquareColor } from '@/enums/SquareColor';
-import { ChessVariant } from '@/enums/ChessVariant';
+    import { ChessVariant } from '@/enums/ChessVariant';
 
     export default {
         components: { Square },

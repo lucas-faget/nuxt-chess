@@ -26,16 +26,36 @@
 		},
 		computed: {
 			bottomRightPlayer(): Player|null {
-				return this.chess.players.length === 4 ? this.chess.players[0] : null;
+				switch (this.chess.variant) {
+					case ChessVariant.FourPlayer:
+						return this.chess.players[this.chess.playerIndexInFront];
+					default:
+						return null;
+				}
 			},
 			bottomLeftPlayer(): Player|null {
-				return this.chess.players.length === 4 ? this.chess.players[1] : this.chess.players[0];
+				switch (this.chess.variant) {
+					case ChessVariant.FourPlayer:
+						return this.chess.players[(this.chess.playerIndexInFront + 1) % this.chess.players.length];
+					default:
+						return this.chess.players[this.chess.playerIndexInFront];
+				}
 			},
 			topLeftPlayer(): Player|null {
-				return this.chess.players.length === 4 ? this.chess.players[2] : this.chess.players[1];
+				switch (this.chess.variant) {
+					case ChessVariant.FourPlayer:
+						return this.chess.players[(this.chess.playerIndexInFront + 2) % this.chess.players.length];
+					default:
+						return this.chess.players[(this.chess.playerIndexInFront + 1) % this.chess.players.length];
+				}
 			},
 			topRightPlayer(): Player|null {
-				return this.chess.players.length === 4 ? this.chess.players[3] : null;
+				switch (this.chess.variant) {
+					case ChessVariant.FourPlayer:
+						return this.chess.players[(this.chess.playerIndexInFront + 3) % this.chess.players.length];
+					default:
+						return null;
+				}
 			},
 			currentPlayer(): Player | null {
 				return this.chess.isCurrentMoveTheLast() ? this.chess.controller.player : null;
