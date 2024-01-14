@@ -1,26 +1,39 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { routes } from './routes'
-import HomeView from '../views/HomeView.vue'
-import PrivateGameView from '../views/PrivateGameView.vue'
+import { homeRoutes } from './routes/home';
+import { playRoutes } from './routes/play';
+import { learnRoutes } from './routes/learn';
 import ErrorView from '../views/ErrorView.vue'
+import PrivateGameView from '../views/PrivateGameView.vue'
+
+function generateAlphanumericString(length: number) {
+    const characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    let result = '';
+    for (let i = 0; i < length; i++) {
+        result += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+    return result;
+}
 
 const router = createRouter({
-	history: createWebHistory(import.meta.env.BASE_URL),
+	history: createWebHistory(),
 	routes: [
-		{
-			path: '/',
-			name: 'home',
-			component: HomeView
-		},
-		...routes,
-		{
-			path: '/:roomId([A-Za-z0-9]{8})',
-			name: 'online',
-			component: PrivateGameView,
-			props: (route) => ({
-				roomId: route.params.roomId,
-			}),
-		},
+		...homeRoutes,
+		...playRoutes,
+		...learnRoutes,
+		// {
+		// 	path: '/room',
+		// 	redirect: () => {
+		// 		const roomId = generateAlphanumericString(8);
+		// 		return `/${roomId}`;
+		// 	},
+		// },
+		// {
+		// 	path: '/:roomId([A-Za-z0-9]{8})',
+		// 	component: PrivateGameView,
+		// 	props: (route) => ({
+		// 		roomId: route.params.roomId,
+		// 	}),
+		// },
 		{
 			path: '/:pathMatch(.*)*',
 			name: '404',
@@ -33,4 +46,4 @@ const router = createRouter({
 	]
 });
 
-export default router
+export default router;

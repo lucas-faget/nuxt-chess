@@ -1,7 +1,5 @@
 <script lang="ts">
-    import { routesPlayLocally } from '../router/routes/routesPlayLocally'
-    import { routesPrivateGame } from '../router/routes/routesPrivateGame'
-    import { routesLearn } from '../router/routes/routesLearn'
+    import { routes } from '../router/routes';
     import MobileNavToggle from './MobileNavToggle.vue';
     import Dropdown from './Dropdown.vue';
     import DropdownItems from './DropdownItems.vue';
@@ -11,20 +9,9 @@
         components: { MobileNavToggle, Dropdown, DropdownItems, DropdownItem },
         data() {
             return {
-                menuPlayLocallyItems: routesPlayLocally.map((route) => ({
-                    text: route.text,
-                    path: route.path
-                })),
-                menuPrivateGameItems: routesPrivateGame.map((route) => ({
-                    text: route.text,
-                    path: route.path
-                })),
-                menuLearnItems: routesLearn.map((route) => ({
-                    text: route.text,
-                    path: route.path
-                })),
+                routes: routes,
                 currentRoute: this.$route.path,
-                isMobileNavOpen: false
+                isMobileNavOpen: false,
             }
         },
         mounted() {
@@ -57,88 +44,32 @@
 
         <div class="nav-menu" :aria-expanded="isMobileNavOpen">
             <ul class="nav-ul">
-                <li class="nav-li">
-                    <router-link to="/">
-                        <span class="nav-item">
-                            home
-                        </span>
-                    </router-link>
-                </li>
-
-                <li class="nav-li">
+                <li class="nav-li" v-for="route in routes" :key="route.id">
                     <Dropdown>
                         <!-- Dropdown Toggle Slot -->
                         <template #dropdown-toggle>
-                            <span class="nav-item">Play locally</span>
+                            <span class="nav-item" v-if="route.children && route.children.length > 1">
+                                {{ route.title }}
+                            </span>
+
+                            <router-link :to="route.children[0].path" v-else-if="route.children && route.children.length == 1">
+                                <span class="nav-item">
+                                    {{ route.title }}
+                                </span>
+                            </router-link>
                         </template>
 
                         <!-- Dropdown Content Slot -->
-                        <template #dropdown-content>
+                        <template #dropdown-content v-if="route.children && route.children.length > 1">
                             <DropdownItems>
                                 <!-- Dropdown Items Slot -->
                                 <template #dropdown-items>
-                                    <template v-for="(item, index) in menuPlayLocallyItems" :key="index">
+                                    <template v-for="child in route.children" :key="child.id">
                                         <DropdownItem>
                                             <!-- Dropdown Item Slot -->
                                             <template #dropdown-item>
-                                                <router-link :to="item.path">
-                                                    {{ item.text }}
-                                                </router-link>
-                                            </template>
-                                        </DropdownItem>
-                                    </template>
-                                </template>
-                            </DropdownItems>
-                        </template>
-                    </Dropdown>
-                </li>
-
-                <li class="nav-li">
-                    <Dropdown>
-                        <!-- Dropdown Toggle Slot -->
-                        <template #dropdown-toggle>
-                            <span class="nav-item">Play a friend</span>
-                        </template>
-
-                        <!-- Dropdown Content Slot -->
-                        <template #dropdown-content>
-                            <DropdownItems>
-                                <!-- Dropdown Items Slot -->
-                                <template #dropdown-items>
-                                    <template v-for="(item, index) in menuPrivateGameItems" :key="index">
-                                        <DropdownItem>
-                                            <!-- Dropdown Item Slot -->
-                                            <template #dropdown-item>
-                                                <router-link :to="item.path">
-                                                    {{ item.text }}
-                                                </router-link>
-                                            </template>
-                                        </DropdownItem>
-                                    </template>
-                                </template>
-                            </DropdownItems>
-                        </template>
-                    </Dropdown>
-                </li>
-
-                <li class="nav-li">
-                    <Dropdown>
-                        <!-- Dropdown Toggle Slot -->
-                        <template #dropdown-toggle>
-                            <span class="nav-item">Learn</span>
-                        </template>
-
-                        <!-- Dropdown Content Slot -->
-                        <template #dropdown-content>
-                            <DropdownItems>
-                                <!-- Dropdown Items Slot -->
-                                <template #dropdown-items>
-                                    <template v-for="(item, index) in menuLearnItems" :key="index">
-                                        <DropdownItem>
-                                            <!-- Dropdown Item Slot -->
-                                            <template #dropdown-item>
-                                                <router-link :to="item.path">
-                                                    {{ item.text }}
+                                                <router-link :to="child.path">
+                                                    {{ child.text }}
                                                 </router-link>
                                             </template>
                                         </DropdownItem>

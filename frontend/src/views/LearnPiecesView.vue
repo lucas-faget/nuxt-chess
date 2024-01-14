@@ -1,6 +1,6 @@
 <script lang="ts">
-    import { PieceName } from '../chess/types/PieceName';
     import { mapGetters } from 'vuex';
+    import { PieceName } from '../chess/types/PieceName';
 
 	export default {
         data() {
@@ -61,7 +61,7 @@
                 </div>
             </div>
             <div class="section">
-                <img class="piece" :src="getPieceImageSrc('white', article.piece)" alt="Piece" />
+                <img class="piece" :src="getPieceImageSrc('w' , article.piece)" alt="Piece" />
             </div>
         </article>
 	</div>
