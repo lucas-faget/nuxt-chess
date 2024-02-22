@@ -1,9 +1,0 @@
-[build]
-  base = "backend"
-  publish = "dist"
-  command = "npm run build"
-
-[[redirects]]
-  from = "/*"
-  to = "/main.js"
-  status = 200
