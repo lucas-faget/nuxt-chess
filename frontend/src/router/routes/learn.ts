@@ -1,5 +1,4 @@
 import LearnPiecesView from '../../views/LearnPiecesView.vue'
-import LearnOpeningsView from '../../views/LearnOpeningsView.vue'
 
 export const learnRoutes = [
     {
@@ -8,12 +7,5 @@ export const learnRoutes = [
         path: '/learn/pieces',
         name: 'learn-pieces',
         component: LearnPiecesView
-    },
-    {
-        id: 2,
-        text: 'Openings',
-        path: '/learn/openings',
-        name: 'learn-openings',
-        component: LearnOpeningsView
-    },
+    }
 ];

@@ -17,8 +17,7 @@
                         title: "Learn",
                         text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor.",
 						path: "/learn",
-						image: "/assets/image/chess-hogwarts.png",
-                        imageClass: "image-class-2"
+						image: "/assets/image/chess.png"
                     },
                     {
                         title: "Fischer Random Chess",
