@@ -8,34 +8,10 @@
                 articles: [
                     {
                         title: "Standard Chess",
-                        text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor.",
+                        text: "Chess is a board game for two players, called White and Black, each controlling an army of chess pieces, with the objective to checkmate the opponent's king.",
 						path: "/play",
                         image: "/assets/image/chessboard.jpg",
 						imageClass: "image-class-1"
-                    },
-                    {
-                        title: "Learn",
-                        text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor.",
-						path: "/learn",
-						image: "/assets/image/chess.png"
-                    },
-                    {
-                        title: "Fischer Random Chess",
-                        text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor.",
-						path: "/play/960",
-                        image: "/assets/image/chess.png"
-                    },
-                    {
-                        title: "Fog of War",
-                        text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor.",
-						path: "/play/fog",
-                        image: "/assets/image/chess-fog.jpg"
-                    },
-                    {
-                        title: "Four-player Chess",
-                        text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor.",
-						path: "/play/4player",
-						image: "/assets/image/chess.png"
                     }
                 ]
             };
