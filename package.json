@@ -10,6 +10,7 @@
     "type-check": "vue-tsc --noEmit"
   },
   "dependencies": {
+    "three": "^0.163.0",
     "vue": "^3.4.23",
     "vue-router": "^4.1.2",
     "vuex": "^4.1.0"

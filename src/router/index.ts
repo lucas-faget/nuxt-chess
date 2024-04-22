@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import { homeRoutes } from './routes/home';
 import { playRoutes } from './routes/play';
 import { learnRoutes } from './routes/learn';
+import { threeRoutes } from './routes/three';
 import ErrorView from '../views/ErrorView.vue'
 
 const router = createRouter({
@@ -10,6 +11,7 @@ const router = createRouter({
 		...homeRoutes,
 		...playRoutes,
 		...learnRoutes,
+		...threeRoutes,
 		{
 			path: '/:pathMatch(.*)*',
 			name: '404',
