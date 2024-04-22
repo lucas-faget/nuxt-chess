@@ -46,96 +46,27 @@
 </script>
 
 <template>
-	<div class="learn">
+	<div class="articles">
 		<article v-for="(article, index) in articles" :key="index">
             <div class="section">
-                <div class="text">
+                <div class="section-header">
+                    <img :src="getPieceImageSrc('w' , article.piece)" alt="Piece" />
                     <div class="title">{{ article.title }}</div>
-                    <div class="description">{{ article.text }}</div>
-                    <!-- <div style="display: flex;">  
-                        <CustomButton 
-                            text="Button" 
-                            :leftIcon="index % 2 === 0 ? '' : 'chevron-left.svg'"
-                            :rightIcon="index % 2 === 0 ? 'chevron-right.svg' : ''"
-                    </div> -->
+                </div>
+                <div class="section-content">
+                    <div class="text">{{ article.text }}</div>
                 </div>
             </div>
             <div class="section">
-                <img class="piece" :src="getPieceImageSrc('w' , article.piece)" alt="Piece" />
+                
             </div>
         </article>
 	</div>
 </template>
 
 <style scoped>
-    .learn {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-
-	article {
-        width: 85vw;
-        min-height: 100vh;
-        display: flex;
-        flex-direction: column;
-        gap: 60px;
-    }
-
-    @media screen and (min-width: 1000px) {
-        article:nth-child(2n+1) {
-			flex-direction: row;
-		}
-
-		article:nth-child(2n) {
-			flex-direction: row-reverse;
-		}
-    }
-
-    @media screen and (max-width: 999px) {
-        .learn {
-            margin-block: 60px;
-            gap: 60px;
-        }
-
-        article {
-            flex-direction: column;
-        }
-    }
-
-    .flex-row {
-        flex-direction: row;
-    }
-
-    .flex-row-reverse {
-        flex-direction: row-reverse;
-    }
-
-    .section {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-    }
-
-    .text {
-        display: flex;
-        flex-direction: column;
-        gap: 30px;
-    }
-
-    .piece {
+    /* .piece {
         width: max(20vw, 150px);
         aspect-ratio: 1 / 1;
-    }
-
-    .title {
-        font-size: 50px;
-    }
-
-    .description {
-        color: var(--color-gray);
-        font-size: 18px;
-    }
+    } */
 </style>

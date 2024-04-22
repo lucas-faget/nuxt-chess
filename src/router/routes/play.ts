@@ -15,7 +15,7 @@ export const playRoutes = [
     },
     {
         id: 2,
-        text: 'Fischer Random Chess',
+        text: 'Fischer Random',
         path: '/play/960',
         name: 'play-960',
         component: TwoPlayerGameView,
@@ -27,7 +27,7 @@ export const playRoutes = [
         id: 3,
         path: '/play/fog',
         name: 'play-fog',
-        text: 'Fog Of War Chess',
+        text: 'Fog Of War',
         component: TwoPlayerGameView,
         props: {
             variant: ChessVariant.FogOfWar
