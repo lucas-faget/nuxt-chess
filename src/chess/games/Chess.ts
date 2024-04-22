@@ -192,6 +192,17 @@ export abstract class Chess
         }
     }
 
+    resetGame(): void
+    {
+        if (!this.isActiveTurnTheLast()) {
+            this.showLastMove();
+        }
+
+        while (this.gameStateByTurn.length > 1) {
+            this.deleteLastMove();
+        }
+    }
+
     showFirstMove(): void
     {
         while (this.activeTurnNumber > 1) {

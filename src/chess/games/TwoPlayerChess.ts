@@ -20,11 +20,10 @@ export class TwoPlayerChess extends Chess
 
     static FenString: string = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
-    constructor(variant: ChessVariant, fenString: string = TwoPlayerChess.FenString)
+    constructor(variant: ChessVariant, fenString: string = TwoPlayerChess.FenString, players: Player[] = [Whites, Blacks])
     {
         const fenRecord: FenRecord = TwoPlayerChess.getFenRecordFromString(fenString);
 
-        const players: Player[] = [Whites, Blacks];
         const controller: PlayerController = new PlayerController(
             fenRecord.activeColor === TwoPlayerChess.WhiteColor ? players[0] : players[1]
         );
@@ -63,9 +62,12 @@ export class TwoPlayerChess extends Chess
             queenside: castlingRightsString.includes(TwoPlayerChess.WhiteQueensideCastling)
         };
 
-        this.players[1].castlingRights = {
-            kingside: castlingRightsString.includes(TwoPlayerChess.BlackKingsideCastling),
-            queenside: castlingRightsString.includes(TwoPlayerChess.BlackQueensideCastling)
-        };
+        if (this.players.length > 1)
+        {
+            this.players[1].castlingRights = {
+                kingside: castlingRightsString.includes(TwoPlayerChess.BlackKingsideCastling),
+                queenside: castlingRightsString.includes(TwoPlayerChess.BlackQueensideCastling)
+            };
+        }
     }
 }
