@@ -14,8 +14,6 @@ import { Chess } from "../games/Chess";
 
 export class Pawn extends Piece
 {
-    static PawnLineIndex: number = 1;
-
     constructor(color: PlayerColor) {
         super(color);
     }
@@ -115,16 +113,16 @@ export class Pawn extends Piece
 
     static isPawnLine(position: Coordinates, direction: Coordinates, chessboard: Chessboard): boolean
     {
-        if (Chess.areEqualCoordinates(direction, Direction.Up)) {
-            return position.x === Pawn.PawnLineIndex;
-        } else if (Chess.areEqualCoordinates(direction, Direction.Down)) {
-            return position.x === chessboard.ranks.length - 1 - Pawn.PawnLineIndex;
-        } else if (Chess.areEqualCoordinates(direction, Direction.Right)) {
-            return position.y === Pawn.PawnLineIndex;
-        } else if (Chess.areEqualCoordinates(direction, Direction.Left)) {
-            return position.x === chessboard.files.length - 1 - Pawn.PawnLineIndex;
-        } else {
-            return false;
+        if (direction.y === 0 && direction.x !== 0) {
+            return (direction.x > 0 && position.x === 1)
+                || (direction.x < 0 && position.x === chessboard.ranks.length - 2);
         }
+    
+        if (direction.x === 0 && direction.y !== 0) {
+            return (direction.y > 0 && position.y === 1)
+                || (direction.y < 0 && position.y === chessboard.ranks.length - 2);
+        }
+        
+        return false;
     }
 }
