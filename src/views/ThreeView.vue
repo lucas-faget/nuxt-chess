@@ -1,4 +1,4 @@
-<script lang="ts">
+<script>
 	import * as THREE from 'three';
 	import { MapControls } from 'three/examples/jsm/controls/MapControls.js';
 	
@@ -74,8 +74,8 @@
 				}
 			},
 			addChessPieces(scene) {
-				const pieceSize: number = 6;
-				const pieceY: number = 10;
+				const pieceSize = 6;
+				const pieceY = 10;
 
 				const geometry = new THREE.BoxGeometry(pieceSize, pieceY, pieceSize);
 				const whiteMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });

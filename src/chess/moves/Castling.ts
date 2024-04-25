@@ -6,7 +6,8 @@ export class Castling extends Move
 {
     rookMove: Move;
 
-    constructor(fromSquare: Square, toSquare: Square, rookMove: Move) {
+    constructor(fromSquare: Square, toSquare: Square, rookMove: Move)
+    {
         super(fromSquare, toSquare);
         this.rookMove = rookMove;
     }

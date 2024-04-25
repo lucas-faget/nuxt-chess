@@ -5,7 +5,8 @@ import { Move } from "./Move";
 
 export class Capture extends Move
 {
-    constructor(fromSquare: Square, toSquare: Square, capturedPiece: Piece|null) {
+    constructor(fromSquare: Square, toSquare: Square, capturedPiece: Piece|null)
+    {
         super(fromSquare, toSquare);
         this.capturedPiece = capturedPiece;
     }

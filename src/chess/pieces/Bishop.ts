@@ -10,7 +10,8 @@ export class Bishop extends MobilePiece
         Direction.UpLeft, Direction.UpRight, Direction.DownRight, Direction.DownLeft,
     ];
 
-    constructor(color: PlayerColor) {
+    constructor(color: PlayerColor)
+    {
         super(color);
         this.directions = Bishop.Directions;
     }

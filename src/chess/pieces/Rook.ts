@@ -10,7 +10,8 @@ export class Rook extends MobilePiece
         Direction.Up, Direction.Right, Direction.Down, Direction.Left,
     ];
 
-    constructor(color: PlayerColor) {
+    constructor(color: PlayerColor)
+    {
         super(color);
         this.directions = Rook.Directions;
     }

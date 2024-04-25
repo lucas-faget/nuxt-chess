@@ -18,7 +18,8 @@ export abstract class Piece
 
     color: PlayerColor;
 
-    constructor(color: PlayerColor) {
+    constructor(color: PlayerColor)
+    {
         this.color = color;
     }
 

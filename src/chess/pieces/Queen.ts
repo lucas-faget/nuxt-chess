@@ -11,7 +11,8 @@ export class Queen extends MobilePiece
         ...Bishop.Directions, ...Rook.Directions
     ];
 
-    constructor(color: PlayerColor) {
+    constructor(color: PlayerColor)
+    {
         super(color);
         this.directions = Queen.Directions;
     }

@@ -14,7 +14,8 @@ import { Chess } from "../games/Chess";
 
 export class Pawn extends Piece
 {
-    constructor(color: PlayerColor) {
+    constructor(color: PlayerColor)
+    {
         super(color);
     }
 

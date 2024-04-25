@@ -12,7 +12,8 @@ export class Player
     castlingRights: CastlingRights;
     capturedPieces: Map<PieceName, number>;
 
-    constructor(color: PlayerColor, name: string, direction: Coordinates) {
+    constructor(color: PlayerColor, name: string, direction: Coordinates)
+    {
         this.color = color;
         this.name = name;
         this.direction = direction;

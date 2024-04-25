@@ -17,7 +17,8 @@ export class PlayerController
     legalMoves: LegalMoves = {};
     enPassantTargetSquare: string = Chess.NoneEnPassantTargetSquare;
 
-    constructor(player: Player) {
+    constructor(player: Player)
+    {
         this.player = player;
     }
 

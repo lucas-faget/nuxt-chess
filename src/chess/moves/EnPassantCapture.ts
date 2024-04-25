@@ -7,7 +7,8 @@ export class EnPassantCapture extends Capture
 {
     capturedPieceSquare: Square;
 
-    constructor(fromSquare: Square, toSquare: Square, capturedPiece: Piece, capturedPieceSquare: Square) {
+    constructor(fromSquare: Square, toSquare: Square, capturedPiece: Piece, capturedPieceSquare: Square)
+    {
         super(fromSquare, toSquare, capturedPiece);
         this.capturedPieceSquare = capturedPieceSquare;
     }
