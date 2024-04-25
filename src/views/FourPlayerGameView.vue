@@ -20,7 +20,7 @@
 		},
 		data() {
 			return {
-				chess: new FourPlayerChess(this.variant),
+				chess: new FourPlayerChess(),
 				lightSquareColor: SquareColor.Brown,
 				darkSquareColor: SquareColor.Brown,
 			}
@@ -52,7 +52,7 @@
 		},
 		watch: {
 			variant(newVariant: ChessVariant, oldVariant: ChessVariant) {
-				this.chess = new FourPlayerChess(newVariant);
+				this.chess = new FourPlayerChess();
 			}
 		}
 	}

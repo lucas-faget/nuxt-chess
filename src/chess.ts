@@ -9,5 +9,5 @@ export function createTwoPlayerChessGame(variant: ChessVariant = ChessVariant.St
 
 export function createFourPlayerChessGame(): FourPlayerChess
 {
-    return new FourPlayerChess(ChessVariant.FourPlayer);
+    return new FourPlayerChess();
 }

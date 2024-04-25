@@ -5,5 +5,4 @@ export interface GameState {
     move: Move|null;
     castlingRights: CastlingRights;
     enPassantTargetSquare: string;
-    halfmoveNumber: number;
 }
