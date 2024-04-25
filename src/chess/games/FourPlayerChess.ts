@@ -1,4 +1,4 @@
-import type { ChessVariant } from "../types/ChessVariant";
+import { ChessVariant } from "../types/ChessVariant";
 import type { Player } from "../players/Player";
 import { Blacks, Golds, Silvers, Whites } from "../players/Players";
 import type { Chessboard } from "../chessboards/Chessboard";
@@ -9,7 +9,7 @@ import type { GameState } from "../types/GameState";
 
 export class FourPlayerChess extends Chess
 {
-    constructor(variant: ChessVariant)
+    constructor()
     {
         const players: Player[] = [Whites, Silvers, Blacks, Golds];
         const controller: PlayerController = new PlayerController(
@@ -19,10 +19,9 @@ export class FourPlayerChess extends Chess
         const gameState: GameState = {
             move: null,
             castlingRights: controller.player.castlingRights,
-            enPassantTargetSquare: Chess.NoneEnPassantTargetSquare,
-            halfmoveNumber: 0
+            enPassantTargetSquare: Chess.NoneEnPassantTargetSquare
         };
 
-        super(variant, players, controller, chessboard, gameState);
+        super(ChessVariant.FourPlayer, players, controller, chessboard, gameState);
     }
 }

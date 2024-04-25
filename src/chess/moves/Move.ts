@@ -4,7 +4,6 @@ import type { Piece } from "../pieces/Piece";
 import type { Square } from "../squares/Square";
 import { MoveType } from "../types/MoveType";
 import { PieceName } from "../types/PieceName";
-import type { SerialisedMove } from "../types/SerialisedMove";
 
 export class Move
 {
@@ -29,14 +28,6 @@ export class Move
     {
         this.fromSquare.piece = this.toSquare.piece;
         this.toSquare.piece = null;
-    }
-
-    serialiseMove(): SerialisedMove
-    {
-        return {
-            fromSquareName: this.fromSquare.name,
-            toSquareName: this.toSquare.name
-        }
     }
 
     isDoubleStepPawnAdvance(chessboard: Chessboard, playerDirection: Coordinates): boolean

@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import * as THREE from 'three';
 	import { MapControls } from 'three/examples/jsm/controls/MapControls.js';
 	
@@ -26,7 +26,8 @@
 			controls.maxPolarAngle = Math.PI / 2.5;
 
 			this.addAxis(scene);
-			this.addChessboard(scene, camera, renderer, controls);
+			this.addChessboard(scene);
+			this.addChessPieces(scene);
 
 			camera.position.set(50, 50, 50);
 			camera.lookAt(0, 0, 0);
@@ -55,8 +56,9 @@
 			addChessboard(scene) {
 				const squareNumber = 8;
 				const squareSize = 10;
+				const squareY = 2;
 
-				const geometry = new THREE.BoxGeometry(squareSize, 2, squareSize);
+				const geometry = new THREE.BoxGeometry(squareSize, squareY, squareSize);
 				const lightMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
 				const darkMaterial = new THREE.MeshBasicMaterial({ color: 0x666666 });
 
@@ -66,10 +68,18 @@
 						let square = new THREE.Mesh(geometry, material);
 						let xx = squareSize * (x - squareNumber / 2 + 0.5);
 						let yy = squareSize * (y - squareNumber / 2 + 0.5);
-						square.position.set(xx, 0, yy);
+						square.position.set(xx, - squareY / 2, yy);
 						scene.add(square);
 					}
 				}
+			},
+			addChessPieces(scene) {
+				const pieceSize: number = 6;
+				const pieceY: number = 10;
+
+				const geometry = new THREE.BoxGeometry(pieceSize, pieceY, pieceSize);
+				const whiteMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
+				const blackMaterial = new THREE.MeshBasicMaterial({ color: 0x000000 });
 			}
 		}
 	}

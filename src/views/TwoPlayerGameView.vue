@@ -4,6 +4,8 @@
 	import { TwoPlayerChess } from '../chess/games/TwoPlayerChess';
 	import { SquareColor } from '../types/SquareColor';
 
+	import { createTwoPlayerChessGame } from '../chess.ts'
+
 	import Background from '../components/Background.vue'
 	import Chessboard from '../components/Chessboard.vue'
 	import PlayerCard from '../components/PlayerCard.vue'
@@ -20,7 +22,7 @@
 		},
 		data() {
 			return {
-				chess: new TwoPlayerChess(this.variant),
+				chess: createTwoPlayerChessGame(this.variant),
 				lightSquareColor: SquareColor.Brown,
 				darkSquareColor: SquareColor.Brown,
 			}

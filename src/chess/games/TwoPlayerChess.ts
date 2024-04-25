@@ -34,8 +34,7 @@ export class TwoPlayerChess extends Chess
                 kingside: controller.player.castlingRights.kingside,
                 queenside: controller.player.castlingRights.queenside,
             },
-            enPassantTargetSquare: fenRecord.enPassantTarget,
-            halfmoveNumber: parseInt(fenRecord.halfmoveClock)
+            enPassantTargetSquare: fenRecord.enPassantTarget
         };
 
         super(variant, players, controller, chessboard, gameState);

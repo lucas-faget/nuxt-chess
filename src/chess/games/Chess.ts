@@ -19,10 +19,9 @@ export abstract class Chess
     chessboard: Chessboard;
     gameStateByTurn: GameState[];
     activeTurnNumber: number;
-    fullmoveNumber: number = 1;
     playerIndexInFront: number = 0;
 
-    static NoneEnPassantTargetSquare = '-';
+    static NoneEnPassantTargetSquare: string = '-';
 
     constructor(variant: ChessVariant, players: Player[], controller: PlayerController, chessboard: Chessboard, gameState: GameState)
     {
@@ -55,20 +54,6 @@ export abstract class Chess
         this.controller.setPlayer(this.players[(this.players.indexOf(this.controller.player) + 1) % this.players.length]);
     }
 
-    incrementFullmoveNumber(): void
-    {
-        if (this.players.indexOf(this.controller.player) === this.players.length - 1) {
-            this.fullmoveNumber++;
-        }
-    }
-
-    decrementFullmoveNumber(): void
-    {
-        if (this.players.indexOf(this.controller.player) === 0) {
-            this.fullmoveNumber--;
-        }
-    }
-
     addPlayerCapturedPiece(move: Move): void
     {
         if (move.capturedPiece) {
@@ -89,15 +74,6 @@ export abstract class Chess
             return move.toSquare.name;
         } else {
             return Chess.NoneEnPassantTargetSquare;
-        }
-    }
-
-    getHalfmoveNumber(move: Move): number
-    {
-        if (move.getMoveType() === MoveType.Capture || move.fromSquare.getPiece()?.getName() === PieceName.Pawn) {
-            return 0
-        } else {
-            return this.gameStateByTurn[this.gameStateByTurn.length - 1]?.halfmoveNumber + 1 ?? 0;
         }
     }
 
@@ -145,8 +121,7 @@ export abstract class Chess
                 kingside: this.controller.player.castlingRights.kingside,
                 queenside: this.controller.player.castlingRights.queenside,
             },
-            enPassantTargetSquare: this.getEnPassantTargetSquare(move),
-            halfmoveNumber: this.getHalfmoveNumber(move)
+            enPassantTargetSquare: this.getEnPassantTargetSquare(move)
         });
 
         this.activeTurnNumber = this.gameStateByTurn.length;
@@ -171,7 +146,6 @@ export abstract class Chess
         this.setCastlingRights(move);
         this.addPlayerCapturedPiece(move);
         move.carryoutMove();
-        this.incrementFullmoveNumber();
         this.setNextPlayer();
         this.updateController();
     }
@@ -183,7 +157,6 @@ export abstract class Chess
             {
                 let lastGameState: GameState = this.removeGameState();
                 if (lastGameState.move) lastGameState.move.undoMove();
-                this.decrementFullmoveNumber();
                 this.setPreviousPlayer();
                 this.controller.player.castlingRights = lastGameState.castlingRights;
                 if (lastGameState.move) this.removePlayerCapturedPiece(lastGameState.move);
