@@ -2,58 +2,70 @@
 	import * as THREE from 'three';
 	import { MapControls } from 'three/examples/jsm/controls/MapControls.js';
 	
-	export default {
-		mounted() {
+	export default
+	{
+		mounted()
+		{
 			const scene = new THREE.Scene();
 			const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 			const renderer = new THREE.WebGLRenderer({ alpha: true });
 			const controls = new MapControls(camera, renderer.domElement);
 
-			renderer.setSize(window.innerWidth, window.innerHeight);
-			renderer.setClearColor(0x000000, 0);
-			this.$refs.container.appendChild(renderer.domElement);
-
-			controls.mouseButtons = {
-				LEFT: THREE.MOUSE.LEFT,
-				RIGHT: THREE.MOUSE.LEFT
-			};
-			controls.enablePan = false;
-			controls.enableDamping = true;
-			controls.dampingFactor = 0.05;
-			controls.screenSpacePanning = false;
-			controls.minDistance = 50;
-			controls.maxDistance = 150;
-			controls.maxPolarAngle = Math.PI / 2.5;
+			this.init(camera, renderer, controls);
 
 			this.addAxis(scene);
 			this.addChessboard(scene);
-			this.addChessPieces(scene);
+			
+			this.animate(scene, camera, renderer, controls);
 
-			camera.position.set(50, 50, 50);
-			camera.lookAt(0, 0, 0);
+			window.addEventListener('resize', () => {
+				this.onWindowResize(camera, renderer);
+			});
+		},
+		methods:
+		{
+			init(camera, renderer, controls)
+			{
+				renderer.setSize(window.innerWidth, window.innerHeight);
+				renderer.setClearColor(0x000000, 0);
+				this.$refs.container.appendChild(renderer.domElement);
 
-			function animate() {
-				requestAnimationFrame(animate);
-				controls.update(); // only required if controls.enableDamping = true, or if controls.autoRotate = true
+				controls.mouseButtons = {
+					LEFT: THREE.MOUSE.LEFT,
+					RIGHT: THREE.MOUSE.LEFT
+				};
+				controls.enablePan = false;
+				controls.enableDamping = true;
+				controls.dampingFactor = 0.05;
+				controls.screenSpacePanning = false;
+				controls.minDistance = 50;
+				controls.maxDistance = 150;
+				controls.maxPolarAngle = Math.PI / 2.5;
+
+				camera.position.set(50, 50, 50);
+				camera.lookAt(0, 0, 0);
+			},
+			animate(scene, camera, renderer, controls)
+			{
+				requestAnimationFrame(() => {
+					this.animate(scene, camera, renderer, controls);
+				});
+				controls.update();
 				renderer.render(scene, camera);
-			}
-
-			function onWindowResize() {
+			},
+			onWindowResize(camera, renderer)
+			{
 				camera.aspect = window.innerWidth / window.innerHeight;
 				camera.updateProjectionMatrix();
 				renderer.setSize(window.innerWidth, window.innerHeight);
-			}
-
-			window.addEventListener('resize', onWindowResize);
-
-			animate();
-		},
-		methods: {
-			addAxis(scene) {
+			},
+			addAxis(scene)
+			{
 				const axesHelper = new THREE.AxesHelper(100);
 				scene.add(axesHelper);
 			},
-			addChessboard(scene) {
+			addChessboard(scene)
+			{
 				const squareNumber = 8;
 				const squareSize = 10;
 				const squareY = 2;
@@ -72,14 +84,6 @@
 						scene.add(square);
 					}
 				}
-			},
-			addChessPieces(scene) {
-				const pieceSize = 6;
-				const pieceY = 10;
-
-				const geometry = new THREE.BoxGeometry(pieceSize, pieceY, pieceSize);
-				const whiteMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
-				const blackMaterial = new THREE.MeshBasicMaterial({ color: 0x000000 });
 			}
 		}
 	}
