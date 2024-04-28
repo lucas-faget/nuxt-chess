@@ -68,6 +68,8 @@
 			});
 
 			window.addEventListener('resize', this.onWindowResize);
+
+			this.movePiece(squareGroup, pieceGroup, 'e2', 'e4');
 		},
 		methods:
 		{
@@ -125,8 +127,8 @@
 						const material = new THREE.MeshPhongMaterial({ color });
 						const square = new THREE.Mesh(geometry, material);
 						const x = this.squareSize * (col - this.files.length / 2 + 0.5);
-						const y = this.squareSize * (row - this.ranks.length / 2 + 0.5);
-						square.position.set(x, - this.squareHeight / 2, y);
+						const z = this.squareSize * (row - this.ranks.length / 2 + 0.5);
+						square.position.set(x, - this.squareHeight / 2, z);
 						const id = this.files[col] + this.ranks[this.ranks.length - 1 - row];
 						square.name = id;
 						square.color = color;
@@ -147,8 +149,8 @@
 							const material = new THREE.MeshPhongMaterial({ color });	
 							const cube = new THREE.Mesh(geometry, material);
 							const x = (col - 3.5) * this.squareSize;
-							const y = (row - 3.5) * this.squareSize;
-							cube.position.set(x, this.pieceHeight[piece.toLowerCase()] / 2, y);
+							const z = (row - 3.5) * this.squareSize;
+							cube.position.set(x, this.pieceHeight[piece.toLowerCase()] / 2, z);
 							const id = this.files[col] + this.ranks[this.ranks.length - 1 - row];
 							cube.name = id;
 							cube.color = color;
@@ -186,7 +188,27 @@
 						square.material.color.set(0xff0000);
 					}
 				}
+			},
+			movePiece(squareGroup, pieceGroup, fromSquareName, toSquareName)
+			{
+				const fromSquare = squareGroup.getObjectByName(fromSquareName);
+				const fromPiece = pieceGroup.getObjectByName(fromSquareName);
+				const toSquare = squareGroup.getObjectByName(toSquareName);
+				const toPiece = pieceGroup.getObjectByName(toSquareName);
 
+				if (fromSquare && toSquare) {
+					if (!fromPiece) {
+						console.log('No piece to move');
+					} else {
+						fromPiece.position.x = toSquare.position.x;
+            			fromPiece.position.z = toSquare.position.z;
+						if (toPiece) {
+							pieceGroup.remove(toPiece);
+						}
+					}
+				} else {
+					console.log('Invalid move');
+				}
 			},
 			FENtoBoard(fen)
 			{
