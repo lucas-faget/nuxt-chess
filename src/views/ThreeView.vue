@@ -39,7 +39,9 @@
 				mouse: undefined,
 
 				squareGroup: undefined,
-				pieceGroup: undefined
+				pieceGroup: undefined,
+
+				selectedSquareName: undefined
 			}
 		},
 		mounted()
@@ -65,12 +67,14 @@
 			this.animate(scene);
 
 			this.$refs.container.addEventListener('mousemove', (event) => {
-				this.handleMouseMove(event, scene, squareGroup, pieceGroup);
+				this.handleMouseMove(event, squareGroup, pieceGroup);
+			});
+
+			this.$refs.container.addEventListener('click', (event) => {
+				this.handleMouseClick(event, squareGroup, pieceGroup);
 			});
 
 			window.addEventListener('resize', this.onWindowResize);
-
-			this.playOpening(squareGroup, pieceGroup);
 		},
 		methods:
 		{
@@ -161,7 +165,7 @@
 					}
 				}
 			},
-			handleMouseMove(event, scene, squareGroup, pieceGroup)
+			handleMouseMove(event, squareGroup, pieceGroup)
 			{
 				const containerRect = this.$refs.container.getBoundingClientRect();
 				const offsetX = event.clientX - containerRect.left;
@@ -172,24 +176,61 @@
 
 				this.raycaster.setFromCamera(this.mouse, this.camera);
 
-				const intersectsSquares = this.raycaster.intersectObjects(squareGroup.children);
-				const intersectsPieces = this.raycaster.intersectObjects(pieceGroup.children);
+				const intersectedSquares = this.raycaster.intersectObjects(squareGroup.children);
+				const intersectedPieces = this.raycaster.intersectObjects(pieceGroup.children);
 
 				[...squareGroup.children, ...pieceGroup.children].forEach((child) => {
 					child.material.color.set(child.color);
 				});
 
-				if (intersectsPieces.length > 0) {
-					const piece = intersectsPieces[0].object;
-					console.log("Piece", piece.name);
+				if (intersectedPieces.length > 0) {
+					const piece = intersectedPieces[0].object;
+					// console.log("Piece", piece.name);
 					piece.material.color.set(0xff0000);
     			} else {
-					if (intersectsSquares.length > 0) {
-						const square = intersectsSquares[0].object;
-						console.log("Square", square.name);
+					if (intersectedSquares.length > 0) {
+						const square = intersectedSquares[0].object;
+						// console.log("Square", square.name);
 						square.material.color.set(0xff0000);
 					}
 				}
+			},
+			handleMouseClick(event, squareGroup, pieceGroup)
+			{
+				const containerRect = this.$refs.container.getBoundingClientRect();
+				const offsetX = event.clientX - containerRect.left;
+				const offsetY = event.clientY - containerRect.top;
+
+				this.mouse.x = (offsetX / containerRect.width) * 2 - 1;
+				this.mouse.y = - (offsetY / containerRect.height) * 2 + 1;
+
+				this.raycaster.setFromCamera(this.mouse, this.camera);
+
+				const intersectedSquares = this.raycaster.intersectObjects(squareGroup.children);
+				const intersectedPieces = this.raycaster.intersectObjects(pieceGroup.children);
+
+				if (intersectedPieces.length > 0) {
+					const piece = intersectedPieces[0].object;
+					if (!this.selectedSquareName) {
+						this.selectedSquareName = piece.name;
+					} else {
+						this.movePiece(squareGroup, pieceGroup, this.selectedSquareName, piece.name);
+						this.selectedSquareName = undefined;
+					}
+				} else if (intersectedSquares.length > 0) {
+					const square = intersectedSquares[0].object;
+					const piece = pieceGroup.getObjectByName(square.name);
+					if (!this.selectedSquareName && piece) {
+						this.selectedSquareName = piece.name;
+					} else if (this.selectedSquareName) {
+						this.movePiece(squareGroup, pieceGroup, this.selectedSquareName, square.name);
+						this.selectedSquareName = undefined;
+					}
+				} else {
+					this.selectedSquareName = undefined;
+				}
+
+				console.log(this.selectedSquareName);
 			},
 			movePiece(squareGroup, pieceGroup, fromSquareName, toSquareName)
 			{
@@ -214,12 +255,15 @@
 									pieceGroup.remove(toPiece);
 								}
 							});
+
+						fromPiece.name = toSquare.name;
 					}
 				} else {
 					console.log('Invalid move');
 				}
 			},
-			playOpening(squareGroup, pieceGroup) {
+			playOpening(squareGroup, pieceGroup)
+			{
 				this.movePiece(squareGroup, pieceGroup, 'e2', 'e4');
 				this.movePiece(squareGroup, pieceGroup, 'e7', 'e5');
 				this.movePiece(squareGroup, pieceGroup, 'g1', 'f3');
