@@ -18,6 +18,9 @@
 				whiteColor: 0xcccccc,
 				blackColor: 0x222222,
 
+				hoverColor: 0xff0000,
+				selectColor: 0x0000ff,
+
 				files: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'],
 				ranks: ['1', '2', '3', '4', '5', '6', '7', '8'],
 				squareSize: 10,
@@ -41,6 +44,7 @@
 				squareGroup: undefined,
 				pieceGroup: undefined,
 
+				hoveredObject: undefined,
 				selectedPiece: undefined
 			}
 		},
@@ -137,7 +141,10 @@
 						square.position.set(x, - this.squareHeight / 2, z);
 						const id = this.files[col] + this.ranks[this.ranks.length - 1 - row];
 						square.name = id;
-						square.color = color;
+						square.data = {
+							type: "square",
+							color: color
+						};
 						group.add(square);
 					}
 				}
@@ -159,7 +166,10 @@
 							cube.position.set(x, this.pieceHeight[piece.toLowerCase()] / 2, z);
 							const id = this.files[col] + this.ranks[this.ranks.length - 1 - row];
 							cube.name = id;
-							cube.color = color;
+							cube.data = {
+								type: "piece",
+								color: color
+							};
 							group.add(cube);
 						}
 					}
@@ -179,20 +189,12 @@
 				const intersectedSquares = this.raycaster.intersectObjects(squareGroup.children);
 				const intersectedPieces = this.raycaster.intersectObjects(pieceGroup.children);
 
-				// [...squareGroup.children, ...pieceGroup.children].forEach((child) => {
-				// 	child.material.color.set(child.color);
-				// });
-
-				if (intersectedPieces.length > 0) {
-					const piece = intersectedPieces[0].object;
-					// console.log("Piece", piece.name);
-					// piece.material.color.set(0xff0000);
+				if (intersectedPieces.length > 0 || intersectedSquares.length > 0) {
+					const object = intersectedPieces.length > 0 ? intersectedPieces[0].object : intersectedSquares[0].object;
+					this.removeHoveredObject();
+					this.hoverObject(object);
     			} else {
-					if (intersectedSquares.length > 0) {
-						const square = intersectedSquares[0].object;
-						// console.log("Square", square.name);
-						// square.material.color.set(0xff0000);
-					}
+					this.removeHoveredObject();
 				}
 			},
 			handleMouseClick(event, squareGroup, pieceGroup)
@@ -220,7 +222,7 @@
 				} else if (intersectedSquares.length > 0) {
 					const square = intersectedSquares[0].object;
 					const piece = pieceGroup.getObjectByName(square.name);
-					if (!this.selectedPiece && piece) {
+					if (piece && !this.selectedPiece) {
 						this.selectPiece(piece);
 					} else if (this.selectedPiece) {
 						this.movePiece(squareGroup, pieceGroup, this.selectedPiece.name, square.name);
@@ -229,23 +231,34 @@
 				} else {
 					this.deselectPiece();
 				}
-
-				console.log(this.selectedPiece?.name ?? undefined);
+			},
+			hoverObject(object)
+			{
+				this.hoveredObject = object;
+				if (this.hoveredObject !== this.selectedPiece) {
+					object.material.color.set(this.hoverColor);
+				}
+			},
+			removeHoveredObject()
+			{
+				if (this.hoveredObject) {
+					if (this.hoveredObject == this.selectedPiece) {
+						this.hoveredObject.material.color.set(this.selectColor);
+					} else {
+						this.hoveredObject.material.color.set(this.hoveredObject.data.color);
+					}
+					this.hoveredObject = undefined;
+				}
 			},
 			selectPiece(piece)
 			{
 				this.selectedPiece = piece;
-				piece.material.color.set(0x0000ff);
-			},
-			selectPiece(piece)
-			{
-				this.selectedPiece = piece;
-				piece.material.color.set(0x0000ff);
+				piece.material.color.set(this.selectColor);
 			},
 			deselectPiece()
 			{
 				if (this.selectedPiece) {
-					this.selectedPiece.material.color.set(this.selectedPiece.color);
+					this.selectedPiece.material.color.set(this.selectedPiece.data.color);
 					this.selectedPiece = undefined;
 				}
 			},
