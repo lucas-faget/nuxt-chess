@@ -1,6 +1,7 @@
 <script>
 	import * as THREE from 'three';
 	import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+	import TWEEN from '@tweenjs/tween.js'
 	
 	export default
 	{
@@ -69,7 +70,7 @@
 
 			window.addEventListener('resize', this.onWindowResize);
 
-			this.movePiece(squareGroup, pieceGroup, 'e2', 'e4');
+			this.playOpening(squareGroup, pieceGroup);
 		},
 		methods:
 		{
@@ -104,6 +105,7 @@
 					this.animate(scene);
 				});
 				this.controls.update();
+				TWEEN.update();
 				this.renderer.render(scene, this.camera);
 			},
 			onWindowResize()
@@ -200,15 +202,30 @@
 					if (!fromPiece) {
 						console.log('No piece to move');
 					} else {
-						fromPiece.position.x = toSquare.position.x;
-            			fromPiece.position.z = toSquare.position.z;
-						if (toPiece) {
-							pieceGroup.remove(toPiece);
-						}
+						const targetX = toSquare.position.x;
+            			const targetZ = toSquare.position.z;
+
+						new TWEEN.Tween(fromPiece.position)
+							.to({ x: targetX, z: targetZ }, 500)
+							.easing(TWEEN.Easing.Quadratic.Out)
+							.start()
+							.onComplete(() => {
+								if (toPiece) {
+									pieceGroup.remove(toPiece);
+								}
+							});
 					}
 				} else {
 					console.log('Invalid move');
 				}
+			},
+			playOpening(squareGroup, pieceGroup) {
+				this.movePiece(squareGroup, pieceGroup, 'e2', 'e4');
+				this.movePiece(squareGroup, pieceGroup, 'e7', 'e5');
+				this.movePiece(squareGroup, pieceGroup, 'g1', 'f3');
+				this.movePiece(squareGroup, pieceGroup, 'b8', 'c6');
+				this.movePiece(squareGroup, pieceGroup, 'f1', 'c4');
+				this.movePiece(squareGroup, pieceGroup, 'f8', 'c5');
 			},
 			FENtoBoard(fen)
 			{

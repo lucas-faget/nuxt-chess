@@ -10,6 +10,7 @@
     "type-check": "vue-tsc --noEmit"
   },
   "dependencies": {
+    "@tweenjs/tween.js": "^23.1.1",
     "three": "^0.163.0",
     "vue": "^3.4.23",
     "vue-router": "^4.1.2",
