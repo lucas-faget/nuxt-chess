@@ -41,7 +41,7 @@
 				squareGroup: undefined,
 				pieceGroup: undefined,
 
-				selectedSquareName: undefined
+				selectedPiece: undefined
 			}
 		},
 		mounted()
@@ -179,19 +179,19 @@
 				const intersectedSquares = this.raycaster.intersectObjects(squareGroup.children);
 				const intersectedPieces = this.raycaster.intersectObjects(pieceGroup.children);
 
-				[...squareGroup.children, ...pieceGroup.children].forEach((child) => {
-					child.material.color.set(child.color);
-				});
+				// [...squareGroup.children, ...pieceGroup.children].forEach((child) => {
+				// 	child.material.color.set(child.color);
+				// });
 
 				if (intersectedPieces.length > 0) {
 					const piece = intersectedPieces[0].object;
 					// console.log("Piece", piece.name);
-					piece.material.color.set(0xff0000);
+					// piece.material.color.set(0xff0000);
     			} else {
 					if (intersectedSquares.length > 0) {
 						const square = intersectedSquares[0].object;
 						// console.log("Square", square.name);
-						square.material.color.set(0xff0000);
+						// square.material.color.set(0xff0000);
 					}
 				}
 			},
@@ -211,26 +211,43 @@
 
 				if (intersectedPieces.length > 0) {
 					const piece = intersectedPieces[0].object;
-					if (!this.selectedSquareName) {
-						this.selectedSquareName = piece.name;
+					if (!this.selectedPiece) {
+						this.selectPiece(piece);
 					} else {
-						this.movePiece(squareGroup, pieceGroup, this.selectedSquareName, piece.name);
-						this.selectedSquareName = undefined;
+						this.movePiece(squareGroup, pieceGroup, this.selectedPiece.name, piece.name);
+						this.deselectPiece();
 					}
 				} else if (intersectedSquares.length > 0) {
 					const square = intersectedSquares[0].object;
 					const piece = pieceGroup.getObjectByName(square.name);
-					if (!this.selectedSquareName && piece) {
-						this.selectedSquareName = piece.name;
-					} else if (this.selectedSquareName) {
-						this.movePiece(squareGroup, pieceGroup, this.selectedSquareName, square.name);
-						this.selectedSquareName = undefined;
+					if (!this.selectedPiece && piece) {
+						this.selectPiece(piece);
+					} else if (this.selectedPiece) {
+						this.movePiece(squareGroup, pieceGroup, this.selectedPiece.name, square.name);
+						this.deselectPiece();
 					}
 				} else {
-					this.selectedSquareName = undefined;
+					this.deselectPiece();
 				}
 
-				console.log(this.selectedSquareName);
+				console.log(this.selectedPiece?.name ?? undefined);
+			},
+			selectPiece(piece)
+			{
+				this.selectedPiece = piece;
+				piece.material.color.set(0x0000ff);
+			},
+			selectPiece(piece)
+			{
+				this.selectedPiece = piece;
+				piece.material.color.set(0x0000ff);
+			},
+			deselectPiece()
+			{
+				if (this.selectedPiece) {
+					this.selectedPiece.material.color.set(this.selectedPiece.color);
+					this.selectedPiece = undefined;
+				}
 			},
 			movePiece(squareGroup, pieceGroup, fromSquareName, toSquareName)
 			{
