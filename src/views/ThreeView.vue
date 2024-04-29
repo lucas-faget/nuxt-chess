@@ -70,9 +70,9 @@
 
 			this.animate(scene);
 
-			this.$refs.container.addEventListener('mousemove', (event) => {
-				this.handleMouseMove(event, squareGroup, pieceGroup);
-			});
+			// this.$refs.container.addEventListener('mousemove', (event) => {
+			// 	this.handleMouseMove(event, squareGroup, pieceGroup);
+			// });
 
 			this.$refs.container.addEventListener('click', (event) => {
 				this.handleMouseClick(event, squareGroup, pieceGroup);
@@ -216,16 +216,22 @@
 					if (!this.selectedPiece) {
 						this.selectPiece(piece);
 					} else {
-						this.movePiece(squareGroup, pieceGroup, this.selectedPiece.name, piece.name);
+						if (piece.uuid !== this.selectedPiece.uuid) {
+							this.movePiece(squareGroup, pieceGroup, this.selectedPiece.name, piece.name);
+						}
 						this.deselectPiece();
 					}
 				} else if (intersectedSquares.length > 0) {
 					const square = intersectedSquares[0].object;
 					const piece = pieceGroup.getObjectByName(square.name);
-					if (piece && !this.selectedPiece) {
-						this.selectPiece(piece);
-					} else if (this.selectedPiece) {
-						this.movePiece(squareGroup, pieceGroup, this.selectedPiece.name, square.name);
+					if (!this.selectedPiece) {
+						if (piece) {
+							this.selectPiece(piece);
+						}
+					} else {
+						if (!piece || (piece.uuid !== this.selectedPiece.uuid)) {
+							this.movePiece(squareGroup, pieceGroup, this.selectedPiece.name, square.name);
+						}
 						this.deselectPiece();
 					}
 				} else {
@@ -235,14 +241,14 @@
 			hoverObject(object)
 			{
 				this.hoveredObject = object;
-				if (this.hoveredObject !== this.selectedPiece) {
+				if (this.hoveredObject.uuid !== this.selectedPiece.uuid) {
 					object.material.color.set(this.hoverColor);
 				}
 			},
 			removeHoveredObject()
 			{
 				if (this.hoveredObject) {
-					if (this.hoveredObject == this.selectedPiece) {
+					if (this.hoveredObject.uuid === this.selectedPiece.uuid) {
 						this.hoveredObject.material.color.set(this.selectColor);
 					} else {
 						this.hoveredObject.material.color.set(this.hoveredObject.data.color);
