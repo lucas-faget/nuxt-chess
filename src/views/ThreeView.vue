@@ -46,7 +46,8 @@
 				pieceGroup: undefined,
 
 				hoveredObject: undefined,
-				selectedPiece: undefined
+				selectedPiece: undefined,
+				selectedPiecePosition: undefined
 			}
 		},
 		mounted()
@@ -90,7 +91,7 @@
 				this.renderer.setClearColor(0x000000, 0);
 				this.$refs.container.appendChild(this.renderer.domElement);
 
-				// controls.enablePan = false;
+				// this.controls.enablePan = false;
 				this.controls.enableDamping = true;
 				this.controls.dampingFactor = 0.05;
 				this.controls.screenSpacePanning = false;
@@ -230,8 +231,12 @@
 
 				if (object) {
 					if (this.selectedPiece) {
-						this.movePiece(squareGroup, pieceGroup, this.selectedPiece.name, object.name);
-						this.deselectPiece();
+						if (object.name !== this.selectedPiece.name) {
+							this.play(squareGroup, pieceGroup, this.selectedPiece.name, object.name);
+						} else {
+							this.moveObject(this.selectedPiece, this.selectedPiecePosition.x, this.selectedPiecePosition.z);
+						}
+						this.unselectPiece();
 					} else {
 						const piece = object.data.type === "piece" ? object : pieceGroup.getObjectByName(object.name);
 						if (piece) {
@@ -239,7 +244,10 @@
 						}
 					}
 				} else {
-					this.deselectPiece();
+					if (this.selectedPiece) {
+						this.moveObject(this.selectedPiece, this.selectedPiecePosition.x, this.selectedPiecePosition.z);
+						this.unselectPiece();
+					}
 				}
 			},
 			hoverObject(object)
@@ -258,13 +266,18 @@
 			{
 				this.removeHoveredObject();
 				this.selectedPiece = piece;
+				this.selectedPiecePosition = {
+					x: piece.position.x,
+					z: piece.position.z
+				}
 				piece.material.color.set(this.selectColor);
 			},
-			deselectPiece()
+			unselectPiece()
 			{
 				if (this.selectedPiece) {
 					this.selectedPiece.material.color.set(this.selectedPiece.data.color);
 					this.selectedPiece = undefined;
+					this.selectedPiecePosition = undefined;
 				}
 			},
 			dragSelectedPiece()
@@ -277,7 +290,14 @@
     				this.selectedPiece.position.z = point.z;
 				}
 			},
-			movePiece(squareGroup, pieceGroup, fromSquareName, toSquareName)
+			moveObject(object, targetX, targetZ)
+			{
+				new TWEEN.Tween(object.position)
+					.to({ x: targetX, z: targetZ }, 500)
+					.easing(TWEEN.Easing.Quadratic.Out)
+					.start();
+			},
+			play(squareGroup, pieceGroup, fromSquareName, toSquareName)
 			{
 				const fromSquare = squareGroup.getObjectByName(fromSquareName);
 				const fromPiece = pieceGroup.getObjectByName(fromSquareName);
@@ -288,33 +308,23 @@
 					if (!fromPiece) {
 						console.log('No piece to move');
 					} else {
+						fromPiece.position.x = this.selectedPiecePosition.x;
+						fromPiece.position.z = this.selectedPiecePosition.z;
+
 						const targetX = toSquare.position.x;
             			const targetZ = toSquare.position.z;
 
-						new TWEEN.Tween(fromPiece.position)
-							.to({ x: targetX, z: targetZ }, 500)
-							.easing(TWEEN.Easing.Quadratic.Out)
-							.start()
-							.onComplete(() => {
-								if (toPiece) {
-									pieceGroup.remove(toPiece);
-								}
-							});
+						this.moveObject(fromPiece, targetX, targetZ);
+
+						if (toPiece) {
+							pieceGroup.remove(toPiece);
+						}
 
 						fromPiece.name = toSquare.name;
 					}
 				} else {
 					console.log('Invalid move');
 				}
-			},
-			playOpening(squareGroup, pieceGroup)
-			{
-				this.movePiece(squareGroup, pieceGroup, 'e2', 'e4');
-				this.movePiece(squareGroup, pieceGroup, 'e7', 'e5');
-				this.movePiece(squareGroup, pieceGroup, 'g1', 'f3');
-				this.movePiece(squareGroup, pieceGroup, 'b8', 'c6');
-				this.movePiece(squareGroup, pieceGroup, 'f1', 'c4');
-				this.movePiece(squareGroup, pieceGroup, 'f8', 'c5');
 			},
 			FENtoBoard(fen)
 			{
