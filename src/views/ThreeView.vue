@@ -40,6 +40,7 @@
 				controls: undefined,
 				raycaster: undefined,
 				mouse: undefined,
+				plane: undefined,
 
 				squareGroup: undefined,
 				pieceGroup: undefined,
@@ -61,6 +62,7 @@
 			this.controls = new OrbitControls(this.camera, this.renderer.domElement);
 			this.mouse = new THREE.Vector2();
 			this.raycaster = new THREE.Raycaster();
+			this.plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
 
 			this.init(scene);
 
@@ -70,9 +72,9 @@
 
 			this.animate(scene);
 
-			// this.$refs.container.addEventListener('mousemove', (event) => {
-			// 	this.handleMouseMove(event, squareGroup, pieceGroup);
-			// });
+			this.$refs.container.addEventListener('mousemove', (event) => {
+				this.handleMouseMove(event, squareGroup, pieceGroup);
+			});
 
 			this.$refs.container.addEventListener('click', (event) => {
 				this.handleMouseClick(event, squareGroup, pieceGroup);
@@ -186,16 +188,23 @@
 
 				this.raycaster.setFromCamera(this.mouse, this.camera);
 
-				const intersectedSquares = this.raycaster.intersectObjects(squareGroup.children);
-				const intersectedPieces = this.raycaster.intersectObjects(pieceGroup.children);
+				const objects = squareGroup.children.concat(pieceGroup.children);
+				const intersections = this.raycaster.intersectObjects(objects);
 
-				if (intersectedPieces.length > 0 || intersectedSquares.length > 0) {
-					const object = intersectedPieces.length > 0 ? intersectedPieces[0].object : intersectedSquares[0].object;
-					this.removeHoveredObject();
-					this.hoverObject(object);
-    			} else {
-					this.removeHoveredObject();
+				let object = undefined;
+				if (intersections.length > 0) {
+					object = intersections[0].object;
+					if (this.selectedPiece && object.uuid === this.selectedPiece.uuid) {
+						object = intersections.length > 1 ? intersections[1].object : undefined;
+					}
 				}
+
+				this.removeHoveredObject();
+				if (object) {
+					this.hoverObject(object);
+				}
+
+				this.dragSelectedPiece();
 			},
 			handleMouseClick(event, squareGroup, pieceGroup)
 			{
@@ -208,31 +217,26 @@
 
 				this.raycaster.setFromCamera(this.mouse, this.camera);
 
-				const intersectedSquares = this.raycaster.intersectObjects(squareGroup.children);
-				const intersectedPieces = this.raycaster.intersectObjects(pieceGroup.children);
+				const objects = squareGroup.children.concat(pieceGroup.children);
+				const intersections = this.raycaster.intersectObjects(objects);
 
-				if (intersectedPieces.length > 0) {
-					const piece = intersectedPieces[0].object;
-					if (!this.selectedPiece) {
-						this.selectPiece(piece);
-					} else {
-						if (piece.uuid !== this.selectedPiece.uuid) {
-							this.movePiece(squareGroup, pieceGroup, this.selectedPiece.name, piece.name);
-						}
-						this.deselectPiece();
+				let object = undefined;
+				if (intersections.length > 0) {
+					object = intersections[0].object;
+					if (this.selectedPiece && object.uuid === this.selectedPiece.uuid) {
+						object = intersections.length > 1 ? intersections[1].object : undefined;
 					}
-				} else if (intersectedSquares.length > 0) {
-					const square = intersectedSquares[0].object;
-					const piece = pieceGroup.getObjectByName(square.name);
-					if (!this.selectedPiece) {
+				}
+
+				if (object) {
+					if (this.selectedPiece) {
+						this.movePiece(squareGroup, pieceGroup, this.selectedPiece.name, object.name);
+						this.deselectPiece();
+					} else {
+						const piece = object.data.type === "piece" ? object : pieceGroup.getObjectByName(object.name);
 						if (piece) {
 							this.selectPiece(piece);
 						}
-					} else {
-						if (!piece || (piece.uuid !== this.selectedPiece.uuid)) {
-							this.movePiece(squareGroup, pieceGroup, this.selectedPiece.name, square.name);
-						}
-						this.deselectPiece();
 					}
 				} else {
 					this.deselectPiece();
@@ -241,23 +245,18 @@
 			hoverObject(object)
 			{
 				this.hoveredObject = object;
-				if (this.hoveredObject.uuid !== this.selectedPiece.uuid) {
-					object.material.color.set(this.hoverColor);
-				}
+				object.material.color.set(this.hoverColor);
 			},
 			removeHoveredObject()
 			{
 				if (this.hoveredObject) {
-					if (this.hoveredObject.uuid === this.selectedPiece.uuid) {
-						this.hoveredObject.material.color.set(this.selectColor);
-					} else {
-						this.hoveredObject.material.color.set(this.hoveredObject.data.color);
-					}
+					this.hoveredObject.material.color.set(this.hoveredObject.data.color);
 					this.hoveredObject = undefined;
 				}
 			},
 			selectPiece(piece)
 			{
+				this.removeHoveredObject();
 				this.selectedPiece = piece;
 				piece.material.color.set(this.selectColor);
 			},
@@ -266,6 +265,16 @@
 				if (this.selectedPiece) {
 					this.selectedPiece.material.color.set(this.selectedPiece.data.color);
 					this.selectedPiece = undefined;
+				}
+			},
+			dragSelectedPiece()
+			{
+				if (this.selectedPiece) {
+					var point = new THREE.Vector3();
+					this.raycaster.ray.intersectPlane(this.plane, point);
+
+					this.selectedPiece.position.x = point.x;
+    				this.selectedPiece.position.z = point.z;
 				}
 			},
 			movePiece(squareGroup, pieceGroup, fromSquareName, toSquareName)
