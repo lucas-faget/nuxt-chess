@@ -4,7 +4,7 @@
 	import { TwoPlayerChess } from '../chess/games/TwoPlayerChess';
 	import { SquareColor } from '../types/SquareColor';
 
-	import { createTwoPlayerChessGame } from '../chess.ts'
+	import { createTwoPlayerChessGame } from '../chess'
 
 	import Background from '../components/Background.vue'
 	import Chessboard from '../components/Chessboard.vue'
@@ -37,7 +37,7 @@
 		},
 		methods: {
 			isPlayerMoving(player: Player): boolean {
-                return this.chess.isActiveTurnTheLast() && this.chess.controller.player === player;
+                return this.chess.isPlayerActive(player);
             },
 			setLightSquareColor(squareColor: SquareColor) {
 				this.lightSquareColor = squareColor;

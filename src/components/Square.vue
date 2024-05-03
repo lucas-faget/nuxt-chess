@@ -32,11 +32,11 @@
                 return this.square?.isDark() ? 'square-dark-' + this.darkSquareColor : 'square-light-' + this.lightSquareColor;
             },
             color(): string|undefined {
-                return this.square?.getPiece()?.color ?? undefined;
+                return this.square?.piece?.color ?? undefined;
             },
             bgPiece() {
                 return this.square && !this.square.isEmpty() ? {
-                    backgroundImage: this.color ? `url(${this.getPieceImageSrc(this.color, this.square.getPiece()?.getName())})` : 'none',
+                    backgroundImage: this.color ? `url(${this.getPieceImageSrc(this.color, this.square.piece?.getName())})` : 'none',
                     backgroundRepeat: 'no-repeat',
                     backgroundSize: 'contain',
                 } : '';

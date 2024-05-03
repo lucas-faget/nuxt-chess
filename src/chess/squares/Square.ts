@@ -8,7 +8,6 @@ import { Bishop } from "../pieces/Bishop";
 import { Rook } from "../pieces/Rook";
 import { Queen } from "../pieces/Queen";
 import { King } from "../pieces/King";
-import type { Chessboard } from "../chessboards/Chessboard";
 import { Chess } from "../games/Chess";
 
 export class Square
@@ -21,11 +20,6 @@ export class Square
         this.name = name;
         this.position = position;
         this.piece = null;
-    }
-
-    getPiece(): Piece|null
-    {
-        return this.piece;
     }
 
     setPiece(name: PieceName, color: PlayerColor): void
@@ -72,22 +66,8 @@ export class Square
         return this.piece !== null && this.piece.getName() === pieceName;
     }
 
-    isNextToOpponentKing(color: PlayerColor, chessboard: Chessboard)
+    isDark(): boolean
     {
-        let nextSquare: Square|null = null;
-
-        for (const direction of King.Directions) {
-            if (nextSquare = chessboard.getSquareByDirection(this, direction)) {
-                if (nextSquare.getPiece()?.getName() === PieceName.King && nextSquare.getPiece()?.color !== color) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-
-    isDark(): boolean {
-        return Chess.isDarkSquare(this.position.y, this.position.x);
+        return Chess.isDarkSquare(this.position.x, this.position.y);
     }
 }

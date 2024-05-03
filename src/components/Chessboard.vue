@@ -68,9 +68,9 @@
             },
             clickSquare(squareName: string): void
             {
-                if (this.chess.canPlay()) {
-                    if (this.chess.controller.isLegalMove(this.fromSquareName, squareName)) {
-                        let move = this.chess.controller.getLegalMove(this.fromSquareName, squareName);
+                if (this.chess.isActiveMoveTheLast()) {
+                    if (this.chess.isLegalMove(this.fromSquareName, squareName)) {
+                        let move = this.chess.getLegalMove(this.fromSquareName, squareName);
                         if (move) {
                             this.chess.saveMove(move);
                         }
@@ -82,7 +82,7 @@
             },
             isLegal(squareName: string): boolean
             {
-                return this.chess.controller.isLegalMove(this.fromSquareName, squareName) && this.chess.canPlay();
+                return this.chess.isLegalMove(this.fromSquareName, squareName) && this.chess.isActiveMoveTheLast();
             },
             isFogged(squareName: string): boolean
             {

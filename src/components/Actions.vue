@@ -29,16 +29,16 @@
                         this.chess.spinChessboard();
                         break;
                     case ActionType.First:
-                        this.chess.showFirstMove();
+                        this.chess.goToFirstMove();
                         break;
                     case ActionType.Previous:
-                        this.chess.showPreviousMove();
+                        this.chess.goToPreviousMove();
                         break;
                     case ActionType.Next:
-                        this.chess.showNextMove();
+                        this.chess.goToNextMove();
                         break;
                     case ActionType.Last:
-                        this.chess.showLastMove();
+                        this.chess.goToLastMove();
                         break;
                     case ActionType.Cancel:
                         this.chess.deleteLastMove();
@@ -47,7 +47,7 @@
             },
             isBlinking(actionType: ActionType, isHovered: boolean): boolean
             {
-                return !isHovered && actionType === ActionType.Last && !this.chess.isActiveTurnTheLast();
+                return !isHovered && actionType === ActionType.Last && !this.chess.isActiveMoveTheLast();
             }
         }
     }

@@ -1,8 +1,8 @@
 import { PlayerColor } from "../types/PlayerColor";
 import { PieceName } from "../types/PieceName";
+import type { Player } from "../players/Player";
 import type { Square } from "../squares/Square";
 import type { Move } from "../moves/Move";
-import type { PlayerController } from "../players/PlayerController";
 import type { Chessboard } from "../chessboards/Chessboard";
 
 export abstract class Piece
@@ -25,7 +25,7 @@ export abstract class Piece
 
     abstract getName(): PieceName;
 
-    abstract getMoves(square: Square, chessboard: Chessboard, controller: PlayerController): Move[];
+    abstract getMoves(player: Player, square: Square, chessboard: Chessboard, kingSquare: Square|null, enPassantTarget: string|null): Move[];
 
     toString(): string
     {

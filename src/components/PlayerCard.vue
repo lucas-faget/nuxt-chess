@@ -18,11 +18,11 @@
             allCapturedPieces(): string[][]|null {
                 let allCapturedPieces: string[][] = [];
 
-                for (const [pieceName, count] of this.player.capturedPieces.entries()) {
-                    if (count > 0) {
-                        allCapturedPieces.push(Array<string>(count as number).fill(pieceName as string));
-                    }
-                }
+                // for (const [pieceName, count] of this.player.capturedPieces.entries()) {
+                //     if (count > 0) {
+                //         allCapturedPieces.push(Array<string>(count as number).fill(pieceName as string));
+                //     }
+                // }
 
                 return allCapturedPieces;
             },

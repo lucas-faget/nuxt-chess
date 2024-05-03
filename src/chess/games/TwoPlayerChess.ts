@@ -4,14 +4,12 @@ import type { Player } from "../players/Player";
 import { Blacks, Whites } from "../players/Players";
 import type { Chessboard } from "../chessboards/Chessboard";
 import { TwoPlayerChessboard } from "../chessboards/TwoPlayerChessboard";
-import { PlayerController } from "../players/PlayerController";
 import { Chess } from "./Chess";
-import type { GameState } from "../types/GameState";
 
 export class TwoPlayerChess extends Chess
 {
-    static WhiteColor = 'w';
-    static BlackColor = 'b';
+    static WhiteColor: string = 'w';
+    static BlackColor: string = 'b';
 
     static WhiteKingsideCastling: string = 'K';
     static WhiteQueensideCastling: string = 'Q';
@@ -24,21 +22,15 @@ export class TwoPlayerChess extends Chess
     {
         const fenRecord: FenRecord = TwoPlayerChess.getFenRecordFromString(fenString);
 
-        const controller: PlayerController = new PlayerController(
-            fenRecord.activeColor === TwoPlayerChess.WhiteColor ? players[0] : players[1]
-        );
         const chessboard: Chessboard = new TwoPlayerChessboard(fenRecord.position);
-        const gameState: GameState = {
-            move: null,
-            castlingRights: {
-                kingside: controller.player.castlingRights.kingside,
-                queenside: controller.player.castlingRights.queenside,
-            },
-            enPassantTargetSquare: fenRecord.enPassantTarget
-        };
 
-        super(variant, players, controller, chessboard, gameState);
-        this.setCastlingRightsFromFen(fenRecord.castlingRights);
+        super(variant, players, chessboard);
+
+        this.activePlayerIndex = fenRecord.activeColor === TwoPlayerChess.WhiteColor ? 0 : 1;
+
+        this.addNewGameState(fenRecord.enPassantTarget !== '-' ? fenRecord.enPassantTarget : null);
+
+        this.setLegalMoves();
     }
 
     static getFenRecordFromString(fenString: string): FenRecord
@@ -47,26 +39,10 @@ export class TwoPlayerChess extends Chess
         return {
             position: fenData[0],
             activeColor: fenData[1],
-            castlingRights: fenData[2],
+            castlingAvailabilities: fenData[2],
             enPassantTarget: fenData[3],
             halfmoveClock: fenData[4],
             fullmoveNumber: fenData[5]
-        }
-    }
-
-    setCastlingRightsFromFen(castlingRightsString: string): void
-    {
-        this.players[0].castlingRights = {
-            kingside: castlingRightsString.includes(TwoPlayerChess.WhiteKingsideCastling),
-            queenside: castlingRightsString.includes(TwoPlayerChess.WhiteQueensideCastling)
-        };
-
-        if (this.players.length > 1)
-        {
-            this.players[1].castlingRights = {
-                kingside: castlingRightsString.includes(TwoPlayerChess.BlackKingsideCastling),
-                queenside: castlingRightsString.includes(TwoPlayerChess.BlackQueensideCastling)
-            };
         }
     }
 }

@@ -1,210 +1,122 @@
 import type { Coordinates } from "../coordinates/Position";
 import { ChessVariant } from "../types/ChessVariant";
-import { PieceName } from "../types/PieceName";
-import { King } from "../pieces/King";
-import type { Square } from "../squares/Square";
-import { MoveType } from "../types/MoveType";
-import type { Move } from "../moves/Move";
-import type { CastlingRights } from "../types/CastlingRights";
-import type { GameState } from "../types/GameState";
 import type { Player } from "../players/Player";
+import type { Square } from "../squares/Square";
+import type { Move } from "../moves/Move";
+import type { LegalMoves } from "../types/LegalMoves";
+import type { GameState } from "../types/GameState";
 import type { Chessboard } from "../chessboards/Chessboard";
-import type { PlayerController } from "../players/PlayerController";
 
 export abstract class Chess
 {
     variant: ChessVariant;
     players: Player[];
-    controller: PlayerController;
     chessboard: Chessboard;
-    gameStateByTurn: GameState[];
-    activeTurnNumber: number;
+    legalMoves: LegalMoves = {};
+    gameStates: GameState[] = [];
+
+    activePlayerIndex = 0;
     playerIndexInFront: number = 0;
+    activeMoveIndex: number = 0;
 
-    static NoneEnPassantTargetSquare: string = '-';
-
-    constructor(variant: ChessVariant, players: Player[], controller: PlayerController, chessboard: Chessboard, gameState: GameState)
+    constructor(variant: ChessVariant, players: Player[], chessboard: Chessboard)
     {
         this.variant = variant;
         this.players = players;
-        this.controller = controller;
         this.chessboard = chessboard;
-        this.gameStateByTurn = [gameState];
-        this.activeTurnNumber = this.gameStateByTurn.length;
-        this.updateController();
     }
 
-    isActiveTurnTheLast(): boolean
+    setLegalMoves(): void
     {
-        return this.activeTurnNumber === this.gameStateByTurn.length;
+        const player: Player = this.players[this.activePlayerIndex];
+        const kingSquare: Square|null = this.chessboard.searchKingSquare(player.color);
+        const enPassantTarget: string|null = this.gameStates[this.activeMoveIndex].enPassantTarget;
+
+        this.legalMoves = this.chessboard.calculateLegalMoves(player, kingSquare, enPassantTarget);
     }
 
-    canPlay(): boolean
+    isLegalMove(fromSquareName: string, toSquareName: string): boolean
     {
-        return this.isActiveTurnTheLast();
+        return fromSquareName in this.legalMoves && toSquareName in this.legalMoves[fromSquareName];
     }
 
-    setPreviousPlayer(): void
+    getLegalMove(fromSquareName: string, toSquareName: string): Move|null
     {
-        this.controller.setPlayer(this.players[(this.players.indexOf(this.controller.player) - 1 + this.players.length) % this.players.length]);
+        return this.legalMoves[fromSquareName][toSquareName] ?? null;
+    }
+
+    isLegalSquare(squareName: string): boolean
+    {
+        for (const fromSquareName in this.legalMoves) {
+            if (squareName in this.legalMoves[fromSquareName]) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    isActiveMoveTheLast(): boolean
+    {
+        return this.activeMoveIndex === this.gameStates.length - 1;
+    }
+
+    isPlayerActive(player: Player): boolean
+    {
+        return this.isActiveMoveTheLast() && this.players[this.activePlayerIndex] === player;
     }
 
     setNextPlayer(): void
     {
-        this.controller.setPlayer(this.players[(this.players.indexOf(this.controller.player) + 1) % this.players.length]);
+        this.activePlayerIndex = (this.activePlayerIndex + 1) % this.players.length;
     }
 
-    addPlayerCapturedPiece(move: Move): void
+    setPreviousPlayer(): void
     {
-        if (move.capturedPiece) {
-            this.controller.player.addCapturedPiece(move.capturedPiece.getName());
-        }
+        this.activePlayerIndex = (this.activePlayerIndex - 1 + this.players.length) % this.players.length;
     }
 
-    removePlayerCapturedPiece(move: Move): void
+    addNewGameState(enPassantTarget: string|null = null): void
     {
-        if (move.capturedPiece) {
-            this.controller.player.removeCapturedPiece(move.capturedPiece.getName());
-        }
-    }
-
-    getEnPassantTargetSquare(move: Move): string
-    {
-        if (move.isDoubleStepPawnAdvance(this.chessboard, this.controller.player.direction)) {
-            return move.toSquare.name;
-        } else {
-            return Chess.NoneEnPassantTargetSquare;
-        }
-    }
-
-    setCastlingRights(move: Move): void
-    {
-        const castlingRights: CastlingRights = this.controller.player.castlingRights;
-
-        if (castlingRights.kingside || castlingRights.queenside) {
-            if (this.controller.player.castlingRights.kingside) {
-                if (move.fromSquare.getPiece()?.getName() === PieceName.King) {
-                    castlingRights.kingside = false;
-                } else {
-                    if (move.fromSquare.getPiece()?.getName() === PieceName.Rook) {
-                        if (this.controller.kingSquare) {
-                            let kingsideRook: Square|null = this.chessboard.getSquareByDirection(this.controller.kingSquare, this.controller.player.queensideCastlingDirection(), King.KingsideCastlingStep);
-                            if (move.fromSquare.name === kingsideRook?.name) {
-                                castlingRights.kingside = false;
-                            }
-                        }
-                    }
-                }
-            }
-            if (castlingRights.queenside) {
-                if (move.fromSquare.getPiece()?.getName() === PieceName.King) {
-                    castlingRights.queenside = false;
-                } else {
-                    if (move.fromSquare.getPiece()?.getName() === PieceName.Rook) {
-                        if (this.controller.kingSquare) {
-                            let queensideRook: Square|null = this.chessboard.getSquareByDirection(this.controller.kingSquare, this.controller.player.kingsideCastlingDirection(), King.QueensideCastlingStep);
-                            if (move.fromSquare.name === queensideRook?.name) {
-                                castlingRights.queenside = false;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    addGameState(move: Move): void
-    {
-        this.gameStateByTurn.push({
-            move: move,
-            castlingRights: {
-                kingside: this.controller.player.castlingRights.kingside,
-                queenside: this.controller.player.castlingRights.queenside,
-            },
-            enPassantTargetSquare: this.getEnPassantTargetSquare(move)
+        this.gameStates.push({
+            move: null,
+            enPassantTarget: enPassantTarget,
         });
-
-        this.activeTurnNumber = this.gameStateByTurn.length;
-    }
-
-    removeGameState(): GameState
-    {
-        const gameState: GameState = this.gameStateByTurn.pop()!;
-        this.activeTurnNumber = this.gameStateByTurn.length;
-        return gameState;
-    }
-
-    updateController(): void
-    {
-        this.controller.enPassantTargetSquare = this.gameStateByTurn[this.activeTurnNumber - 1].enPassantTargetSquare;
-        this.controller.calculateMoves(this);
     }
 
     saveMove(move: Move): void
     {
-        this.addGameState(move);
-        this.setCastlingRights(move);
-        this.addPlayerCapturedPiece(move);
         move.carryoutMove();
+        this.gameStates[this.activeMoveIndex].move = move;
+        this.addNewGameState(move.enPassantTarget);
+        this.activeMoveIndex++;
         this.setNextPlayer();
-        this.updateController();
+        this.setLegalMoves();
     }
 
     deleteLastMove(): void
     {
-        if (this.isActiveTurnTheLast()) {
-            if (this.gameStateByTurn.length > 1)
+        if (this.isActiveMoveTheLast()) {
+            if (this.gameStates.length > 1)
             {
-                let lastGameState: GameState = this.removeGameState();
-                if (lastGameState.move) lastGameState.move.undoMove();
+                this.gameStates.pop();
+                this.activeMoveIndex--;
+                this.gameStates[this.activeMoveIndex].move!.undoMove();
+                this.gameStates[this.activeMoveIndex].move = null;
                 this.setPreviousPlayer();
-                this.controller.player.castlingRights = lastGameState.castlingRights;
-                if (lastGameState.move) this.removePlayerCapturedPiece(lastGameState.move);
-                this.updateController();
+                this.setLegalMoves();
             }
         }
     }
 
     resetGame(): void
     {
-        if (!this.isActiveTurnTheLast()) {
-            this.showLastMove();
+        if (!this.isActiveMoveTheLast()) {
+            this.goToLastMove();
         }
 
-        while (this.gameStateByTurn.length > 1) {
+        while (this.gameStates.length > 1) {
             this.deleteLastMove();
-        }
-    }
-
-    showFirstMove(): void
-    {
-        while (this.activeTurnNumber > 1) {
-            this.activeTurnNumber--;
-            this.gameStateByTurn[this.activeTurnNumber].move!.undoMove();
-        }
-    }
-
-    showPreviousMove(): void
-    {
-        if (this.activeTurnNumber > 1) {
-            this.activeTurnNumber--;
-            this.gameStateByTurn[this.activeTurnNumber].move!.undoMove();
-        }
-    }
-
-    showNextMove(): void
-    {
-        if (this.activeTurnNumber < this.gameStateByTurn.length) {
-            this.gameStateByTurn[this.activeTurnNumber].move!.carryoutMove();
-            this.activeTurnNumber++;
-        }
-    }
-
-    showLastMove(): void
-    {
-        while (this.activeTurnNumber < this.gameStateByTurn.length) {
-            this.gameStateByTurn[this.activeTurnNumber].move!.carryoutMove();
-            this.activeTurnNumber++;
         }
     }
 
@@ -213,14 +125,44 @@ export abstract class Chess
         this.playerIndexInFront = (this.playerIndexInFront + 1) % this.players.length;
     }
 
+    goToPreviousMove(): void
+    {
+        if (this.activeMoveIndex > 0) {
+            this.activeMoveIndex--;
+            this.gameStates[this.activeMoveIndex].move!.undoMove();
+        }
+    }
+
+    goToFirstMove(): void
+    {
+        while (this.activeMoveIndex > 0) {
+            this.goToPreviousMove();
+        }
+    }
+
+    goToNextMove(): void
+    {
+        if (this.activeMoveIndex < this.gameStates.length - 1) {
+            this.gameStates[this.activeMoveIndex].move!.carryoutMove();
+            this.activeMoveIndex++;
+        }
+    }
+
+    goToLastMove(): void
+    {
+        while (this.activeMoveIndex < this.gameStates.length - 1) {
+            this.goToNextMove();
+        }
+    }
+
     isFoggedSquare(squareName: string): boolean
     {
         return this.variant === ChessVariant.FogOfWar
-            && this.chessboard.getSquareByName(squareName)?.getPiece()?.color !== this.controller.player.color
-            && !this.controller.isLegalSquare(squareName);
+            && this.chessboard.getSquareByName(squareName)?.piece?.color !== this.players[this.activePlayerIndex].color
+            && !this.isLegalSquare(squareName);
     }
 
-    static isDarkSquare(y: number, x: number): boolean
+    static isDarkSquare(x: number, y: number): boolean
     {
         return (y % 2 === 0) ? (x % 2 === 0) : (x % 2 !== 0);
     }
