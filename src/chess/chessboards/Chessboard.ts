@@ -9,8 +9,8 @@ import type { Player } from "../players/Player";
 import { Square } from "../squares/Square";
 import type { Move } from "../moves/Move";
 import { King } from "../pieces/King";
-import type { LegalMoves } from "../types/LegalMoves";
 import type { Pieces } from "../types/Pieces";
+import type { LegalMoves } from "../types/LegalMoves";
 
 export abstract class Chessboard {
     ranks: string[];
@@ -53,7 +53,7 @@ export abstract class Chessboard {
         });
     }
 
-    searchKingSquare(color: PlayerColor): Square | null {
+    findKingSquare(color: PlayerColor): Square | null {
         for (const square of this.squares.values()) {
             if (square.isOccupiedByPieceName(PieceName.King) && square.isOccupiedByAlly(color)) {
                 return square;
@@ -72,13 +72,7 @@ export abstract class Chessboard {
 
         for (const square of this.squares.values()) {
             if (square.isOccupiedByAlly(player.color)) {
-                let moves: Move[] = square.piece!.getMoves(
-                    player,
-                    square,
-                    this,
-                    kingSquare,
-                    enPassantTarget
-                );
+                let moves: Move[] = square.piece!.getMoves(player, square, this, enPassantTarget);
 
                 if (moves) {
                     for (const move of moves) {
@@ -101,7 +95,10 @@ export abstract class Chessboard {
 
         if (kingSquare) {
             move.carryOutMove();
-            isChecked = this.isChecked(player, kingSquare);
+            isChecked = this.isChecked(
+                player,
+                move.toSquare.piece?.getName() === PieceName.King ? move.toSquare : kingSquare
+            );
             move.undoMove();
         }
 
@@ -160,7 +157,7 @@ export abstract class Chessboard {
         for (const direction of Queen.Directions) {
             square = this.getSquareByDirection(kingSquare, direction);
             while (square) {
-                if (square.isEmpty()) {
+                if (!square.isEmpty()) {
                     if (square.isOccupiedByOpponent(player.color)) {
                         if (Rook.Directions.includes(direction)) {
                             if (

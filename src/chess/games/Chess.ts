@@ -37,7 +37,7 @@ export abstract class Chess {
 
     setLegalMoves(): void {
         const player: Player = this.players[this.activePlayerIndex];
-        const kingSquare: Square | null = this.chessboard.searchKingSquare(player.color);
+        const kingSquare: Square | null = this.chessboard.findKingSquare(player.color);
         const enPassantTarget: string | null =
             this.gameStates[this.currentMoveIndex].enPassantTarget;
 

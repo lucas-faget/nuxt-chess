@@ -10,7 +10,6 @@ import { Capture } from "../moves/Capture";
 import { Promotion } from "../moves/Promotion";
 import { EnPassantCapture } from "../moves/EnPassantCapture";
 import type { Chessboard } from "../chessboards/Chessboard";
-import { Chess } from "../games/Chess";
 
 export class Pawn extends Piece {
     constructor(color: PlayerColor) {
@@ -25,7 +24,6 @@ export class Pawn extends Piece {
         player: Player,
         fromSquare: Square,
         chessboard: Chessboard,
-        kingSquare: Square | null,
         enPassantTarget: string | null
     ): Move[] {
         let moves: Move[] = [];
@@ -51,11 +49,11 @@ export class Pawn extends Piece {
             }
         }
 
-        for (const direction of Pawn.getCaptureDirections(player.direction)) {
+        for (const direction of player.pawnCaptureDirections) {
             toSquare = chessboard.getSquareByDirection(fromSquare, direction);
             if (
                 toSquare &&
-                toSquare.isOccupiedByOpponent(this.color) &&
+                toSquare.isOccupiedByOpponent(player.color) &&
                 !toSquare.isOccupiedByPieceName(PieceName.King)
             ) {
                 let move: Move;
@@ -70,13 +68,7 @@ export class Pawn extends Piece {
 
         return [
             ...moves,
-            ...this.getEnPassantCapture(
-                player,
-                fromSquare,
-                chessboard,
-                kingSquare,
-                enPassantTarget
-            ),
+            ...this.getEnPassantCapture(player, fromSquare, chessboard, enPassantTarget),
         ];
     }
 
@@ -84,7 +76,6 @@ export class Pawn extends Piece {
         player: Player,
         fromSquare: Square,
         chessboard: Chessboard,
-        kingSquare: Square | null,
         enPassantTarget: string | null
     ): Move[] {
         let moves: Move[] = [];
@@ -93,7 +84,7 @@ export class Pawn extends Piece {
             let enPassantTargetSquare: Square | null = null;
             let toSquare: Square | null = null;
 
-            for (const direction of [Direction.Left, Direction.Right]) {
+            for (const direction of player.enPassantCaptureDirections) {
                 enPassantTargetSquare = chessboard.getSquareByDirection(fromSquare, direction);
                 if (enPassantTargetSquare?.name === enPassantTarget) {
                     toSquare = chessboard.getSquareByDirection(
@@ -117,17 +108,31 @@ export class Pawn extends Piece {
     }
 
     static getCaptureDirections(direction: Coordinates): Coordinates[] {
-        if (Chess.areEqualCoordinates(direction, Direction.Up)) {
-            return [Direction.UpLeft, Direction.UpRight];
-        } else if (Chess.areEqualCoordinates(direction, Direction.Down)) {
-            return [Direction.DownLeft, Direction.DownRight];
-        } else if (Chess.areEqualCoordinates(direction, Direction.Right)) {
-            return [Direction.UpRight, Direction.DownRight];
-        } else if (Chess.areEqualCoordinates(direction, Direction.Left)) {
-            return [Direction.UpLeft, Direction.DownLeft];
+        if (direction.x === 0 && direction.y !== 0) {
+            return direction.y > 0
+                ? [Direction.UpLeft, Direction.UpRight]
+                : [Direction.DownLeft, Direction.DownRight];
         } else {
-            return [];
+            if (direction.y === 0 && direction.x !== 0) {
+                return direction.x > 0
+                    ? [Direction.DownRight, Direction.UpRight]
+                    : [Direction.DownLeft, Direction.UpLeft];
+            }
         }
+
+        return [];
+    }
+
+    static getEnPassantCaptureDirections(direction: Coordinates): Coordinates[] {
+        if (direction.x === 0 && direction.y !== 0) {
+            return [Direction.Left, Direction.Right];
+        } else {
+            if (direction.y === 0 && direction.x !== 0) {
+                return [Direction.Down, Direction.Up];
+            }
+        }
+
+        return [];
     }
 
     static isStartingPosition(
@@ -140,13 +145,13 @@ export class Pawn extends Piece {
                 (direction.y > 0 && position.y === 1) ||
                 (direction.y < 0 && position.y === chessboard.ranks.length - 2)
             );
-        }
-
-        if (direction.y === 0 && direction.x !== 0) {
-            return (
-                (direction.x > 0 && position.x === 1) ||
-                (direction.x < 0 && position.x === chessboard.ranks.length - 2)
-            );
+        } else {
+            if (direction.y === 0 && direction.x !== 0) {
+                return (
+                    (direction.x > 0 && position.x === 1) ||
+                    (direction.x < 0 && position.x === chessboard.ranks.length - 2)
+                );
+            }
         }
 
         return false;

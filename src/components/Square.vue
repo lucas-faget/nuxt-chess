@@ -62,7 +62,7 @@ export default {
 <template>
     <div v-if="isFogged" class="fogged"></div>
     <div v-else :style="pieceBackgroundStyle" :class="[squareColorStyle, { legal: isLegal }]">
-        <!-- <span v-if="name" style="color: black">{{ name }}</span> -->
+        <span v-if="name" style="color: black">{{ name }}</span>
     </div>
 </template>
 

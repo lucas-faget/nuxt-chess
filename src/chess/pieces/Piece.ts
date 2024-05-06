@@ -27,7 +27,6 @@ export abstract class Piece {
         player: Player,
         square: Square,
         chessboard: Chessboard,
-        kingSquare: Square | null,
         enPassantTarget: string | null
     ): Move[];
 

@@ -10,12 +10,7 @@ import type { Chessboard } from "../chessboards/Chessboard";
 export abstract class MobilePiece extends Piece {
     directions: Coordinates[] = [];
 
-    getMoves(
-        player: Player,
-        fromSquare: Square,
-        chessboard: Chessboard,
-        kingSquare: Square | null
-    ): Move[] {
+    getMoves(player: Player, fromSquare: Square, chessboard: Chessboard): Move[] {
         let moves: Move[] = [];
         let toSquare: Square | null = null;
 
@@ -27,7 +22,7 @@ export abstract class MobilePiece extends Piece {
                     moves.push(move);
                 } else {
                     if (
-                        toSquare.isOccupiedByOpponent(this.color) &&
+                        toSquare.isOccupiedByOpponent(player.color) &&
                         !toSquare.isOccupiedByPieceName(PieceName.King)
                     ) {
                         let move: Move = new Capture(fromSquare, toSquare, toSquare.piece);

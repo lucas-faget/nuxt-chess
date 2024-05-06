@@ -24,12 +24,7 @@ export class Knight extends Piece {
         return PieceName.Knight;
     }
 
-    getMoves(
-        player: Player,
-        fromSquare: Square,
-        chessboard: Chessboard,
-        kingSquare: Square | null
-    ): Move[] {
+    getMoves(player: Player, fromSquare: Square, chessboard: Chessboard): Move[] {
         let moves: Move[] = [];
         let toSquare: Square | null = null;
 
@@ -40,7 +35,7 @@ export class Knight extends Piece {
                     moves.push(move);
                 } else {
                     if (
-                        !toSquare.isOccupiedByAlly(this.color) &&
+                        !toSquare.isOccupiedByAlly(player.color) &&
                         !toSquare.isOccupiedByPieceName(PieceName.King)
                     ) {
                         let move: Move = new Capture(fromSquare, toSquare, toSquare.piece);
