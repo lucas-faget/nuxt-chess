@@ -1,41 +1,41 @@
 @import "./css/index.css";
-@import url('https://fonts.googleapis.com/css2?family=Kanit&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Kanit&display=swap");
 
 :root {
-	/* Square Colors */
-	--color-white: hsl(0,0%,95%);
-	--color-light: hsl(0,0%,85%);
-	--color-light-gray: hsl(0,0%,75%);
-	--color-gray: hsl(0,0%,50%);
-	--color-dark-gray: hsl(0,0%,25%);
-	--color-dark: hsl(0,0%,15%);
-	--color-black: hsl(0,0%,5%);
+    /* Square Colors */
+    --color-white: hsl(0, 0%, 95%);
+    --color-light: hsl(0, 0%, 85%);
+    --color-light-gray: hsl(0, 0%, 75%);
+    --color-gray: hsl(0, 0%, 50%);
+    --color-dark-gray: hsl(0, 0%, 25%);
+    --color-dark: hsl(0, 0%, 15%);
+    --color-black: hsl(0, 0%, 5%);
 
-	/* Player Colors */
-	--white-player-color: #ffffff;
-	--black-player-color: #000000;
-	--silver-player-color: #C0C0C0;
-	--gold-player-color-: #FFD700;
+    /* Player Colors */
+    --white-player-color: #ffffff;
+    --black-player-color: #000000;
+    --silver-player-color: #c0c0c0;
+    --gold-player-color-: #ffd700;
 
-	/* Dimensions */
-	--navbar-height: 70px;
-	--mobile-nav-max-width: 600px;
-	--max-square-size: 65px;
+    /* Dimensions */
+    --navbar-height: 70px;
+    --mobile-nav-max-width: 600px;
+    --max-square-size: 65px;
 }
 
 body {
-	color: var(--color-white);
-	background-color: var(--color-black);
+    color: var(--color-white);
+    background-color: var(--color-black);
 
-	padding: 0;
-	margin: 0;
-	padding-top: var(--navbar-height);
-	overflow-x: hidden;
+    padding: 0;
+    margin: 0;
+    padding-top: var(--navbar-height);
+    overflow-x: hidden;
 
-	font-family: 'Kanit';
+    font-family: "Kanit";
 }
 
 a {
-	color: inherit;
-	text-decoration: none;
+    color: inherit;
+    text-decoration: none;
 }

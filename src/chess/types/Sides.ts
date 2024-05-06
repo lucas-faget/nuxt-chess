@@ -1,4 +1,4 @@
 export enum Side {
     Kingside,
-    Queenside
+    Queenside,
 }

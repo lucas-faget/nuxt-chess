@@ -10,20 +10,18 @@ import { Queen } from "../pieces/Queen";
 import { King } from "../pieces/King";
 import { Chess } from "../games/Chess";
 
-export class Square
-{
+export class Square {
     name: string;
     position: Coordinates;
-    piece: Piece|null;
-  
+    piece: Piece | null;
+
     constructor(name: string, position: Coordinates) {
         this.name = name;
         this.position = position;
         this.piece = null;
     }
 
-    setPiece(name: PieceName, color: PlayerColor): void
-    {
+    setPiece(name: PieceName, color: PlayerColor): void {
         switch (name) {
             case PieceName.Pawn:
                 this.piece = new Pawn(color);
@@ -46,28 +44,19 @@ export class Square
         }
     }
 
-    isEmpty(): boolean
-    {
+    isEmpty(): boolean {
         return this.piece === null;
     }
 
-    isOccupiedByAlly(color: PlayerColor): boolean
-    {
+    isOccupiedByAlly(color: PlayerColor): boolean {
         return this.piece !== null && this.piece.color === color;
     }
 
-    isOccupiedByOpponent(color: PlayerColor): boolean
-    {
+    isOccupiedByOpponent(color: PlayerColor): boolean {
         return this.piece !== null && this.piece.color !== color;
     }
 
-    isOccupiedByPieceName(pieceName: PieceName): boolean
-    {
+    isOccupiedByPieceName(pieceName: PieceName): boolean {
         return this.piece !== null && this.piece.getName() === pieceName;
-    }
-
-    isDark(): boolean
-    {
-        return Chess.isDarkSquare(this.position.x, this.position.y);
     }
 }

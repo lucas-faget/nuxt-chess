@@ -1,153 +1,118 @@
 <script lang="ts">
-	import { ChessVariant } from '../chess/types/ChessVariant'
-	import type { Player } from '../chess/players/Player'
-	import { FourPlayerChess } from '../chess/games/FourPlayerChess';
-	import { SquareColor } from '../types/SquareColor';
+import { mapState, mapGetters, mapActions } from "vuex";
 
-	import Background from '../components/Background.vue'
-	import Chessboard from '../components/Chessboard.vue'
-	import PlayerCard from '../components/PlayerCard.vue'
-	import Actions from '../components/Actions.vue'
-	import Options from '../components/Options.vue'
+import { ChessVariant } from "../chess/types/ChessVariant";
+import { SquareColor } from "../types/SquareColor";
+import type { Player } from "../chess/players/Player";
 
-	export default {
-		components: { Chessboard, Actions, PlayerCard, Options, Background },
-		props: {
-			variant: {
-				type: String as () => ChessVariant,
-				default: ChessVariant.Standard
-			}
-		},
-		data() {
-			return {
-				chess: new FourPlayerChess(),
-				lightSquareColor: SquareColor.Brown,
-				darkSquareColor: SquareColor.Brown,
-			}
-		},
-		computed: {
-			bottomPlayer(): Player {
-				return this.chess.players[this.chess.playerIndexInFront];
-			},
-			leftPlayer(): Player {
-				return this.chess.players[(this.chess.playerIndexInFront + 1) % this.chess.players.length];
-			},
-            topPlayer(): Player {
-				return this.chess.players[(this.chess.playerIndexInFront + 2) % this.chess.players.length];
-			},
-			rightPlayer(): Player {
-				return this.chess.players[(this.chess.playerIndexInFront + 3) % this.chess.players.length];
-			}
-		},
-		methods: {
-            isPlayerMoving(player: Player): boolean {
-                return this.isPlayerMoving(player);
-            },
-			setLightSquareColor(squareColor: SquareColor) {
-				this.lightSquareColor = squareColor;
-			},
-			setDarkSquareColor(squareColor: SquareColor) {
-				this.darkSquareColor = squareColor;
-			}
-		},
-		watch: {
-			variant(newVariant: ChessVariant, oldVariant: ChessVariant) {
-				this.chess = new FourPlayerChess();
-			}
-		}
-	}
+import Background from "../components/Background.vue";
+import Chessboard from "../components/Chessboard.vue";
+import PlayerCard from "../components/PlayerCard.vue";
+import Actions from "../components/Actions.vue";
+import Options from "../components/Options.vue";
+
+export default {
+    components: { Chessboard, Actions, PlayerCard, Options, Background },
+    props: {
+        variant: {
+            type: String as () => ChessVariant,
+            default: ChessVariant.Standard,
+        },
+    },
+    data() {
+        return {
+            isLoaded: false,
+            lightSquareColor: SquareColor.Brown,
+            darkSquareColor: SquareColor.Brown,
+        };
+    },
+    mounted() {
+        this.gameExists(this.variant).then((exists) => {
+            if (exists) {
+                this.isLoaded = true;
+            } else {
+                this.createFourPlayerChessGame().then(() => {
+                    this.isLoaded = true;
+                });
+            }
+        });
+    },
+    computed: {
+        bottomPlayer(): Player {
+            return this.players()[this.playerInFrontIndex()];
+        },
+        leftPlayer(): Player {
+            return this.players()[(this.playerInFrontIndex() + 1) % this.players().length];
+        },
+        topPlayer(): Player {
+            return this.players()[(this.playerInFrontIndex() + 2) % this.players().length];
+        },
+        rightPlayer(): Player {
+            return this.players()[(this.playerInFrontIndex() + 3) % this.players().length];
+        },
+    },
+    methods: {
+        ...mapState(["players", "playerInFrontIndex"]),
+        ...mapGetters(["isPlayerActive"]),
+        ...mapActions(["gameExists", "createFourPlayerChessGame"]),
+
+        setLightSquareColor(squareColor: SquareColor) {
+            this.lightSquareColor = squareColor;
+        },
+        setDarkSquareColor(squareColor: SquareColor) {
+            this.darkSquareColor = squareColor;
+        },
+    },
+    watch: {
+        variant(newVariant: ChessVariant, oldVariant: ChessVariant) {
+            if (newVariant !== oldVariant) {
+                this.createFourPlayerChessGame();
+            }
+        },
+    },
+};
 </script>
 
 <template>
-	<div class="chess">
-		<div>
-			<div class="chessboard">
-				<Chessboard
-					:chess="chess"
-					:lightSquareColor="lightSquareColor"
-					:darkSquareColor="darkSquareColor"
-				/>
-				<!-- <div class="chessboard-corner bottom-right">
-					<PlayerCard
-						:player="bottomPlayer"
-						:isPlayerMoving="isPlayerMoving(bottomPlayer)"
-					/>
-				</div>
-				<div class="chessboard-corner bottom-left">
-					<PlayerCard
-						:player="leftPlayer"
-						:isPlayerMoving="isPlayerMoving(leftPlayer)"
-					/>
-				</div>
-				<div class="chessboard-corner top-left">
-					<PlayerCard
-						:player="topPlayer"
-						:isPlayerMoving="isPlayerMoving(topPlayer)"
-					/>
-				</div>
-				<div class="chessboard-corner top-right">
-					<PlayerCard
-						:player="rightPlayer"
-						:isPlayerMoving="isPlayerMoving(rightPlayer)"
-					/>
-				</div> -->
-			</div>
-			<Actions :chess="chess" />
-			<Options
-				:lightSquareColor="lightSquareColor"
-				:darkSquareColor="darkSquareColor"
-				@change-light-square-color="setLightSquareColor"
-				@change-dark-square-color="setDarkSquareColor"
-				style="border-radius: 0 0 10px 10px;"
-			/>
-		</div>
-	</div>
+    <div class="chess">
+        <div v-if="isLoaded">
+            <div class="chessboard">
+                <Chessboard
+                    :lightSquareColor="lightSquareColor"
+                    :darkSquareColor="darkSquareColor"
+                />
+            </div>
+            <Actions />
+            <Options
+                :lightSquareColor="lightSquareColor"
+                :darkSquareColor="darkSquareColor"
+                @update-light-square-color="setLightSquareColor"
+                @update-dark-square-color="setDarkSquareColor"
+                style="border-radius: 0 0 10px 10px"
+            />
+        </div>
+    </div>
 </template>
 
 <style scoped>
-	.chess {
-		padding-block: 30px;
-		display: flex;
-		justify-content: center;
-	}
+.chess {
+    padding-block: 30px;
+    display: flex;
+    justify-content: center;
+}
 
-	.chess > div {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-	}
+.chess > div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
 
-	.chess > div > div {
-		width: min(95vw, 520px);
-	}
+.chess > div > div {
+    width: min(95vw, 520px);
+}
 
-	.chessboard {
-		position: relative;
-        aspect-ratio: 1/1;
-	}
-
-	.chessboard-corner {
-		position: absolute;
-		aspect-ratio: 1/1;
-	}
-
-	.bottom-right {
-		bottom: 0;
-		right: 0;
-	}
-
-	.bottom-left {
-		bottom: 0;
-		left: 0;
-	}
-
-	.top-left {
-		top: 0;
-		left: 0;
-	}
-
-	.top-right {
-		top: 0;
-		right: 0;
-	}
+.chessboard {
+    position: relative;
+    aspect-ratio: 1/1;
+}
 </style>

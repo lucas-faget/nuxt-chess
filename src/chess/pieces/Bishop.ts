@@ -4,20 +4,20 @@ import type { PlayerColor } from "../types/PlayerColor";
 import { PieceName } from "../types/PieceName";
 import { MobilePiece } from "./MobilePiece";
 
-export class Bishop extends MobilePiece
-{
+export class Bishop extends MobilePiece {
     static Directions: Coordinates[] = [
-        Direction.UpLeft, Direction.UpRight, Direction.DownRight, Direction.DownLeft,
+        Direction.UpLeft,
+        Direction.UpRight,
+        Direction.DownRight,
+        Direction.DownLeft,
     ];
 
-    constructor(color: PlayerColor)
-    {
+    constructor(color: PlayerColor) {
         super(color);
         this.directions = Bishop.Directions;
     }
 
-    getName(): PieceName
-    {
+    getName(): PieceName {
         return PieceName.Bishop;
     }
 }

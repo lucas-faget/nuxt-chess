@@ -3,31 +3,31 @@ import type { Square } from "../squares/Square";
 import { MoveType } from "../types/MoveType";
 import { Capture } from "./Capture";
 
-export class EnPassantCapture extends Capture
-{
+export class EnPassantCapture extends Capture {
     capturedPieceSquare: Square;
 
-    constructor(fromSquare: Square, toSquare: Square, capturedPiece: Piece, capturedPieceSquare: Square)
-    {
+    constructor(
+        fromSquare: Square,
+        toSquare: Square,
+        capturedPiece: Piece,
+        capturedPieceSquare: Square
+    ) {
         super(fromSquare, toSquare, capturedPiece);
         this.capturedPieceSquare = capturedPieceSquare;
     }
 
-    carryoutMove(): void
-    {
-        super.carryoutMove();
+    carryOutMove(): void {
+        super.carryOutMove();
         this.capturedPieceSquare.piece = null;
     }
 
-    undoMove(): void
-    {
+    undoMove(): void {
         this.fromSquare.piece = this.toSquare.piece;
         this.toSquare.piece = null;
         this.capturedPieceSquare.piece = this.capturedPiece;
     }
 
-    getMoveType(): MoveType
-    {
+    getMoveType(): MoveType {
         return MoveType.EnPassantCapture;
     }
 }

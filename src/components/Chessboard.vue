@@ -1,115 +1,146 @@
 <script lang="ts">
-    import { ChessVariant } from '../chess/types/ChessVariant';
-    import { SquareColor } from '../types/SquareColor';
-    import type { Chess } from '../chess/games/Chess';
-    import Square from './Square.vue'
+import { mapState, mapGetters, mapActions } from "vuex";
+import { ChessVariant } from "../chess/types/ChessVariant";
+import { SquareColor } from "../types/SquareColor";
+import Square from "./Square.vue";
 
-    export default {
-        components: { Square },
-        props: {
-			chess: {
-                type: Object as () => Chess,
-                required: true,
-            },
-            lightSquareColor: {
-                type: String as () => SquareColor,
-                default: SquareColor.Gray
-            },
-            darkSquareColor: {
-                type: String as () => SquareColor,
-                default: SquareColor.Gray
+export default {
+    components: { Square },
+    props: {
+        lightSquareColor: {
+            type: String as () => SquareColor,
+            default: SquareColor.Gray,
+        },
+        darkSquareColor: {
+            type: String as () => SquareColor,
+            default: SquareColor.Gray,
+        },
+    },
+    data() {
+        return {
+            fromSquareName: null as string | null,
+        };
+    },
+    computed: {
+        rows(): string[] {
+            switch (this.playerInFrontIndex()) {
+                case 1:
+                    return this.variant() === ChessVariant.FourPlayer
+                        ? this.chessboard().reversedFiles
+                        : this.chessboard().ranks;
+                case 2:
+                    return this.chessboard().ranks;
+                case 3:
+                    return this.chessboard().files;
+                case 0:
+                default:
+                    return this.chessboard().reversedRanks;
             }
-		},
-        data() {
+        },
+        columns(): string[] {
+            switch (this.playerInFrontIndex()) {
+                case 1:
+                    return this.variant() === ChessVariant.FourPlayer
+                        ? this.chessboard().reversedRanks
+                        : this.chessboard().reversedFiles;
+                case 2:
+                    return this.chessboard().reversedFiles;
+                case 3:
+                    return this.chessboard().ranks;
+                case 0:
+                default:
+                    return this.chessboard().files;
+            }
+        },
+        isPerpendicular(): boolean {
+            return (
+                (this.variant() === ChessVariant.FourPlayer && this.playerInFrontIndex() === 1) ||
+                this.playerInFrontIndex() === 3
+            );
+        },
+        gridStyle() {
             return {
-                fromSquareName: ""
-            }
+                gridTemplateColumns: `repeat(${this.chessboard().files.length}, ${
+                    100 / this.chessboard().files.length
+                }%)`,
+                gridTemplateRows: `repeat(${this.chessboard().ranks.length}, ${
+                    100 / this.chessboard().ranks.length
+                }%)`,
+            };
         },
-        computed: {
-            rows(): string[] {
-                switch (this.chess.playerIndexInFront) {
-                    case 1:
-                        return this.chess.variant === ChessVariant.FourPlayer ? this.chess.chessboard.reversedFiles : this.chess.chessboard.ranks;
-                    case 2:
-                        return this.chess.chessboard.ranks;
-                    case 3:
-                        return this.chess.chessboard.files;
-                    case 0:
-                    default:
-                        return this.chess.chessboard.reversedRanks;
-                }
-            },
-            columns(): string[] {
-                switch (this.chess.playerIndexInFront) {
-                    case 1:
-                        return this.chess.variant === ChessVariant.FourPlayer ? this.chess.chessboard.reversedRanks : this.chess.chessboard.reversedFiles;
-                    case 2:
-                        return this.chess.chessboard.reversedFiles;
-                    case 3:
-                        return this.chess.chessboard.ranks;
-                    case 0:
-                    default:
-                        return this.chess.chessboard.files;
-                }
-            },
-            isPerpendicular(): boolean {
-                return this.chess.variant === ChessVariant.FourPlayer && this.chess.playerIndexInFront === 1 || this.chess.playerIndexInFront === 3;
-            },
-            gridStyle() {
-                return {
-                    'gridTemplateColumns': `repeat(${this.chess.chessboard.files.length}, ${100 / this.chess.chessboard.files.length}%)`,
-                    'gridTemplateRows': `repeat(${this.chess.chessboard.files.length}, ${100 / this.chess.chessboard.files.length}%)`
-                }
-            }
+    },
+    methods: {
+        ...mapState(["variant", "chessboard", "playerInFrontIndex", "legalMoves"]),
+        ...mapGetters(["isActiveMoveTheLast"]),
+        ...mapActions(["move"]),
+
+        getSquareName(column: string, row: string): string {
+            return this.isPerpendicular ? row + column : column + row;
         },
-        methods: {
-            getSquareName(column: string, row: string): string {
-                return this.isPerpendicular ? row + column : column + row;
-            },
-            clickSquare(squareName: string): void
-            {
-                if (this.chess.isActiveMoveTheLast()) {
-                    if (this.chess.isLegalMove(this.fromSquareName, squareName)) {
-                        let move = this.chess.getLegalMove(this.fromSquareName, squareName);
-                        if (move) {
-                            this.chess.saveMove(move);
+        isLegalMove(fromSquareName: string, toSquareName: string): boolean {
+            return (
+                this.hasLegalMove(fromSquareName) &&
+                toSquareName in this.legalMoves()[fromSquareName]
+            );
+        },
+        hasLegalMove(squareName: string) {
+            return squareName in this.legalMoves();
+        },
+        handleSquareClick(squareName: string): void {
+            if (this.isActiveMoveTheLast()) {
+                if (this.hasLegalMove(squareName) && this.fromSquareName !== squareName) {
+                    this.fromSquareName = squareName;
+                } else {
+                    if (this.fromSquareName) {
+                        if (this.isLegalMove(this.fromSquareName, squareName)) {
+                            this.move({
+                                fromSquareName: this.fromSquareName,
+                                toSquareName: squareName,
+                            });
                         }
-                        this.fromSquareName = "";
-                    } else {
-                        this.fromSquareName = this.fromSquareName !== squareName ? squareName : "";
+                        this.fromSquareName = null;
                     }
                 }
-            },
-            isLegal(squareName: string): boolean
-            {
-                return this.chess.isLegalMove(this.fromSquareName, squareName) && this.chess.isActiveMoveTheLast();
-            },
-            isFogged(squareName: string): boolean
-            {
-                return this.chess.isFoggedSquare(squareName);
             }
-        }
-    }
+        },
+        isDarkSquare(x: number, y: number): boolean {
+            return this.isPerpendicular ? (x + y) % 2 === 0 : (x + y) % 2 !== 0;
+        },
+        isLegalSquare(squareName: string): boolean {
+            return (
+                this.isActiveMoveTheLast() &&
+                this.fromSquareName &&
+                this.isLegalMove(this.fromSquareName, squareName)
+            );
+        },
+        isFoggedSquare(squareName: string): boolean {
+            return false;
+        },
+    },
+};
 </script>
 
 <template>
-	<div class="chessboard" :style="gridStyle">
-		<template v-for="row in rows" :key="row">
-            <template v-for="column in columns" :key="column">
-                <Square :square="chess.chessboard.getSquareByName(getSquareName(column, row))"
-                        :lightSquareColor="lightSquareColor"
-                        :darkSquareColor="darkSquareColor"
-                        :isLegal="isLegal(getSquareName(column, row))"
-                        :isFogged="isFogged(getSquareName(column, row))"
-                        @click="clickSquare(getSquareName(column, row))"
+    <div class="chessboard" :style="gridStyle">
+        <template v-for="(row, y) in rows" :key="row">
+            <template v-for="(column, x) in columns" :key="column">
+                <Square
+                    :name="getSquareName(column, row)"
+                    :piece="chessboard().squares.get(getSquareName(column, row))"
+                    :lightSquareColor="lightSquareColor"
+                    :darkSquareColor="darkSquareColor"
+                    :isDark="isDarkSquare(x, y)"
+                    :isLegal="isLegalSquare(getSquareName(column, row))"
+                    :isFogged="isFoggedSquare(getSquareName(column, row))"
+                    @click="handleSquareClick(getSquareName(column, row))"
                 />
             </template>
         </template>
-	</div>
+    </div>
 </template>
 
 <style scoped>
-    .chessboard {
-        display: grid;
-    }
+.chessboard {
+    display: grid;
+}
 </style>

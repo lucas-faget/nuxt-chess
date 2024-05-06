@@ -5,14 +5,12 @@ import type { Chessboard } from "../chessboards/Chessboard";
 import { FourPlayerChessboard } from "../chessboards/FourPlayerChessboard";
 import { Chess } from "./Chess";
 
-export class FourPlayerChess extends Chess
-{
-    constructor()
-    {
+export class FourPlayerChess extends Chess {
+    constructor() {
         const players: Player[] = [Whites, Silvers, Blacks, Golds];
-        
+
         const chessboard: Chessboard = new FourPlayerChessboard();
-        
+
         super(ChessVariant.FourPlayer, players, chessboard);
 
         this.addNewGameState();

@@ -1,27 +1,23 @@
 import type { Coordinates } from "../coordinates/Position";
 import { Direction } from "../coordinates/Direction";
-import type { PlayerColor } from "../types/PlayerColor"
+import type { PlayerColor } from "../types/PlayerColor";
 
-export class Player
-{
+export class Player {
     name: string;
     color: PlayerColor;
     direction: Coordinates;
 
-    constructor(color: PlayerColor, name: string, direction: Coordinates)
-    {
+    constructor(color: PlayerColor, name: string, direction: Coordinates) {
         this.color = color;
         this.name = name;
         this.direction = direction;
     }
 
-    kingsideDirection(): Coordinates
-    {
+    kingsideDirection(): Coordinates {
         return this.direction.y === 0 ? Direction.Right : Direction.Down;
     }
 
-    queensideDirection(): Coordinates
-    {
+    queensideDirection(): Coordinates {
         return this.direction.y === 0 ? Direction.Left : Direction.Up;
     }
 }

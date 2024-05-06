@@ -8,36 +8,43 @@ import { Move } from "../moves/Move";
 import { Capture } from "../moves/Capture";
 import type { Chessboard } from "../chessboards/Chessboard";
 
-export class Knight extends Piece
-{
+export class Knight extends Piece {
     static Directions: Coordinates[] = [
-        Direction.UpUpLeft, Direction.UpUpRight, Direction.UpRightRight, Direction.DownRightRight, 
-        Direction.DownDownRight, Direction.DownDownLeft, Direction.DownLeftLeft, Direction.UpLeftLeft
+        Direction.UpUpLeft,
+        Direction.UpUpRight,
+        Direction.UpRightRight,
+        Direction.DownRightRight,
+        Direction.DownDownRight,
+        Direction.DownDownLeft,
+        Direction.DownLeftLeft,
+        Direction.UpLeftLeft,
     ];
 
-    getName(): PieceName
-    {
+    getName(): PieceName {
         return PieceName.Knight;
     }
 
-    getMoves(player: Player, fromSquare: Square, chessboard: Chessboard, kingSquare: Square|null): Move[]
-    {
+    getMoves(
+        player: Player,
+        fromSquare: Square,
+        chessboard: Chessboard,
+        kingSquare: Square | null
+    ): Move[] {
         let moves: Move[] = [];
-        let toSquare: Square|null = null;
+        let toSquare: Square | null = null;
 
         for (const direction of Knight.Directions) {
-            if (toSquare = chessboard.getSquareByDirection(fromSquare, direction)) {
+            if ((toSquare = chessboard.getSquareByDirection(fromSquare, direction))) {
                 if (toSquare.isEmpty()) {
                     let move: Move = new Move(fromSquare, toSquare);
-                    if (!chessboard.isCheckedIfMoving(player, move, kingSquare)) {
-                        moves.push(move);
-                    }
+                    moves.push(move);
                 } else {
-                    if (!toSquare.isOccupiedByAlly(this.color) && !toSquare.isOccupiedByPieceName(PieceName.King)) {
+                    if (
+                        !toSquare.isOccupiedByAlly(this.color) &&
+                        !toSquare.isOccupiedByPieceName(PieceName.King)
+                    ) {
                         let move: Move = new Capture(fromSquare, toSquare, toSquare.piece);
-                        if (!chessboard.isCheckedIfMoving(player, move, kingSquare)) {
-                            moves.push(move);
-                        }
+                        moves.push(move);
                     }
                 }
             }

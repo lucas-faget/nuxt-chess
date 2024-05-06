@@ -1,46 +1,46 @@
-import { ChessVariant } from '@/chess/types/ChessVariant';
-import TwoPlayerGameView from '../../views/TwoPlayerGameView.vue'
-import FourPlayerGameView from '../../views/FourPlayerGameView.vue'
+import { ChessVariant } from "@/chess/types/ChessVariant";
+import TwoPlayerGameView from "../../views/TwoPlayerGameView.vue";
+import FourPlayerGameView from "../../views/FourPlayerGameView.vue";
 
 export const playRoutes = [
     {
         id: 1,
-        text: 'Standard',
-        path: '/play',
-        name: 'play',
+        text: "Standard",
+        path: "/play",
+        name: "play",
         component: TwoPlayerGameView,
         props: {
-            variant: ChessVariant.Standard
-        }
+            variant: ChessVariant.Standard,
+        },
     },
     {
         id: 2,
-        text: 'Fischer Random',
-        path: '/play/960',
-        name: 'play-960',
+        text: "Fischer Random",
+        path: "/play/960",
+        name: "play-960",
         component: TwoPlayerGameView,
         props: {
-            variant: ChessVariant.FischerRandom
-        }
+            variant: ChessVariant.FischerRandom,
+        },
     },
     {
         id: 3,
-        path: '/play/fog',
-        name: 'play-fog',
-        text: 'Fog Of War',
+        path: "/play/fog",
+        name: "play-fog",
+        text: "Fog Of War",
         component: TwoPlayerGameView,
         props: {
-            variant: ChessVariant.FogOfWar
-        }
+            variant: ChessVariant.FogOfWar,
+        },
     },
     {
         id: 4,
-        text: 'Four Player Chess',
-        path: '/play/4player',
-        name: 'play-4player',
+        text: "Four Player Chess",
+        path: "/play/4player",
+        name: "play-4player",
         component: FourPlayerGameView,
         props: {
-            variant: ChessVariant.FourPlayer
-        }
+            variant: ChessVariant.FourPlayer,
+        },
     },
 ];

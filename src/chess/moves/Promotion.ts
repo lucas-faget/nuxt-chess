@@ -3,22 +3,18 @@ import { Queen } from "../pieces/Queen";
 import { MoveType } from "../types/MoveType";
 import { Capture } from "./Capture";
 
-export class Promotion extends Capture
-{
-    carryoutMove(): void
-    {
+export class Promotion extends Capture {
+    carryOutMove(): void {
         this.toSquare.piece = new Queen(this.fromSquare.piece!.color);
         this.fromSquare.piece = null;
     }
 
-    undoMove(): void
-    {
+    undoMove(): void {
         this.fromSquare.piece = new Pawn(this.toSquare.piece!.color);
         this.toSquare.piece = this.capturedPiece;
     }
 
-    getMoveType(): MoveType
-    {
+    getMoveType(): MoveType {
         return MoveType.Promotion;
     }
 }

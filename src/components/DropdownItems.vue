@@ -5,11 +5,11 @@
 </template>
 
 <style scoped>
-    .dropdown-items {
-        background-color: var(--color-dark);
-        padding: 4px;
-        display: flex;
-        flex-direction: column;
-        border-radius: 8px;
-    }
+.dropdown-items {
+    background-color: var(--color-dark);
+    padding: 4px;
+    display: flex;
+    flex-direction: column;
+    border-radius: 8px;
+}
 </style>

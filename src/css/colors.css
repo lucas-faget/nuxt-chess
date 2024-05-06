@@ -1,76 +1,76 @@
 /* Player Colors */
 
 .player-color-white {
-	background-color: var(--white-player-color);
+    background-color: var(--white-player-color);
 }
 
 .player-color-black {
-	background-color: var(--black-player-color);
+    background-color: var(--black-player-color);
 }
 
 .player-color-silver {
-	background-color: var(--silver-player-color);
+    background-color: var(--silver-player-color);
 }
 
 .player-color-gold {
-	background-color: var(--gold-player-color-);
+    background-color: var(--gold-player-color-);
 }
 
 /* Square Colors */
 
 .square-light-brown {
-	background-color: wheat;
+    background-color: wheat;
 }
 
 .square-dark-brown {
-	background-color: burlywood;
+    background-color: burlywood;
 }
 
 .square-light-gray {
-	background-color: lightgray;
+    background-color: lightgray;
 }
 
 .square-dark-gray {
-	background-color: darkgray;
+    background-color: darkgray;
 }
 
 .square-light-blue {
-	background-color: hsl(240,100%,90%);
+    background-color: hsl(240, 100%, 90%);
 }
 
 .square-dark-blue {
-	background-color: hsl(240,100%,70%);
+    background-color: hsl(240, 100%, 70%);
 }
 
 .square-light-green {
-	background-color: hsl(120,50%,90%);
+    background-color: hsl(120, 50%, 90%);
 }
 
 .square-dark-green {
-	background-color: hsl(120,50%,70%);
+    background-color: hsl(120, 50%, 70%);
 }
 
 .square-light-red {
-	background-color: hsl(0,100%,90%);
+    background-color: hsl(0, 100%, 90%);
 }
 
 .square-dark-red {
-	background-color: hsl(0,100%,70%);
+    background-color: hsl(0, 100%, 70%);
 }
 
 .blink {
-	animation-name: blink;
-	animation-duration: 1s;
-	animation-timing-function: ease-in-out;
-	animation-iteration-count: infinite;
-	animation-direction: alternate;
+    animation-name: blink;
+    animation-duration: 1s;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
 }
 
 @keyframes blink {
-	0% {
-		background-color: hsla(0, 0%, 50%, 0);
-	}
-	100% {
-		background: hsla(0, 0%, 50%, 1);
-	}
+    0% {
+        background-color: hsla(0, 0%, 50%, 0);
+    }
+    100% {
+        background: hsla(0, 0%, 50%, 1);
+    }
 }

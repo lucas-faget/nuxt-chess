@@ -8,33 +8,34 @@ import { Move } from "../moves/Move";
 import { Capture } from "../moves/Capture";
 import type { Chessboard } from "../chessboards/Chessboard";
 
-export class King extends Piece
-{
+export class King extends Piece {
     static Directions: Coordinates[] = Queen.Directions;
 
-    getName(): PieceName
-    {
+    getName(): PieceName {
         return PieceName.King;
     }
 
-    getMoves(player: Player, fromSquare: Square, chessboard: Chessboard, kingSquare: Square|null): Move[]
-    {
+    getMoves(
+        player: Player,
+        fromSquare: Square,
+        chessboard: Chessboard,
+        kingSquare: Square | null
+    ): Move[] {
         let moves: Move[] = [];
-        let toSquare: Square|null = null;
+        let toSquare: Square | null = null;
 
         for (const direction of King.Directions) {
-            if (toSquare = chessboard.getSquareByDirection(fromSquare, direction)) {
+            if ((toSquare = chessboard.getSquareByDirection(fromSquare, direction))) {
                 if (toSquare.isEmpty()) {
                     let move: Move = new Move(fromSquare, toSquare);
-                    if (!chessboard.isCheckedIfMoving(player, move, kingSquare)) {
-                        moves.push(move);
-                    }
+                    moves.push(move);
                 } else {
-                    if (toSquare.isOccupiedByOpponent(this.color) && !toSquare.isOccupiedByPieceName(PieceName.King)) {
+                    if (
+                        toSquare.isOccupiedByOpponent(this.color) &&
+                        !toSquare.isOccupiedByPieceName(PieceName.King)
+                    ) {
                         let move: Move = new Capture(fromSquare, toSquare, toSquare.piece);
-                        if (!chessboard.isCheckedIfMoving(player, move, kingSquare)) {
-                            moves.push(move);
-                        }
+                        moves.push(move);
                     }
                 }
             }

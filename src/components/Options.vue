@@ -1,42 +1,44 @@
 <script lang="ts">
-    import { SquareColor } from '../types/SquareColor';
-    import Dropdown from './Dropdown.vue';
-    import DropdownItems from './DropdownItems.vue';
-    import DropdownItem from './DropdownItem.vue';
+import { SquareColor } from "../types/SquareColor";
+import Dropdown from "./Dropdown.vue";
+import DropdownItems from "./DropdownItems.vue";
+import DropdownItem from "./DropdownItem.vue";
 
-    export default {
+export default {
+    components: {
+        DropdownItem,
+        DropdownItems,
+        Dropdown,
+    },
     props: {
         lightSquareColor: {
             type: String as () => SquareColor,
-            default: SquareColor.Gray
+            default: SquareColor.Gray,
         },
         darkSquareColor: {
             type: String as () => SquareColor,
-            default: SquareColor.Gray
-        }
+            default: SquareColor.Gray,
+        },
     },
     data() {
         return {
-            squareColors: Object.values(SquareColor)
+            squareColors: Object.values(SquareColor),
         };
     },
     methods: {
-        changeLightColor(squareColor: SquareColor): void {
-            this.$emit('change-light-square-color', squareColor);
+        updateLightColor(squareColor: SquareColor): void {
+            this.$emit("update-light-square-color", squareColor);
         },
-        changeDarkColor(squareColor: SquareColor): void {
-            this.$emit('change-dark-square-color', squareColor);
-        }
+        updateDarkColor(squareColor: SquareColor): void {
+            this.$emit("update-dark-square-color", squareColor);
+        },
     },
-    components: { DropdownItem, DropdownItems, Dropdown }
-}
+};
 </script>
 
 <template>
     <div class="options">
-        <div class="title">
-            Options
-        </div>
+        <div class="title">Options</div>
         <div class="option">
             <div>Change square color :</div>
             <div class="color-squares">
@@ -56,9 +58,12 @@
                                     <DropdownItem>
                                         <!-- Dropdown Item Slot -->
                                         <template #dropdown-item>
-                                            <div 
-                                                :class="['color-square', 'square-light-' + squareColor]"
-                                                @click="changeLightColor(squareColor)"
+                                            <div
+                                                :class="[
+                                                    'color-square',
+                                                    'square-light-' + squareColor,
+                                                ]"
+                                                @click="updateLightColor(squareColor)"
                                             ></div>
                                         </template>
                                     </DropdownItem>
@@ -84,9 +89,12 @@
                                     <DropdownItem>
                                         <!-- Dropdown Item Slot -->
                                         <template #dropdown-item>
-                                            <div 
-                                                :class="['color-square', 'square-dark-' + squareColor]"
-                                                @click="changeDarkColor(squareColor)"
+                                            <div
+                                                :class="[
+                                                    'color-square',
+                                                    'square-dark-' + squareColor,
+                                                ]"
+                                                @click="updateDarkColor(squareColor)"
                                             ></div>
                                         </template>
                                     </DropdownItem>
@@ -101,40 +109,35 @@
 </template>
 
 <style scoped>
-    .options
-    {
-        color: var(--color-light);
-        background-color: var(--color-dark-gray);
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        gap: 20px;
-        padding-block: 20px;
-    }
+.options {
+    color: var(--color-light);
+    background-color: var(--color-dark-gray);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    padding-block: 20px;
+}
 
-    .options > .title
-    {
-        font-size: 25px;
-    }
+.options > .title {
+    font-size: 25px;
+}
 
-    .options > .option
-    {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
+.options > .option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
 
-    .color-squares
-    {
-        display: flex;
-        gap: 10px;
-    }
+.color-squares {
+    display: flex;
+    gap: 10px;
+}
 
-    .color-square
-    {
-        width: 30px;
-        aspect-ratio: 1/1;
-        cursor: pointer;
-    }
+.color-square {
+    width: 30px;
+    aspect-ratio: 1/1;
+    cursor: pointer;
+}
 </style>

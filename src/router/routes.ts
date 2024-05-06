@@ -1,7 +1,7 @@
-import { playRoutes } from './routes/play';
-import { homeRoutes } from './routes/home';
-import { learnRoutes } from './routes/learn';
-import { threeRoutes } from './routes/three';
+import { playRoutes } from "./routes/play";
+import { homeRoutes } from "./routes/home";
+import { learnRoutes } from "./routes/learn";
+import { threeRoutes } from "./routes/three";
 
 export const routes = [
     {
@@ -24,4 +24,4 @@ export const routes = [
         title: "Three",
         children: threeRoutes,
     },
-] 
+];

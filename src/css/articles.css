@@ -13,7 +13,7 @@ article {
 }
 
 @media screen and (min-width: 1000px) {
-    article:nth-child(2n+1) {
+    article:nth-child(2n + 1) {
         flex-direction: row;
     }
 

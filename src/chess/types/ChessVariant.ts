@@ -1,13 +1,13 @@
 export enum ChessVariant {
-    Standard = 'std',
-    FischerRandom = '960',
+    Standard = "std",
+    FischerRandom = "960",
     FogOfWar = "fog",
-    FourPlayer = '4player',
-    Custom = 'custom'
+    FourPlayer = "4player",
+    Custom = "custom",
 }
 
 // Standard
-// 
+//
 //    a b c d e f g h
 //  + --------------- +
 //  | r n b q k b n r | 8
@@ -21,7 +21,7 @@ export enum ChessVariant {
 //  + --------------- +
 
 // FourPlayerChess
-// 
+//
 //    a b c d e f g h i j k l m n
 //  + --------------------------- +
 //  | . . . R N B K Q B N R . . . | 14

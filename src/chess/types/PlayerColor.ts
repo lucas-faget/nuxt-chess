@@ -1,6 +1,6 @@
 export enum PlayerColor {
-    White = 'w',
-    Black = 'b',
-    Silver = 's',
-    Gold = 'g',
+    White = "w",
+    Black = "b",
+    Silver = "s",
+    Gold = "g",
 }
