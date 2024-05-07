@@ -2,6 +2,9 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import TWEEN from "@tweenjs/tween.js";
+import { mapState, mapGetters, mapActions } from "vuex";
+import { ChessVariant } from "@/chess/types/ChessVariant";
+import { PlayerColor } from "@/chess/types/PlayerColor";
 
 export default {
     data() {
@@ -19,8 +22,6 @@ export default {
             hoverColor: 0xff0000,
             selectColor: 0x0000ff,
 
-            files: ["a", "b", "c", "d", "e", "f", "g", "h"],
-            ranks: ["1", "2", "3", "4", "5", "6", "7", "8"],
             squareSize: 10,
             squareHeight: 2,
             pieceSize: 4,
@@ -63,10 +64,19 @@ export default {
         this.plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
 
         this.init(scene);
-
         this.addAxis(scene);
-        this.addChessboard(squareGroup);
-        this.addPiecesFromFEN(pieceGroup, "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR");
+
+        this.gameExists(ChessVariant.Standard).then((exists) => {
+            if (exists) {
+                this.addChessboard(squareGroup);
+                this.addPieces(pieceGroup);
+            } else {
+                this.createTwoPlayerChessGame(ChessVariant.Standard).then(() => {
+                    this.addChessboard(squareGroup);
+                    this.addPieces(pieceGroup);
+                });
+            }
+        });
 
         this.animate(scene);
 
@@ -81,6 +91,16 @@ export default {
         window.addEventListener("resize", this.onWindowResize);
     },
     methods: {
+        ...mapState(["chessboard"]),
+        ...mapGetters([]),
+        ...mapActions([
+            "gameExists",
+            "createTwoPlayerChessGame",
+            "hasLegalMove",
+            "isLegalMove",
+            "move",
+        ]),
+
         init(scene) {
             this.renderer.setSize(window.innerWidth, window.innerHeight);
             this.renderer.setClearColor(0x000000, 0);
@@ -129,16 +149,21 @@ export default {
                 this.squareSize
             );
 
-            for (let row = 0; row < this.ranks.length; row++) {
-                for (let col = 0; col < this.files.length; col++) {
-                    const color = (row + col) % 2 == 0 ? this.lightColor : this.darkColor;
+            for (const [rankIndex, rank] of this.chessboard().reversedRanks.entries()) {
+                for (const [fileIndex, file] of this.chessboard().files.entries()) {
+                    const color =
+                        (fileIndex + rankIndex) % 2 == 0 ? this.lightColor : this.darkColor;
+
                     const material = new THREE.MeshPhongMaterial({ color });
                     const square = new THREE.Mesh(geometry, material);
-                    const x = this.squareSize * (col - this.files.length / 2 + 0.5);
-                    const z = this.squareSize * (row - this.ranks.length / 2 + 0.5);
+
+                    const x =
+                        this.squareSize * (fileIndex - this.chessboard().files.length / 2 + 0.5);
+                    const z =
+                        this.squareSize * (rankIndex - this.chessboard().ranks.length / 2 + 0.5);
+
                     square.position.set(x, -this.squareHeight / 2, z);
-                    const id = this.files[col] + this.ranks[this.ranks.length - 1 - row];
-                    square.name = id;
+                    square.name = file + rank;
                     square.data = {
                         type: "square",
                         color: color,
@@ -147,27 +172,32 @@ export default {
                 }
             }
         },
-        addPiecesFromFEN(group, fen) {
-            const board = this.FENtoBoard(fen);
-
-            for (let row = 0; row < this.ranks.length; row++) {
-                for (let col = 0; col < this.files.length; col++) {
-                    const piece = board[row][col];
-                    if (piece !== ".") {
+        addPieces(group) {
+            for (const [rankIndex, rank] of this.chessboard().reversedRanks.entries()) {
+                for (const [fileIndex, file] of this.chessboard().files.entries()) {
+                    const squareName = file + rank;
+                    const piece = this.chessboard().squares.get(squareName);
+                    if (piece) {
                         const geometry = new THREE.BoxGeometry(
                             this.pieceSize,
-                            this.pieceHeight[piece.toLowerCase()],
+                            this.pieceHeight[piece.name],
                             this.pieceSize
                         );
                         const color =
-                            piece === piece.toUpperCase() ? this.whiteColor : this.blackColor;
+                            piece.color === PlayerColor.White ? this.whiteColor : this.blackColor;
+
                         const material = new THREE.MeshPhongMaterial({ color });
                         const cube = new THREE.Mesh(geometry, material);
-                        const x = (col - 3.5) * this.squareSize;
-                        const z = (row - 3.5) * this.squareSize;
-                        cube.position.set(x, this.pieceHeight[piece.toLowerCase()] / 2, z);
-                        const id = this.files[col] + this.ranks[this.ranks.length - 1 - row];
-                        cube.name = id;
+
+                        const x =
+                            this.squareSize *
+                            (fileIndex - this.chessboard().files.length / 2 + 0.5);
+                        const z =
+                            this.squareSize *
+                            (rankIndex - this.chessboard().ranks.length / 2 + 0.5);
+
+                        cube.position.set(x, this.pieceHeight[piece.name] / 2, z);
+                        cube.name = squareName;
                         cube.data = {
                             type: "piece",
                             color: color,
@@ -226,34 +256,56 @@ export default {
                 }
             }
 
+            // if (this.isActiveMoveTheLast()) {
+            //     if (this.hasLegalMove(squareName) && this.fromSquareName !== squareName) {
+            //         this.fromSquareName = squareName;
+            //     } else {
+            //         if (this.fromSquareName) {
+            //             if (this.isLegalMove(this.fromSquareName, squareName)) {
+            //                 this.move({
+            //                     fromSquareName: this.fromSquareName,
+            //                     toSquareName: squareName,
+            //                 });
+            //             }
+            //             this.fromSquareName = null;
+            //         }
+            //     }
+            // }
+
             if (object) {
                 if (this.selectedPiece) {
                     if (object.name !== this.selectedPiece.name) {
-                        this.play(squareGroup, pieceGroup, this.selectedPiece.name, object.name);
+                        const fromSquareName = this.selectedPiece.name;
+                        const toSquareName = object.name;
+                        this.isLegalMove({ fromSquareName, toSquareName }).then((isLegalMove) => {
+                            if (isLegalMove) {
+                                this.play(squareGroup, pieceGroup, fromSquareName, toSquareName);
+                                this.unselectPiece();
+                            } else {
+                                this.putBackSelectedPieceToItsPosition();
+                                this.unselectPiece();
+                            }
+                        });
                     } else {
-                        this.moveObject(
-                            this.selectedPiece,
-                            this.selectedPiecePosition.x,
-                            this.selectedPiecePosition.z
-                        );
+                        this.putBackSelectedPieceToItsPosition();
+                        this.unselectPiece();
                     }
-                    this.unselectPiece();
                 } else {
                     const piece =
                         object.data.type === "piece"
                             ? object
                             : pieceGroup.getObjectByName(object.name);
                     if (piece) {
-                        this.selectPiece(piece);
+                        this.hasLegalMove(object.name).then((hasLegalMove) => {
+                            if (hasLegalMove) {
+                                this.selectPiece(piece);
+                            }
+                        });
                     }
                 }
             } else {
                 if (this.selectedPiece) {
-                    this.moveObject(
-                        this.selectedPiece,
-                        this.selectedPiecePosition.x,
-                        this.selectedPiecePosition.z
-                    );
+                    this.putBackSelectedPieceToItsPosition();
                     this.unselectPiece();
                 }
             }
@@ -276,6 +328,13 @@ export default {
                 z: piece.position.z,
             };
             piece.material.color.set(this.selectColor);
+        },
+        putBackSelectedPieceToItsPosition() {
+            this.moveObject(
+                this.selectedPiece,
+                this.selectedPiecePosition.x,
+                this.selectedPiecePosition.z
+            );
         },
         unselectPiece() {
             if (this.selectedPiece) {
@@ -309,8 +368,8 @@ export default {
                 if (!fromPiece) {
                     console.log("No piece to move");
                 } else {
-                    fromPiece.position.x = this.selectedPiecePosition.x;
-                    fromPiece.position.z = this.selectedPiecePosition.z;
+                    // fromPiece.position.x = this.selectedPiecePosition.x;
+                    // fromPiece.position.z = this.selectedPiecePosition.z;
 
                     const targetX = toSquare.position.x;
                     const targetZ = toSquare.position.z;
@@ -322,29 +381,10 @@ export default {
                     }
 
                     fromPiece.name = toSquare.name;
-                }
-            } else {
-                console.log("Invalid move");
-            }
-        },
-        FENtoBoard(fen) {
-            const board = [];
-            const rows = fen.split(" ")[0].split("/");
 
-            for (let row of rows) {
-                const rank = [];
-                for (let char of row) {
-                    if (isNaN(char)) {
-                        rank.push(char);
-                    } else {
-                        for (let i = 0; i < parseInt(char); i++) {
-                            rank.push(".");
-                        }
-                    }
+                    this.move({ fromSquareName, toSquareName });
                 }
-                board.push(rank);
             }
-            return board;
         },
     },
 };

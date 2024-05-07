@@ -96,6 +96,15 @@ const store = createStore({
             commit("setCurrentMoveIndex", chess.currentMoveIndex);
             commit("setLegalMoves", chess.legalMoves);
         },
+        hasLegalMove({ state }, squareName: string): boolean {
+            return squareName in state.legalMoves;
+        },
+        isLegalMove({ state }, { fromSquareName, toSquareName }): boolean {
+            return (
+                fromSquareName in state.legalMoves &&
+                toSquareName in state.legalMoves[fromSquareName]
+            );
+        },
         move({ commit, state }, { fromSquareName, toSquareName }): void {
             state.chess?.tryMove(fromSquareName, toSquareName);
             commit("updateChessboard", state.chess?.chessboard.getPieces());
