@@ -96,10 +96,7 @@ const store = createStore({
             commit("setCurrentMoveIndex", chess.currentMoveIndex);
             commit("setLegalMoves", chess.legalMoves);
         },
-        hasLegalMove({ state }, squareName: string): boolean {
-            return squareName in state.legalMoves;
-        },
-        isLegalMove({ state }, { fromSquareName, toSquareName }): boolean {
+        checkLegalMove({ state }, { fromSquareName, toSquareName }): boolean {
             return (
                 fromSquareName in state.legalMoves &&
                 toSquareName in state.legalMoves[fromSquareName]

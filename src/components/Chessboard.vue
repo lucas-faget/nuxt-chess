@@ -77,14 +77,14 @@ export default {
         getSquareName(column: string, row: string): string {
             return this.isPerpendicular ? row + column : column + row;
         },
+        hasLegalMove(squareName: string) {
+            return squareName in this.legalMoves();
+        },
         isLegalMove(fromSquareName: string, toSquareName: string): boolean {
             return (
                 this.hasLegalMove(fromSquareName) &&
                 toSquareName in this.legalMoves()[fromSquareName]
             );
-        },
-        hasLegalMove(squareName: string) {
-            return squareName in this.legalMoves();
         },
         handleSquareClick(squareName: string): void {
             if (this.isActiveMoveTheLast()) {

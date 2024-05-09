@@ -21,6 +21,7 @@ export default {
 
             hoverColor: 0xff0000,
             selectColor: 0x0000ff,
+            legalColor: 0x00ff00,
 
             squareSize: 10,
             squareHeight: 2,
@@ -91,15 +92,18 @@ export default {
         window.addEventListener("resize", this.onWindowResize);
     },
     methods: {
-        ...mapState(["chessboard"]),
+        ...mapState(["chessboard", "legalMoves"]),
         ...mapGetters([]),
-        ...mapActions([
-            "gameExists",
-            "createTwoPlayerChessGame",
-            "hasLegalMove",
-            "isLegalMove",
-            "move",
-        ]),
+        ...mapActions(["gameExists", "createTwoPlayerChessGame", "checkLegalMove", "move"]),
+        hasLegalMove(squareName) {
+            return squareName in this.legalMoves();
+        },
+        isLegalMove(fromSquareName, toSquareName) {
+            return (
+                this.hasLegalMove(fromSquareName) &&
+                toSquareName in this.legalMoves()[fromSquareName]
+            );
+        },
 
         init(scene) {
             this.renderer.setSize(window.innerWidth, window.innerHeight);
@@ -142,7 +146,7 @@ export default {
             const axesHelper = new THREE.AxesHelper(100);
             scene.add(axesHelper);
         },
-        addChessboard(group) {
+        addChessboard(squareGroup) {
             const geometry = new THREE.BoxGeometry(
                 this.squareSize,
                 this.squareHeight,
@@ -168,11 +172,11 @@ export default {
                         type: "square",
                         color: color,
                     };
-                    group.add(square);
+                    squareGroup.add(square);
                 }
             }
         },
-        addPieces(group) {
+        addPieces(pieceGroup) {
             for (const [rankIndex, rank] of this.chessboard().reversedRanks.entries()) {
                 for (const [fileIndex, file] of this.chessboard().files.entries()) {
                     const squareName = file + rank;
@@ -202,7 +206,7 @@ export default {
                             type: "piece",
                             color: color,
                         };
-                        group.add(cube);
+                        pieceGroup.add(cube);
                     }
                 }
             }
@@ -256,37 +260,29 @@ export default {
                 }
             }
 
-            // if (this.isActiveMoveTheLast()) {
-            //     if (this.hasLegalMove(squareName) && this.fromSquareName !== squareName) {
-            //         this.fromSquareName = squareName;
-            //     } else {
-            //         if (this.fromSquareName) {
-            //             if (this.isLegalMove(this.fromSquareName, squareName)) {
-            //                 this.move({
-            //                     fromSquareName: this.fromSquareName,
-            //                     toSquareName: squareName,
-            //                 });
-            //             }
-            //             this.fromSquareName = null;
-            //         }
-            //     }
-            // }
-
             if (object) {
                 if (this.selectedPiece) {
                     if (object.name !== this.selectedPiece.name) {
                         const fromSquareName = this.selectedPiece.name;
                         const toSquareName = object.name;
-                        this.isLegalMove({ fromSquareName, toSquareName }).then((isLegalMove) => {
-                            if (isLegalMove) {
-                                this.play(squareGroup, pieceGroup, fromSquareName, toSquareName);
-                                this.unselectPiece();
-                            } else {
-                                this.putBackSelectedPieceToItsPosition();
+                        this.checkLegalMove({ fromSquareName, toSquareName }).then(
+                            (isLegalMove) => {
+                                if (isLegalMove) {
+                                    this.play(
+                                        squareGroup,
+                                        pieceGroup,
+                                        fromSquareName,
+                                        toSquareName
+                                    );
+                                } else {
+                                    this.putBackSelectedPieceToItsPosition();
+                                }
+                                this.removeLegalSquares(squareGroup);
                                 this.unselectPiece();
                             }
-                        });
+                        );
                     } else {
+                        this.removeLegalSquares(squareGroup);
                         this.putBackSelectedPieceToItsPosition();
                         this.unselectPiece();
                     }
@@ -296,18 +292,32 @@ export default {
                             ? object
                             : pieceGroup.getObjectByName(object.name);
                     if (piece) {
-                        this.hasLegalMove(object.name).then((hasLegalMove) => {
-                            if (hasLegalMove) {
-                                this.selectPiece(piece);
-                            }
-                        });
+                        if (this.hasLegalMove(object.name)) {
+                            this.selectPiece(piece);
+                            this.revealLegalSquares(squareGroup);
+                        }
                     }
                 }
             } else {
                 if (this.selectedPiece) {
+                    this.removeLegalSquares(squareGroup);
                     this.putBackSelectedPieceToItsPosition();
                     this.unselectPiece();
                 }
+            }
+        },
+        revealLegalSquares(squareGroup) {
+            if (this.selectedPiece) {
+                for (const square of squareGroup.children) {
+                    if (this.isLegalMove(this.selectedPiece.name, square.name)) {
+                        square.material.color.set(this.legalColor);
+                    }
+                }
+            }
+        },
+        removeLegalSquares(squareGroup) {
+            for (const square of squareGroup.children) {
+                square.material.color.set(square.data.color);
             }
         },
         hoverObject(object) {
@@ -316,7 +326,14 @@ export default {
         },
         removeHoveredObject() {
             if (this.hoveredObject) {
-                this.hoveredObject.material.color.set(this.hoveredObject.data.color);
+                if (
+                    this.selectedPiece &&
+                    this.isLegalMove(this.selectedPiece.name, this.hoveredObject.name)
+                ) {
+                    this.hoveredObject.material.color.set(this.legalColor);
+                } else {
+                    this.hoveredObject.material.color.set(this.hoveredObject.data.color);
+                }
                 this.hoveredObject = undefined;
             }
         },
