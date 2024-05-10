@@ -1,9 +1,9 @@
 <script>
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import TWEEN from "@tweenjs/tween.js";
 import { mapState, mapGetters, mapActions } from "vuex";
-import { ChessVariant } from "@/chess/types/ChessVariant";
 import { PlayerColor } from "@/chess/types/PlayerColor";
 
 export default {
@@ -67,17 +67,37 @@ export default {
         this.init(scene);
         this.addAxis(scene);
 
-        this.gameExists(ChessVariant.Standard).then((exists) => {
-            if (exists) {
-                this.addChessboard(squareGroup);
-                this.addPieces(pieceGroup);
-            } else {
-                this.createTwoPlayerChessGame(ChessVariant.Standard).then(() => {
-                    this.addChessboard(squareGroup);
-                    this.addPieces(pieceGroup);
-                });
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
+        directionalLight.position.set(1, 1, 1).normalize();
+        scene.add(directionalLight);
+
+        const loader = new GLTFLoader();
+
+        loader.load(
+            "src/models/chessboard.glb",
+            function (gltf) {
+                const group = gltf.scene;
+                console.log(group);
+                group.scale.multiplyScalar(100);
+                scene.add(group);
+            },
+            undefined,
+            function (error) {
+                console.error(error);
             }
-        });
+        );
+
+        // this.gameExists(ChessVariant.Standard).then((exists) => {
+        //     if (exists) {
+        //         this.addChessboard(squareGroup);
+        //         this.addPieces(pieceGroup);
+        //     } else {
+        //         this.createTwoPlayerChessGame(ChessVariant.Standard).then(() => {
+        //             this.addChessboard(squareGroup);
+        //             this.addPieces(pieceGroup);
+        //         });
+        //     }
+        // });
 
         this.animate(scene);
 
@@ -114,9 +134,9 @@ export default {
             this.controls.enableDamping = true;
             this.controls.dampingFactor = 0.05;
             this.controls.screenSpacePanning = false;
-            this.controls.minDistance = 50;
-            this.controls.maxDistance = 150;
-            this.controls.maxPolarAngle = Math.PI / 2.5;
+            // this.controls.minDistance = 50;
+            // this.controls.maxDistance = 150;
+            // this.controls.maxPolarAngle = Math.PI / 2.5;
 
             this.camera.position.set(50, 50, 50);
             this.camera.lookAt(0, 0, 0);
