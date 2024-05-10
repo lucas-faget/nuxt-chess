@@ -74,7 +74,7 @@ export default {
         const loader = new GLTFLoader();
 
         loader.load(
-            "src/models/chessboard.glb",
+            "/models/chessboard.glb",
             function (gltf) {
                 const group = gltf.scene;
                 console.log(group);
