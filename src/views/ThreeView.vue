@@ -4,6 +4,7 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import TWEEN from "@tweenjs/tween.js";
 import { mapState, mapGetters, mapActions } from "vuex";
+import { ChessVariant } from "@/chess/types/ChessVariant";
 import { PlayerColor } from "@/chess/types/PlayerColor";
 
 export default {
@@ -14,26 +15,19 @@ export default {
             near: 0.1,
             far: 1000,
 
-            lightColor: 0xeeeeee,
-            darkColor: 0x444444,
-            whiteColor: 0xcccccc,
-            blackColor: 0x222222,
+            squareSize: 0.05,
 
+            whiteColor: 0xffffff,
+            blackColor: 0x000000,
             hoverColor: 0xff0000,
             selectColor: 0x0000ff,
             legalColor: 0x00ff00,
 
-            squareSize: 10,
-            squareHeight: 2,
-            pieceSize: 4,
-            pieceHeight: {
-                p: 4,
-                r: 8,
-                n: 6,
-                b: 7,
-                q: 10,
-                k: 12,
-            },
+            whiteMaterial: undefined,
+            blackMaterial: undefined,
+            hoverMaterial: undefined,
+            selectMaterial: undefined,
+            legalMaterial: undefined,
 
             camera: undefined,
             renderer: undefined,
@@ -41,9 +35,7 @@ export default {
             raycaster: undefined,
             mouse: undefined,
             plane: undefined,
-
-            squareGroup: undefined,
-            pieceGroup: undefined,
+            loader: undefined,
 
             hoveredObject: undefined,
             selectedPiece: undefined,
@@ -63,41 +55,22 @@ export default {
         this.mouse = new THREE.Vector2();
         this.raycaster = new THREE.Raycaster();
         this.plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
+        this.loader = new GLTFLoader();
 
         this.init(scene);
         this.addAxis(scene);
 
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
-        directionalLight.position.set(1, 1, 1).normalize();
-        scene.add(directionalLight);
-
-        const loader = new GLTFLoader();
-
-        loader.load(
-            "/models/chessboard.glb",
-            function (gltf) {
-                const group = gltf.scene;
-                console.log(group);
-                group.scale.multiplyScalar(100);
-                scene.add(group);
-            },
-            undefined,
-            function (error) {
-                console.error(error);
+        this.gameExists(ChessVariant.Standard).then((exists) => {
+            if (exists) {
+                this.loadChessboard(scene, squareGroup);
+                this.addPieces(pieceGroup);
+            } else {
+                this.createTwoPlayerChessGame(ChessVariant.Standard).then(() => {
+                    this.loadChessboard(scene, squareGroup);
+                    this.addPieces(pieceGroup);
+                });
             }
-        );
-
-        // this.gameExists(ChessVariant.Standard).then((exists) => {
-        //     if (exists) {
-        //         this.addChessboard(squareGroup);
-        //         this.addPieces(pieceGroup);
-        //     } else {
-        //         this.createTwoPlayerChessGame(ChessVariant.Standard).then(() => {
-        //             this.addChessboard(squareGroup);
-        //             this.addPieces(pieceGroup);
-        //         });
-        //     }
-        // });
+        });
 
         this.animate(scene);
 
@@ -115,6 +88,7 @@ export default {
         ...mapState(["chessboard", "legalMoves"]),
         ...mapGetters([]),
         ...mapActions(["gameExists", "createTwoPlayerChessGame", "checkLegalMove", "move"]),
+
         hasLegalMove(squareName) {
             return squareName in this.legalMoves();
         },
@@ -126,6 +100,12 @@ export default {
         },
 
         init(scene) {
+            this.whiteMaterial = new THREE.MeshStandardMaterial({ color: this.whiteColor });
+            this.blackMaterial = new THREE.MeshStandardMaterial({ color: this.blackColor });
+            this.hoverMaterial = new THREE.MeshStandardMaterial({ color: this.hoverColor });
+            this.selectMaterial = new THREE.MeshStandardMaterial({ color: this.selectColor });
+            this.legalMaterial = new THREE.MeshStandardMaterial({ color: this.legalColor });
+
             this.renderer.setSize(window.innerWidth, window.innerHeight);
             this.renderer.setClearColor(0x000000, 0);
             this.$refs.container.appendChild(this.renderer.domElement);
@@ -134,15 +114,15 @@ export default {
             this.controls.enableDamping = true;
             this.controls.dampingFactor = 0.05;
             this.controls.screenSpacePanning = false;
-            // this.controls.minDistance = 50;
-            // this.controls.maxDistance = 150;
+            // this.controls.minDistance = 0.3;
+            this.controls.maxDistance = 1;
             // this.controls.maxPolarAngle = Math.PI / 2.5;
 
-            this.camera.position.set(50, 50, 50);
+            this.camera.position.set(0.3, 0.3, 0.3);
             this.camera.lookAt(0, 0, 0);
 
             const light = new THREE.DirectionalLight(0xffffff, 5);
-            light.position.set(0, 50, 0);
+            light.position.set(0, 0.5, 0);
             this.camera.add(light);
 
             const cameraPole = new THREE.Object3D();
@@ -163,38 +143,34 @@ export default {
             this.renderer.setSize(window.innerWidth, window.innerHeight);
         },
         addAxis(scene) {
-            const axesHelper = new THREE.AxesHelper(100);
+            const axesHelper = new THREE.AxesHelper(1);
             scene.add(axesHelper);
         },
-        addChessboard(squareGroup) {
-            const geometry = new THREE.BoxGeometry(
-                this.squareSize,
-                this.squareHeight,
-                this.squareSize
-            );
+        loadChessboard(scene, squareGroup) {
+            this.loader.load(
+                "/models/chessboard.glb",
+                function (gltf) {
+                    const chessboard = gltf.scene.children[0];
+                    chessboard.children.forEach((child, index) => {
+                        child.position.x -= 0.2;
+                        child.position.z += 0.2;
 
-            for (const [rankIndex, rank] of this.chessboard().reversedRanks.entries()) {
-                for (const [fileIndex, file] of this.chessboard().files.entries()) {
-                    const color =
-                        (fileIndex + rankIndex) % 2 == 0 ? this.lightColor : this.darkColor;
-
-                    const material = new THREE.MeshPhongMaterial({ color });
-                    const square = new THREE.Mesh(geometry, material);
-
-                    const x =
-                        this.squareSize * (fileIndex - this.chessboard().files.length / 2 + 0.5);
-                    const z =
-                        this.squareSize * (rankIndex - this.chessboard().ranks.length / 2 + 0.5);
-
-                    square.position.set(x, -this.squareHeight / 2, z);
-                    square.name = file + rank;
-                    square.data = {
-                        type: "square",
-                        color: color,
-                    };
-                    squareGroup.add(square);
+                        if (index > 1) {
+                            const square = child.clone();
+                            square.name = child.name.toLowerCase();
+                            square.userData.type = "square";
+                            square.userData.material = child.material;
+                            squareGroup.add(square);
+                        } else {
+                            scene.add(child.clone());
+                        }
+                    });
+                },
+                undefined,
+                function (error) {
+                    console.error(error);
                 }
-            }
+            );
         },
         addPieces(pieceGroup) {
             for (const [rankIndex, rank] of this.chessboard().reversedRanks.entries()) {
@@ -202,15 +178,13 @@ export default {
                     const squareName = file + rank;
                     const piece = this.chessboard().squares.get(squareName);
                     if (piece) {
-                        const geometry = new THREE.BoxGeometry(
-                            this.pieceSize,
-                            this.pieceHeight[piece.name],
-                            this.pieceSize
-                        );
-                        const color =
-                            piece.color === PlayerColor.White ? this.whiteColor : this.blackColor;
+                        const cubeSize = 0.02;
+                        const geometry = new THREE.BoxGeometry(cubeSize, cubeSize, cubeSize);
+                        const material =
+                            piece.color === PlayerColor.White
+                                ? this.whiteMaterial
+                                : this.blackMaterial;
 
-                        const material = new THREE.MeshPhongMaterial({ color });
                         const cube = new THREE.Mesh(geometry, material);
 
                         const x =
@@ -220,12 +194,10 @@ export default {
                             this.squareSize *
                             (rankIndex - this.chessboard().ranks.length / 2 + 0.5);
 
-                        cube.position.set(x, this.pieceHeight[piece.name] / 2, z);
+                        cube.position.set(x, cubeSize / 2, z);
                         cube.name = squareName;
-                        cube.data = {
-                            type: "piece",
-                            color: color,
-                        };
+                        cube.userData.type = "piece";
+                        cube.userData.material = material;
                         pieceGroup.add(cube);
                     }
                 }
@@ -308,7 +280,7 @@ export default {
                     }
                 } else {
                     const piece =
-                        object.data.type === "piece"
+                        object.userData?.type === "piece"
                             ? object
                             : pieceGroup.getObjectByName(object.name);
                     if (piece) {
@@ -330,29 +302,30 @@ export default {
             if (this.selectedPiece) {
                 for (const square of squareGroup.children) {
                     if (this.isLegalMove(this.selectedPiece.name, square.name)) {
-                        square.material.color.set(this.legalColor);
+                        square.material = this.legalMaterial;
                     }
                 }
             }
         },
         removeLegalSquares(squareGroup) {
             for (const square of squareGroup.children) {
-                square.material.color.set(square.data.color);
+                square.material = square.userData.material;
             }
         },
         hoverObject(object) {
             this.hoveredObject = object;
-            object.material.color.set(this.hoverColor);
+            object.material = this.hoverMaterial;
         },
         removeHoveredObject() {
             if (this.hoveredObject) {
                 if (
                     this.selectedPiece &&
+                    this.hoveredObject.userData.type === "square" &&
                     this.isLegalMove(this.selectedPiece.name, this.hoveredObject.name)
                 ) {
-                    this.hoveredObject.material.color.set(this.legalColor);
+                    this.hoveredObject.material = this.legalMaterial;
                 } else {
-                    this.hoveredObject.material.color.set(this.hoveredObject.data.color);
+                    this.hoveredObject.material = this.hoveredObject.userData.material;
                 }
                 this.hoveredObject = undefined;
             }
@@ -364,7 +337,7 @@ export default {
                 x: piece.position.x,
                 z: piece.position.z,
             };
-            piece.material.color.set(this.selectColor);
+            piece.material = this.selectMaterial;
         },
         putBackSelectedPieceToItsPosition() {
             this.moveObject(
@@ -375,7 +348,7 @@ export default {
         },
         unselectPiece() {
             if (this.selectedPiece) {
-                this.selectedPiece.material.color.set(this.selectedPiece.data.color);
+                this.selectedPiece.material = this.selectedPiece.userData.material;
                 this.selectedPiece = undefined;
                 this.selectedPiecePosition = undefined;
             }
