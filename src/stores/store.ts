@@ -109,6 +109,9 @@ const store = createStore({
                 toSquareName in state.legalMoves[fromSquareName]
             );
         },
+        getLegalMove({ state }, { fromSquareName, toSquareName }): Move | null {
+            return state.chess?.getLegalMove(fromSquareName, toSquareName)?.serialize() ?? null;
+        },
         tryMove({ commit, getters, state }, { fromSquareName, toSquareName }): void {
             if (getters.isActiveMoveTheLast) {
                 const move = state.chess?.tryMove(fromSquareName, toSquareName);

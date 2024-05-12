@@ -87,7 +87,13 @@ export default {
     methods: {
         ...mapState(["chessboard", "legalMoves"]),
         ...mapGetters([]),
-        ...mapActions(["gameExists", "createTwoPlayerChessGame", "checkLegalMove", "tryMove"]),
+        ...mapActions([
+            "gameExists",
+            "createTwoPlayerChessGame",
+            "checkLegalMove",
+            "getLegalMove",
+            "tryMove",
+        ]),
 
         hasLegalMove(squareName) {
             return squareName in this.legalMoves();
@@ -367,33 +373,33 @@ export default {
                 .easing(TWEEN.Easing.Quadratic.Out)
                 .start();
         },
-        play(squareGroup, pieceGroup, fromSquareName, toSquareName) {
-            const fromSquare = squareGroup.getObjectByName(fromSquareName);
-            const fromPiece = pieceGroup.getObjectByName(fromSquareName);
-            const toSquare = squareGroup.getObjectByName(toSquareName);
-            const toPiece = pieceGroup.getObjectByName(toSquareName);
+        carryOutMove(squareGroup, pieceGroup, move) {
+            const fromSquare = squareGroup.getObjectByName(move.fromSquare);
+            const fromPiece = pieceGroup.getObjectByName(move.fromSquare);
+            const toSquare = squareGroup.getObjectByName(move.toSquare);
+            const captureSquare = squareGroup.getObjectByName(move.captureSquare);
+            const capturedPiece = pieceGroup.getObjectByName(move.captureSquare);
 
-            if (fromSquare && toSquare) {
-                if (!fromPiece) {
-                    console.log("No piece to move");
-                } else {
-                    // fromPiece.position.x = this.selectedPiecePosition.x;
-                    // fromPiece.position.z = this.selectedPiecePosition.z;
+            if (fromSquare && toSquare && captureSquare && fromPiece) {
+                const targetX = toSquare.position.x;
+                const targetZ = toSquare.position.z;
 
-                    const targetX = toSquare.position.x;
-                    const targetZ = toSquare.position.z;
+                this.moveObject(fromPiece, targetX, targetZ);
 
-                    this.moveObject(fromPiece, targetX, targetZ);
-
-                    if (toPiece) {
-                        pieceGroup.remove(toPiece);
-                    }
-
-                    fromPiece.name = toSquare.name;
-
-                    this.tryMove({ fromSquareName, toSquareName });
+                if (capturedPiece) {
+                    pieceGroup.remove(capturedPiece);
                 }
+
+                fromPiece.name = toSquare.name;
             }
+        },
+        play(squareGroup, pieceGroup, fromSquareName, toSquareName) {
+            this.getLegalMove({ fromSquareName, toSquareName }).then((move) => {
+                if (move) {
+                    this.tryMove({ fromSquareName, toSquareName });
+                    this.carryOutMove(squareGroup, pieceGroup, move);
+                }
+            });
         },
     },
 };

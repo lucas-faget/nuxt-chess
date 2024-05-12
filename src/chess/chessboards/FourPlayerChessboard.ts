@@ -1,6 +1,5 @@
 import { PlayerColor } from "../types/PlayerColor";
 import { PieceName } from "../types/PieceName";
-import { Square } from "../squares/Square";
 import { Chessboard } from "./Chessboard";
 
 export class FourPlayerChessboard extends Chessboard {
