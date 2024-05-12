@@ -1,8 +1,8 @@
 import type { Piece } from "./Piece";
 
-export interface Move {
+export type Move = {
     fromSquare: string;
     toSquare: string;
     captureSquare: string;
-    capturedPiece: Piece;
-}
+    capturedPiece: Piece | null;
+};

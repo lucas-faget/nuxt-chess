@@ -1,6 +1,5 @@
+import type { Piece } from "./Piece";
+
 export interface Pieces {
-    [key: string]: {
-        name: string;
-        color: string;
-    };
+    [key: string]: Piece;
 }

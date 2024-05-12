@@ -9,8 +9,8 @@ import type { Player } from "../players/Player";
 import { Square } from "../squares/Square";
 import type { Move } from "../moves/Move";
 import { King } from "../pieces/King";
-import type { Pieces } from "../types/Pieces";
 import type { LegalMoves } from "../types/LegalMoves";
+import type { SerializedPieces } from "../serialization/SerializedPieces";
 
 export abstract class Chessboard {
     ranks: string[];
@@ -201,8 +201,8 @@ export abstract class Chessboard {
         return false;
     }
 
-    getPieces(): Pieces {
-        const pieces: Pieces = {};
+    getPieces(): SerializedPieces {
+        const pieces: SerializedPieces = {};
 
         for (const [squareName, square] of this.squares.entries()) {
             if (square.piece) {

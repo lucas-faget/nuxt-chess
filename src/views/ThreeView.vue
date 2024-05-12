@@ -87,7 +87,7 @@ export default {
     methods: {
         ...mapState(["chessboard", "legalMoves"]),
         ...mapGetters([]),
-        ...mapActions(["gameExists", "createTwoPlayerChessGame", "checkLegalMove", "move"]),
+        ...mapActions(["gameExists", "createTwoPlayerChessGame", "checkLegalMove", "tryMove"]),
 
         hasLegalMove(squareName) {
             return squareName in this.legalMoves();
@@ -186,7 +186,6 @@ export default {
                                 : this.blackMaterial;
 
                         const cube = new THREE.Mesh(geometry, material);
-
                         const x =
                             this.squareSize *
                             (fileIndex - this.chessboard().files.length / 2 + 0.5);
@@ -392,7 +391,7 @@ export default {
 
                     fromPiece.name = toSquare.name;
 
-                    this.move({ fromSquareName, toSquareName });
+                    this.tryMove({ fromSquareName, toSquareName });
                 }
             }
         },

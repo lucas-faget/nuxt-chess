@@ -2,6 +2,7 @@ import type { Piece } from "../pieces/Piece";
 import type { Square } from "../squares/Square";
 import { MoveType } from "../types/MoveType";
 import { Move } from "./Move";
+import type { SerializedMove } from "../serialization/SerializedMove";
 
 export class Capture extends Move {
     constructor(fromSquare: Square, toSquare: Square, capturedPiece: Piece | null) {

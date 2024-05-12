@@ -7,6 +7,7 @@ import type { Move } from "../moves/Move";
 import type { LegalMoves } from "../types/LegalMoves";
 import type { GameState } from "../types/GameState";
 import type { Chessboard } from "../chessboards/Chessboard";
+import type { SerializedMove } from "../serialization/SerializedMove";
 
 export abstract class Chess {
     variant: ChessVariant;
@@ -22,17 +23,6 @@ export abstract class Chess {
         this.variant = variant;
         this.players = players;
         this.chessboard = chessboard;
-    }
-
-    tryMove(fromSquareName: string, toSquareName: string) {
-        if (this.isActiveMoveTheLast()) {
-            if (this.isLegalMove(fromSquareName, toSquareName)) {
-                const move = this.getLegalMove(fromSquareName, toSquareName);
-                if (move) {
-                    this.move(move);
-                }
-            }
-        }
     }
 
     setLegalMoves(): void {
@@ -76,6 +66,28 @@ export abstract class Chess {
         });
     }
 
+    getMoveByIndex(index: number): SerializedMove | null {
+        if (index >= 0 && index < this.gameStates.length) {
+            return this.gameStates[index].move?.serialize() ?? null;
+        }
+
+        return null;
+    }
+
+    tryMove(fromSquareName: string, toSquareName: string): SerializedMove | null {
+        if (this.isActiveMoveTheLast()) {
+            if (this.isLegalMove(fromSquareName, toSquareName)) {
+                const move = this.getLegalMove(fromSquareName, toSquareName);
+                if (move) {
+                    this.move(move);
+                    return move.serialize();
+                }
+            }
+        }
+
+        return null;
+    }
+
     move(move: Move): void {
         move.carryOutMove();
         this.gameStates[this.currentMoveIndex].move = move;
@@ -85,17 +97,21 @@ export abstract class Chess {
         this.setLegalMoves();
     }
 
-    cancelLastMove(): void {
+    cancelLastMove(): SerializedMove | null {
         if (this.isActiveMoveTheLast()) {
             if (this.gameStates.length > 1) {
                 this.gameStates.pop();
                 this.currentMoveIndex--;
-                this.gameStates[this.currentMoveIndex].move!.undoMove();
+                const move: Move | null = this.gameStates[this.currentMoveIndex].move;
+                move?.undoMove();
                 this.gameStates[this.currentMoveIndex].move = null;
                 this.setPreviousPlayer();
                 this.setLegalMoves();
+                return move?.serialize() ?? null;
             }
         }
+
+        return null;
     }
 
     resetGame(): void {

@@ -1,5 +1,6 @@
 import { createStore } from "vuex";
 import type { Pieces } from "@/types/Pieces";
+import type { Move } from "@/types/Move";
 import { Chessboard } from "@/types/Chessboard";
 
 import { ChessVariant } from "@/chess/types/ChessVariant";
@@ -59,6 +60,12 @@ const store = createStore({
         updateChessboard(state, pieces: Pieces) {
             state.chessboard?.fillChessboard(pieces);
         },
+        carryOutMove(state, move: Move) {
+            state.chessboard?.carryOutMove(move);
+        },
+        undoMove(state, move: Move) {
+            state.chessboard?.undoMove(move);
+        },
     },
     actions: {
         gameExists({ state }, variant: ChessVariant): boolean {
@@ -102,32 +109,61 @@ const store = createStore({
                 toSquareName in state.legalMoves[fromSquareName]
             );
         },
-        move({ commit, state }, { fromSquareName, toSquareName }): void {
-            state.chess?.tryMove(fromSquareName, toSquareName);
-            commit("updateChessboard", state.chess?.chessboard.getPieces());
-            commit("setActivePlayerIndex", state.chess?.activePlayerIndex);
-            commit("setLastMoveIndex", state.chess?.currentMoveIndex);
-            commit("setCurrentMoveIndex", state.chess?.currentMoveIndex);
-            commit("setLegalMoves", state.chess?.legalMoves);
+        tryMove({ commit, getters, state }, { fromSquareName, toSquareName }): void {
+            if (getters.isActiveMoveTheLast) {
+                const move = state.chess?.tryMove(fromSquareName, toSquareName);
+                if (move) {
+                    commit("carryOutMove", move);
+                    commit("setActivePlayerIndex", state.chess?.activePlayerIndex);
+                    commit("setLastMoveIndex", state.chess?.currentMoveIndex);
+                    commit("setCurrentMoveIndex", state.chess?.currentMoveIndex);
+                    commit("setLegalMoves", state.chess?.legalMoves);
+                }
+            }
+        },
+        cancelLastMove({ commit, getters, state }): void {
+            if (getters.isActiveMoveTheLast) {
+                const move = state.chess?.cancelLastMove();
+                if (move) {
+                    commit("undoMove", move);
+                    commit("setActivePlayerIndex", state.chess?.activePlayerIndex);
+                    commit("setLastMoveIndex", state.chess?.currentMoveIndex);
+                    commit("setCurrentMoveIndex", state.chess?.currentMoveIndex);
+                    commit("setLegalMoves", state.chess?.legalMoves);
+                }
+            }
         },
         spinChessboard({ commit, state }): void {
             const index = (state.playerInFrontIndex + 1) % state.players.length;
             commit("setPlayerInFrontIndex", index);
         },
-        goToFirstMove({ state }): void {
-            // TODO
+        goToFirstMove({ dispatch, state }): void {
+            while (state.currentMoveIndex > 0) {
+                dispatch("goToPreviousMove");
+            }
         },
-        goToPreviousMove({ state }): void {
-            // TODO
+        goToPreviousMove({ commit, state }): void {
+            if (state.currentMoveIndex > 0) {
+                commit("setCurrentMoveIndex", state.currentMoveIndex - 1);
+                const move = state.chess?.getMoveByIndex(state.currentMoveIndex);
+                if (move) {
+                    commit("undoMove", move);
+                }
+            }
         },
-        goToNextMove({ state }): void {
-            // TODO
+        goToNextMove({ commit, state }): void {
+            if (state.currentMoveIndex < state.lastMoveIndex) {
+                const move = state.chess?.getMoveByIndex(state.currentMoveIndex);
+                if (move) {
+                    commit("carryOutMove", move);
+                }
+                commit("setCurrentMoveIndex", state.currentMoveIndex + 1);
+            }
         },
-        goToLastMove({ state }): void {
-            // TODO
-        },
-        cancelLastMove({ state }): void {
-            // TODO
+        goToLastMove({ dispatch, state }): void {
+            while (state.currentMoveIndex < state.lastMoveIndex) {
+                dispatch("goToNextMove");
+            }
         },
     },
 });
