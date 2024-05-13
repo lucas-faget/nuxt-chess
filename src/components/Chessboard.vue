@@ -72,7 +72,7 @@ export default {
     methods: {
         ...mapState(["variant", "chessboard", "playerInFrontIndex", "legalMoves"]),
         ...mapGetters(["isActiveMoveTheLast"]),
-        ...mapActions(["tryMove"]),
+        ...mapActions(["checkLegalMove", "tryMove"]),
 
         getSquareName(column: string, row: string): string {
             return this.isPerpendicular ? row + column : column + row;
@@ -92,12 +92,18 @@ export default {
                     this.fromSquareName = squareName;
                 } else {
                     if (this.fromSquareName) {
-                        if (this.isLegalMove(this.fromSquareName, squareName)) {
-                            this.tryMove({
-                                fromSquareName: this.fromSquareName,
-                                toSquareName: squareName,
-                            });
-                        }
+                        const fromSquareName: string = this.fromSquareName;
+                        const toSquareName: string = squareName;
+                        this.checkLegalMove({ fromSquareName, toSquareName }).then(
+                            (isLegalMove) => {
+                                if (isLegalMove) {
+                                    this.tryMove({
+                                        fromSquareName,
+                                        toSquareName,
+                                    });
+                                }
+                            }
+                        );
                         this.fromSquareName = null;
                     }
                 }
