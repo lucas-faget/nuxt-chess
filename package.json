@@ -12,11 +12,18 @@
     "dependencies": {
         "@nuxtjs/tailwindcss": "^6.12.1",
         "@pinia/nuxt": "^0.5.1",
+        "@primevue/themes": "^4.0.2",
         "nuxt": "^3.12.4",
         "pinia": "^2.1.7",
+        "primeicons": "^7.0.0",
+        "primevue": "^4.0.2",
+        "tailwindcss-primeui": "^0.3.4",
         "vue": "latest"
     },
     "overrides": {
         "vue": "latest"
+    },
+    "devDependencies": {
+        "@primevue/nuxt-module": "^4.0.2"
     }
 }
