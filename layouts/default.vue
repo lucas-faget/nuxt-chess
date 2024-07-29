@@ -1,7 +1,6 @@
 <template>
     <div>
-        <AppHeader />
-        <div class="w-full min-h-screen">
+        <div class="min-h-screen">
             <slot />
         </div>
         <AppFooter />
