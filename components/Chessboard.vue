@@ -100,7 +100,7 @@ function handleSquareClick(squareName: string): void {
 </script>
 
 <template>
-    <div class="grid h-full w-full" :style="gridStyle">
+    <div class="grid h-full w-full aspect-square" :style="gridStyle">
         <template v-for="(row, y) in rows" :key="row">
             <template v-for="(column, x) in columns" :key="column">
                 <Square

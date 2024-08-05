@@ -51,27 +51,49 @@ watch(
 
 <template>
     <div class="w-full flex max-md:flex-col">
-        <div class="w-full h-full flex justify-center items-center">
-            <div class="square w-full h-full max-w-[100vmin] max-h-[100vmin] aspect-square p-4">
-                <Chessboard
-                    v-if="chessStore.variant && chessStore.chessboard"
-                    :variant="chessStore.variant"
-                    :playerInFrontIndex="chessStore.playerInFrontIndex"
-                    :chessboard="chessStore.chessboard"
-                    :legalMoves="chessStore.legalMoves"
-                    :canPlay="chessStore.isActiveMoveTheLast"
-                    @handle-move="handleMove"
-                />
+        <div
+            class="w-full h-full max-h-screen min-h-[calc(20rem+8rem)] max-w-full flex justify-center"
+        >
+            <div class="w-full max-w-[calc(100vh-8rem)] min-w-[20rem] h-full flex flex-col">
+                <div class="h-16 flex items-center gap-4 shrink-0">
+                    <Avatar
+                        icon="pi pi-user"
+                        size="large"
+                        style="background-color: var(--p-neutral-200); color: var(--p-neutral-800)"
+                        shape="circle"
+                    />
+                    <span>Player 1</span>
+                </div>
+                <div class="aspect-square">
+                    <Chessboard
+                        v-if="chessStore.variant && chessStore.chessboard"
+                        :variant="chessStore.variant"
+                        :playerInFrontIndex="chessStore.playerInFrontIndex"
+                        :chessboard="chessStore.chessboard"
+                        :legalMoves="chessStore.legalMoves"
+                        :canPlay="chessStore.isActiveMoveTheLast"
+                        @handle-move="handleMove"
+                    />
+                </div>
+                <div class="h-16 flex items-center gap-4 shrink-0">
+                    <Avatar
+                        icon="pi pi-user"
+                        size="large"
+                        style="background-color: var(--p-neutral-800); color: var(--p-neutral-200)"
+                        shape="circle"
+                    />
+                    <span>Player 2</span>
+                </div>
             </div>
         </div>
 
-        <div class="w-[36rem] max-md:w-full h-full p-2">
-            <Card class="h-full overflow-hidden">
+        <div class="w-min max-md:w-full md:min-h-screen p-2">
+            <Card class="w-full h-full overflow-hidden">
                 <template #header>
                     <Tabs value="0">
                         <TabList>
                             <Tab value="0">Moves</Tab>
-                            <Tab value="1">Data</Tab>
+                            <Tab value="1">Game</Tab>
                         </TabList>
                         <TabPanels>
                             <TabPanel value="0">
@@ -142,63 +164,67 @@ watch(
                     </Tabs>
                 </template>
                 <template #footer>
-                    <div class="flex justify-center">
-                        <div class="flex gap-2">
-                            <Button
-                                icon="pi pi-sync"
-                                aria-label="Spin"
-                                severity="contrast"
-                                v-tooltip.top="'Spin chessboard'"
-                                type="text"
-                                placeholder="Top"
-                                @click="chessStore.spinChessboard"
-                            />
-                            <Button
-                                icon="pi pi-step-backward"
-                                aria-label="First move"
-                                severity="secondary"
-                                v-tooltip.top="'First move'"
-                                type="text"
-                                placeholder="Top"
-                                @click="chessStore.goToFirstMove"
-                            />
-                            <Button
-                                icon="pi pi-caret-left"
-                                aria-label="Previous move"
-                                severity="secondary"
-                                v-tooltip.top="'Previous move'"
-                                type="text"
-                                placeholder="Top"
-                                @click="chessStore.goToPreviousMove"
-                            />
-                            <Button
-                                icon="pi pi-caret-right"
-                                aria-label="Next move"
-                                severity="secondary"
-                                v-tooltip.top="'Next move'"
-                                type="text"
-                                placeholder="Top"
-                                @click="chessStore.goToNextMove"
-                            />
-                            <Button
-                                icon="pi pi-step-forward"
-                                aria-label="Last move"
-                                severity="secondary"
-                                v-tooltip.top="'Last move'"
-                                type="text"
-                                placeholder="Top"
-                                @click="chessStore.goToLastMove"
-                            />
-                            <Button
-                                icon="pi pi-undo"
-                                aria-label="Undo move"
-                                severity="danger"
-                                v-tooltip.top="'Undo move'"
-                                type="text"
-                                placeholder="Top"
-                                @click="chessStore.cancelLastMove"
-                            />
-                        </div>
+                    <div class="flex justify-center gap-2">
+                        <Button
+                            style="height: 3rem; width: 3rem"
+                            icon="pi pi-sync"
+                            aria-label="Spin"
+                            severity="contrast"
+                            v-tooltip.top="'Spin chessboard'"
+                            type="text"
+                            placeholder="Top"
+                            @click="chessStore.spinChessboard"
+                        />
+                        <Button
+                            style="height: 3rem; width: 3rem"
+                            icon="pi pi-step-backward"
+                            aria-label="First move"
+                            severity="secondary"
+                            v-tooltip.top="'First move'"
+                            type="text"
+                            placeholder="Top"
+                            @click="chessStore.goToFirstMove"
+                        />
+                        <Button
+                            style="height: 3rem; width: 3rem"
+                            icon="pi pi-caret-left"
+                            aria-label="Previous move"
+                            severity="secondary"
+                            v-tooltip.top="'Previous move'"
+                            type="text"
+                            placeholder="Top"
+                            @click="chessStore.goToPreviousMove"
+                        />
+                        <Button
+                            style="height: 3rem; width: 3rem"
+                            icon="pi pi-caret-right"
+                            aria-label="Next move"
+                            severity="secondary"
+                            v-tooltip.top="'Next move'"
+                            type="text"
+                            placeholder="Top"
+                            @click="chessStore.goToNextMove"
+                        />
+                        <Button
+                            style="height: 3rem; width: 3rem"
+                            icon="pi pi-step-forward"
+                            aria-label="Last move"
+                            severity="secondary"
+                            v-tooltip.top="'Last move'"
+                            type="text"
+                            placeholder="Top"
+                            @click="chessStore.goToLastMove"
+                        />
+                        <Button
+                            style="height: 3rem; width: 3rem"
+                            icon="pi pi-undo"
+                            aria-label="Undo move"
+                            severity="danger"
+                            v-tooltip.top="'Undo move'"
+                            type="text"
+                            placeholder="Top"
+                            @click="chessStore.cancelLastMove"
+                        />
                     </div>
                 </template>
             </Card>

@@ -23,7 +23,7 @@ defineProps<{
     >
         <img
             v-if="piece !== null"
-            class="h-full w-full"
+            class="h-full w-full aspect-square"
             :src="getPieceImage(piece.color, piece.name)"
             :alt="piece.name"
         />
