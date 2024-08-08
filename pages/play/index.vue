@@ -27,7 +27,6 @@ function setDarkSquareColor(squareColor: VSquareColor): void {
 }
 
 function handleMove(fromSquareName: string, toSquareName: string): void {
-    console.log("move");
     chessStore.tryMove(fromSquareName, toSquareName);
 }
 
