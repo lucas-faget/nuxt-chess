@@ -1,33 +1,93 @@
 <script setup lang="ts">
+import { useConfirm } from "primevue/useconfirm";
+import { useChessStore } from "~/stores/chess";
 import { VChessVariant } from "@/types";
+
+const confirm = useConfirm();
+const chessStore = useChessStore();
 
 const { isSmallScreen } = useMediaQuery();
 
 const visible = ref<boolean>(false);
 
-const opponents = ref([
+const opponents = [
     { name: "Anybody", icon: "pi-users" },
     { name: "Computer", icon: "pi-microchip-ai" },
     { name: "Friend", icon: "pi-face-smile" },
-]);
+];
 
 const variants = [
     { name: "Standard", type: VChessVariant.Standard },
     { name: "Fischer random", type: VChessVariant.FischerRandom },
-    { name: "Fof of War", type: VChessVariant.FogOfWar },
+    { name: "Fog of War", type: VChessVariant.FogOfWar },
     { name: "Four Player chess", type: VChessVariant.FourPlayer },
 ];
 
 const speeds = [{ name: "10+0" }, { name: "5+0" }, { name: "3+0" }, { name: "1+0" }];
 
-const selectedOpponent = ref();
+const selectedOpponent = ref(opponents[0]);
 const selectedVariant = ref(variants[0]);
 const selectedSpeed = ref(speeds[0]);
+
+const confirmCreation = () => {
+    confirm.require({
+        message:
+            "It seems that a game already exists. If you start a new game, the current game will be removed. Are you sure you want to continue ?",
+        header: "Game already exists",
+        icon: "pi pi-exclamation-circle",
+        rejectProps: {
+            label: "Return to game",
+            severity: "secondary",
+            outlined: true,
+        },
+        acceptProps: {
+            label: "Create new game",
+            severity: "contrast",
+        },
+        reject: () => {
+            navigateTo("/play");
+        },
+        accept: () => {
+            visible.value = true;
+        },
+    });
+};
+
+const play = (): void => {
+    if (chessStore.gameExists()) {
+        confirmCreation();
+    } else {
+        visible.value = true;
+    }
+};
+
+const createChessGame = (): void => {
+    chessStore.createChessGame(selectedVariant.value.type);
+    navigateTo("/play");
+};
 </script>
 
 <template>
-    <Button label="Play" @click="visible = true" />
+    <div class="flex justify-center items-center min-h-screen">
+        <div class="flex flex-col gap-8">
+            <span class="text-5xl font-semibold">Play Chess</span>
+            <span class="w-full max-w-[32rem] text-lg text-surface-500 dark:text-surface-400"
+                >Play chess online alone or with your friends. Choose from various chess variants,
+                select your favourite time control, then dive into the match. May the best player
+                win!</span
+            >
+            <Button
+                label="Play"
+                @click="play"
+                severity="contrast"
+                icon="pi pi-arrow-right"
+                iconPos="right"
+                class="w-32"
+            />
+        </div>
+    </div>
 
+    <ConfirmDialog :style="{ maxWidth: '32rem' }"></ConfirmDialog>
     <Dialog
         v-model:visible="visible"
         modal
@@ -56,18 +116,8 @@ const selectedSpeed = ref(speeds[0]);
 
             <Divider :layout="`${isSmallScreen ? 'horizontal' : 'vertical'}`" />
 
-            <!-- <div class="max-sm:hidden">
-                <Divider layout="vertical" />
-            </div>
-
-            <div class="sm:hidden">
-                <Divider layout="horizontal" />
-            </div> -->
-
             <div class="flex-1 flex flex-col gap-4">
                 <img src="/images/chess.png" alt="Image" class="w-full mb-4" />
-
-                <span class="text-surface-500 dark:text-surface-400"> Set up your game. </span>
 
                 <div class="flex justify-between items-center gap-4">
                     <span class="text-surface-500 dark:text-surface-400"> Variant </span>
@@ -102,13 +152,17 @@ const selectedSpeed = ref(speeds[0]);
                 type="button"
                 label="Cancel"
                 severity="secondary"
+                icon="pi pi-angle-left"
+                iconPos="left"
                 @click="visible = false"
             ></Button>
             <Button
                 type="button"
                 label="Create"
-                @click="visible = false"
                 severity="contrast"
+                icon="pi pi-angle-right"
+                iconPos="right"
+                @click="createChessGame"
             ></Button>
         </div>
     </Dialog>

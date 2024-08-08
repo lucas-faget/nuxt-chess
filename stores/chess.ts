@@ -32,8 +32,8 @@ export const useChessStore = defineStore("chess", {
         isActiveMoveTheLast: (state) => state.lastMoveIndex === state.currentMoveIndex,
     },
     actions: {
-        gameExists(variant: VChessVariant): boolean {
-            return this.chess !== null && this.variant === variant;
+        gameExists(): boolean {
+            return this.chess !== null;
         },
         createChessGame(variant: VChessVariant = VChessVariant.Standard) {
             const chess: Chess =

@@ -1,13 +1,11 @@
 <script setup lang="ts">
 import { useChessStore } from "~/stores/chess";
-import { VChessVariant, VSquareColor, type VPlayer } from "@/types";
+import { VSquareColor, type VPlayer } from "@/types";
 
 const chessStore = useChessStore();
 
 const value = ref("1");
 const options = ref(["0", "1"]);
-
-const variant: VChessVariant = VChessVariant.Standard;
 
 const lightSquareColor = ref<VSquareColor>(VSquareColor.Brown);
 const darkSquareColor = ref<VSquareColor>(VSquareColor.Brown);
@@ -33,20 +31,11 @@ function handleMove(fromSquareName: string, toSquareName: string): void {
     chessStore.tryMove(fromSquareName, toSquareName);
 }
 
-onMounted(() => {
-    if (!chessStore.gameExists(variant)) {
-        chessStore.createChessGame(variant);
+onBeforeMount(() => {
+    if (!chessStore.gameExists()) {
+        navigateTo("/");
     }
 });
-
-watch(
-    () => chessStore.variant,
-    async (newVariant, oldVariant) => {
-        if (newVariant && newVariant !== oldVariant) {
-            chessStore.createChessGame(newVariant);
-        }
-    }
-);
 </script>
 
 <template>
