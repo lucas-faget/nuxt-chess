@@ -40,7 +40,9 @@ export abstract class Chess {
     }
 
     getLegalMove(fromSquareName: string, toSquareName: string): Move | null {
-        return this.legalMoves[fromSquareName][toSquareName] ?? null;
+        return this.isLegalMove(fromSquareName, toSquareName)
+            ? this.legalMoves[fromSquareName][toSquareName]
+            : null;
     }
 
     isActiveMoveTheLast(): boolean {

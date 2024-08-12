@@ -18,6 +18,7 @@
         "primeicons": "^7.0.0",
         "primevue": "^4.0.2",
         "tailwindcss-primeui": "^0.3.4",
+        "three": "^0.167.1",
         "vue": "latest"
     },
     "overrides": {

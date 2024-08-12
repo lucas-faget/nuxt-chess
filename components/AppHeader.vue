@@ -23,6 +23,11 @@ const items = ref([
             },
         ],
     },
+    {
+        label: "3D Chess",
+        icon: "pi pi-box",
+        route: "/three",
+    },
 ]);
 </script>
 
