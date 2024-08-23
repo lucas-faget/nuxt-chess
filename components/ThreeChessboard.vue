@@ -113,7 +113,7 @@ const addAxis = () => {
 
 const loadChessboard = () => {
     loader.value.load(
-        "/models/chess.glb",
+        "https://assets.lucas-faget.com/models/chess.glb",
         function (gltf) {
             const chessboard = gltf.scene.children[0];
             chessboard.children.forEach((child, index) => {

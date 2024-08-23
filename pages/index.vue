@@ -117,7 +117,7 @@ const createChessGame = (): void => {
             <Divider :layout="`${isSmallScreen ? 'horizontal' : 'vertical'}`" />
 
             <div class="flex-1 flex flex-col gap-4">
-                <img src="/images/chess.png" alt="Image" class="w-full mb-4" />
+                <img src="/images/chess_banner.png" alt="Image" class="w-full mb-4" />
 
                 <div class="flex justify-between items-center gap-4">
                     <span class="text-surface-500 dark:text-surface-400"> Variant </span>

@@ -9,9 +9,4 @@ export default defineNuxtConfig({
             ripple: true,
         },
     },
-    tailwindcss: {
-        config: {
-            plugins: [require("tailwindcss-primeui")],
-        },
-    },
 });
