@@ -5,3 +5,9 @@
 .app-font {
     font-family: "Space Grotesk", sans-serif;
 }
+
+:root {
+    --header-h: 4rem;
+    --chessboard-head-h: 3.5rem;
+    --min-square-size: 2rem;
+}

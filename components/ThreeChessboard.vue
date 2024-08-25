@@ -60,7 +60,7 @@ const init = () => {
         near,
         far
     );
-    renderer.value = new THREE.WebGLRenderer({ antialias: false, alpha: true, precision: "lowp" });
+    renderer.value = new THREE.WebGLRenderer({ antialias: true, alpha: true, precision: "lowp" });
     controls.value = new OrbitControls(camera.value, renderer.value.domElement);
     raycaster.value = new THREE.Raycaster();
     mouse.value = new THREE.Vector2();

@@ -32,8 +32,11 @@ const items = ref([
 </script>
 
 <template>
-    <div class="card m-1">
-        <Menubar :model="items">
+    <div class="card">
+        <Menubar
+            :model="items"
+            class="!border-0 !rounded-none !bg-transparent !h-[var(--header-h)]"
+        >
             <template #item="{ item, props, hasSubmenu }">
                 <router-link v-if="item.route" v-slot="{ href, navigate }" :to="item.route" custom>
                     <a v-ripple :href="href" v-bind="props.action" @click="navigate">
@@ -71,9 +74,3 @@ const items = ref([
         </Menubar>
     </div>
 </template>
-
-<style>
-:root {
-    --header-height: 5rem;
-}
-</style>

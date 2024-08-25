@@ -39,18 +39,23 @@ onBeforeMount(() => {
 
 <template>
     <div class="w-full flex max-md:flex-col">
-        <div
-            class="w-full h-full max-h-screen min-h-[calc(20rem+8rem)] max-w-full flex justify-center"
-        >
-            <div class="w-full max-w-[calc(100vh-8rem)] min-w-[20rem] h-full flex flex-col">
-                <div class="h-16 flex items-center gap-4 shrink-0">
-                    <Avatar
-                        icon="pi pi-user"
-                        size="large"
-                        style="background-color: var(--p-neutral-200); color: var(--p-neutral-800)"
-                        shape="circle"
-                    />
-                    <span>Player 1</span>
+        <div class="w-full h-full flex justify-center">
+            <div
+                class="w-full max-w-[calc(100vh-2*var(--chessboard-head-h)-var(--header-h))] min-w-[20rem] flex flex-col p-2"
+            >
+                <div class="h-[var(--chessboard-head-h)] flex items-start shrink-0">
+                    <div class="flex items-center gap-4">
+                        <Avatar
+                            icon="pi pi-user"
+                            size="large"
+                            style="
+                                background-color: var(--p-neutral-200);
+                                color: var(--p-neutral-800);
+                            "
+                            shape="circle"
+                        />
+                        <span>Player 1</span>
+                    </div>
                 </div>
                 <div class="aspect-square">
                     <Chessboard
@@ -63,22 +68,29 @@ onBeforeMount(() => {
                         @handle-move="handleMove"
                     />
                 </div>
-                <div class="h-16 flex items-center gap-4 shrink-0">
-                    <Avatar
-                        icon="pi pi-user"
-                        size="large"
-                        style="background-color: var(--p-neutral-800); color: var(--p-neutral-200)"
-                        shape="circle"
-                    />
-                    <span>Player 2</span>
+                <div class="h-[var(--chessboard-head-h)] flex items-end shrink-0">
+                    <div class="flex items-center gap-4">
+                        <Avatar
+                            icon="pi pi-user"
+                            size="large"
+                            style="
+                                background-color: var(--p-neutral-800);
+                                color: var(--p-neutral-200);
+                            "
+                            shape="circle"
+                        />
+                        <span>Player 2</span>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="w-min max-md:w-full md:min-h-screen p-2">
-            <Card class="w-full h-full overflow-hidden">
+        <div
+            class="w-96 max-md:w-full md:min-h-[calc(100vh-var(--header-h))] shrink-0 p-2 md:p-4 flex flex-col gap-2"
+        >
+            <Panel class="flex-1 overflow-hidden">
                 <template #header>
-                    <Tabs value="0">
+                    <Tabs value="0" class="w-full">
                         <TabList>
                             <Tab value="0">Moves</Tab>
                             <Tab value="1">Game</Tab>
@@ -95,7 +107,7 @@ onBeforeMount(() => {
                                     sunt in culpa qui officia deserunt mollit anim id est laborum.
                                 </p>
                             </TabPanel>
-                            <TabPanel value="1">
+                            <TabPanel value="1" class="">
                                 <div class="flex flex-col">
                                     <div class="flex justify-center items-center gap-8 py-8">
                                         <div class="flex flex-col items-center gap-2">
@@ -151,71 +163,74 @@ onBeforeMount(() => {
                         </TabPanels>
                     </Tabs>
                 </template>
-                <template #footer>
-                    <div class="flex justify-center gap-2">
-                        <Button
-                            style="height: 3rem; width: 3rem"
-                            icon="pi pi-sync"
-                            aria-label="Spin"
-                            severity="contrast"
-                            v-tooltip.top="'Spin chessboard'"
-                            type="text"
-                            placeholder="Top"
-                            @click="chessStore.spinChessboard"
-                        />
-                        <Button
-                            style="height: 3rem; width: 3rem"
-                            icon="pi pi-step-backward"
-                            aria-label="First move"
-                            severity="secondary"
-                            v-tooltip.top="'First move'"
-                            type="text"
-                            placeholder="Top"
-                            @click="chessStore.goToFirstMove"
-                        />
-                        <Button
-                            style="height: 3rem; width: 3rem"
-                            icon="pi pi-caret-left"
-                            aria-label="Previous move"
-                            severity="secondary"
-                            v-tooltip.top="'Previous move'"
-                            type="text"
-                            placeholder="Top"
-                            @click="chessStore.goToPreviousMove"
-                        />
-                        <Button
-                            style="height: 3rem; width: 3rem"
-                            icon="pi pi-caret-right"
-                            aria-label="Next move"
-                            severity="secondary"
-                            v-tooltip.top="'Next move'"
-                            type="text"
-                            placeholder="Top"
-                            @click="chessStore.goToNextMove"
-                        />
-                        <Button
-                            style="height: 3rem; width: 3rem"
-                            icon="pi pi-step-forward"
-                            aria-label="Last move"
-                            severity="secondary"
-                            v-tooltip.top="'Last move'"
-                            type="text"
-                            placeholder="Top"
-                            @click="chessStore.goToLastMove"
-                        />
-                        <Button
-                            style="height: 3rem; width: 3rem"
-                            icon="pi pi-undo"
-                            aria-label="Undo move"
-                            severity="danger"
-                            v-tooltip.top="'Undo move'"
-                            type="text"
-                            placeholder="Top"
-                            @click="chessStore.cancelLastMove"
-                        />
-                    </div>
-                </template>
-            </Card>
+            </Panel>
+            <div class="flex flex-col gap-3">
+                <div class="flex gap-2">
+                    <Button
+                        class="flex-1"
+                        icon="pi pi-step-backward"
+                        aria-label="First move"
+                        severity="secondary"
+                        v-tooltip.top="'First move'"
+                        type="text"
+                        placeholder="Top"
+                        @click="chessStore.goToFirstMove"
+                    />
+                    <Button
+                        class="flex-1"
+                        icon="pi pi-caret-left"
+                        aria-label="Previous move"
+                        severity="secondary"
+                        v-tooltip.top="'Previous move'"
+                        type="text"
+                        placeholder="Top"
+                        @click="chessStore.goToPreviousMove"
+                    />
+                    <Button
+                        class="flex-1"
+                        icon="pi pi-caret-right"
+                        aria-label="Next move"
+                        severity="secondary"
+                        v-tooltip.top="'Next move'"
+                        type="text"
+                        placeholder="Top"
+                        @click="chessStore.goToNextMove"
+                    />
+                    <Button
+                        class="flex-1"
+                        icon="pi pi-step-forward"
+                        aria-label="Last move"
+                        severity="secondary"
+                        v-tooltip.top="'Last move'"
+                        type="text"
+                        placeholder="Top"
+                        @click="chessStore.goToLastMove"
+                    />
+                </div>
+                <div class="flex gap-2">
+                    <Button
+                        class="flex-1"
+                        icon="pi pi-sync"
+                        aria-label="Spin"
+                        severity="contrast"
+                        v-tooltip.top="'Spin chessboard'"
+                        type="text"
+                        placeholder="Top"
+                        @click="chessStore.spinChessboard"
+                    />
+                    <Button
+                        outlined
+                        class="flex-1"
+                        icon="pi pi-undo"
+                        aria-label="Undo move"
+                        severity="contrast"
+                        v-tooltip.top="'Undo move'"
+                        type="text"
+                        placeholder="Top"
+                        @click="chessStore.cancelLastMove"
+                    />
+                </div>
+            </div>
         </div>
     </div>
 </template>
