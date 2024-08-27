@@ -8,6 +8,8 @@
 
 :root {
     --header-h: 4rem;
+    --aside-w: 16rem;
+
     --chessboard-head-h: 3.5rem;
     --min-square-size: 2rem;
 }

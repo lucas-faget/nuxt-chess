@@ -2,6 +2,10 @@
 import { useChessStore } from "~/stores/chess";
 import { VSquareColor, type VPlayer } from "@/types";
 
+definePageMeta({
+    layout: "aside",
+});
+
 const chessStore = useChessStore();
 
 const value = ref("1");
@@ -38,10 +42,10 @@ onBeforeMount(() => {
 </script>
 
 <template>
-    <div class="w-full flex max-md:flex-col">
+    <div class="w-full flex max-lg:flex-col">
         <div class="w-full h-full flex justify-center">
             <div
-                class="w-full max-w-[calc(100vh-2*var(--chessboard-head-h)-var(--header-h))] min-w-[20rem] flex flex-col p-2"
+                class="w-full max-w-[calc(100vh-2*var(--chessboard-head-h))] min-w-[20rem] flex flex-col p-2"
             >
                 <div class="h-[var(--chessboard-head-h)] flex items-start shrink-0">
                     <div class="flex items-center gap-4">
@@ -85,9 +89,7 @@ onBeforeMount(() => {
             </div>
         </div>
 
-        <div
-            class="w-96 max-md:w-full md:min-h-[calc(100vh-var(--header-h))] shrink-0 p-2 md:p-4 flex flex-col gap-2"
-        >
+        <div class="w-96 max-lg:w-full md:min-h-screen shrink-0 p-2 flex flex-col gap-2">
             <Panel class="flex-1 overflow-hidden">
                 <template #header>
                     <Tabs value="0" class="w-full">
