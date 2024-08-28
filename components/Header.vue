@@ -70,7 +70,11 @@ const items = ref([
 
             <template #end>
                 <div class="flex gap-4">
-                    <DarkModeSelector />
+                    <div class="flex gap-2">
+                        <SettingsDialog />
+                        <DarkModeToggle />
+                    </div>
+
                     <div class="flex items-center gap-4">
                         <Button
                             type="button"

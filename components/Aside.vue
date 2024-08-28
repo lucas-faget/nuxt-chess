@@ -20,7 +20,7 @@ const items = ref([
 
 <template>
     <div
-        class="fixed inset-0 w-[var(--aside-w)] h-full flex flex-col justify-between py-4 px-2 border-r-[1px] dark:border-zinc-700"
+        class="fixed inset-0 w-[var(--aside-w)] h-full py-4 px-2 bg-surface-0 dark:bg-surface-900 border-r-[1px] border-surface-200 dark:border-surface-700 flex flex-col justify-between"
     >
         <div class="flex flex-col">
             <div>
@@ -50,7 +50,7 @@ const items = ref([
 
             <Divider />
 
-            <Menu :model="items" class="!border-0">
+            <Menu :model="items" class="!border-0 !bg-transparent">
                 <template #item="{ item, props }">
                     <router-link
                         v-if="item.route"
@@ -90,8 +90,9 @@ const items = ref([
 
             <Divider />
 
-            <div class="flex justify-end">
-                <DarkModeSelector />
+            <div class="flex gap-2 justify-end">
+                <SettingsDialog />
+                <DarkModeToggle />
             </div>
         </div>
     </div>

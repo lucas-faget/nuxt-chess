@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import type { VPiece } from "@/types";
+import { useSettings } from "~/composables/useSettings";
+const { getChessboardColor } = useSettings();
 
 defineProps<{
     name?: string;
@@ -14,11 +16,11 @@ defineProps<{
         :class="[
             isDark
                 ? isLegal
-                    ? 'bg-gray-200'
-                    : 'bg-neutral-400'
+                    ? 'bg-neutral-600'
+                    : getChessboardColor().darkClassName
                 : isLegal
-                ? 'bg-gray-100'
-                : 'bg-neutral-300',
+                ? 'bg-neutral-500'
+                : getChessboardColor().lightClassName,
         ]"
     >
         <img

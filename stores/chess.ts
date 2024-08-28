@@ -11,7 +11,6 @@ import {
     type VMove,
     type VPieces,
     type VPlayer,
-    VSquareColor,
 } from "~/types";
 
 export const useChessStore = defineStore("chess", {
@@ -25,8 +24,6 @@ export const useChessStore = defineStore("chess", {
         currentMoveIndex: 0,
         playerInFrontIndex: 0,
         legalMoves: {} as VLegalMoves,
-        lightSquareColor: VSquareColor.Brown as VSquareColor,
-        darkSquareColor: VSquareColor.Brown as VSquareColor,
     }),
     getters: {
         isActiveMoveTheLast: (state) => state.lastMoveIndex === state.currentMoveIndex,

@@ -1,0 +1,53 @@
+<script setup lang="ts">
+import { useSettings } from "~/composables/useSettings";
+const { getChessboardColor, setChessboardColor, getColors } = useSettings();
+
+defineProps({
+    global: {
+        type: Boolean,
+        default: false,
+    },
+});
+
+const selectedColor = ref(getChessboardColor());
+
+watch(selectedColor, () => {
+    setChessboardColor(selectedColor.value);
+});
+</script>
+
+<template>
+    <div class="flex flex-col gap-4">
+        <div class="flex gap-2 items-center flex-wrap" v-if="global">
+            <span class="text-muted-color">Dark mode toggle :</span>
+            <DarkModeToggle />
+        </div>
+
+        <div class="flex gap-2 items-center flex-wrap">
+            <span class="text-muted-color">Chessboard color :</span>
+            <Select
+                v-model="selectedColor"
+                :options="getColors()"
+                optionLabel="name"
+                placeholder="Select a color"
+                class="w-full md:w-56"
+            >
+                <template #value="slotProps">
+                    <div v-if="slotProps.value" class="flex items-center gap-2">
+                        <div :class="[slotProps.value.darkClassName, 'w-5 h-5 rounded-md']"></div>
+                        <div class="capitalize">{{ slotProps.value.name }}</div>
+                    </div>
+                    <span v-else>
+                        {{ slotProps.placeholder }}
+                    </span>
+                </template>
+                <template #option="slotProps">
+                    <div class="flex items-center gap-2">
+                        <div :class="[slotProps.option.darkClassName, 'w-5 h-5 rounded-md']"></div>
+                        <div class="capitalize">{{ slotProps.option.name }}</div>
+                    </div>
+                </template>
+            </Select>
+        </div>
+    </div>
+</template>
