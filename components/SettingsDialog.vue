@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const visible = ref(false);
+const visible = ref<boolean>(false);
 </script>
 
 <template>

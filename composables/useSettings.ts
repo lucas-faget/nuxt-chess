@@ -27,6 +27,7 @@ const colors = ref([
 const defaultSettings = {
     darkMode: true,
     chessboardColor: colors.value.find((color) => color.name === "blue") ?? colors.value[0],
+    chessboardSpin: false,
 };
 
 const userSettings = ref({ ...defaultSettings });
@@ -40,6 +41,10 @@ export function useSettings() {
         userSettings.value.darkMode = !userSettings.value.darkMode;
     };
 
+    const getColors = () => {
+        return colors.value;
+    };
+
     const getChessboardColor = () => {
         return userSettings.value.chessboardColor;
     };
@@ -48,12 +53,16 @@ export function useSettings() {
         userSettings.value.chessboardColor = color;
     };
 
-    const resetSettings = () => {
-        userSettings.value = { ...defaultSettings };
+    const isChessboardSpinAutomatic = () => {
+        return userSettings.value.chessboardSpin;
     };
 
-    const getColors = () => {
-        return colors.value;
+    const toggleChessboardSpin = () => {
+        userSettings.value.chessboardSpin = !userSettings.value.chessboardSpin;
+    };
+
+    const resetSettings = () => {
+        userSettings.value = { ...defaultSettings };
     };
 
     return {
@@ -62,6 +71,8 @@ export function useSettings() {
         toggleDarkMode,
         getChessboardColor,
         setChessboardColor,
+        isChessboardSpinAutomatic,
+        toggleChessboardSpin,
         resetSettings,
         getColors,
     };

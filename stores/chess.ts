@@ -1,9 +1,8 @@
 import { defineStore } from "pinia";
-
+import { useSettings } from "~/composables/useSettings";
 import type { Chess } from "~/chess/games/Chess";
 import { TwoPlayerChess } from "~/chess/games/TwoPlayerChess";
 import { FourPlayerChess } from "~/chess/games/FourPlayerChess";
-
 import {
     VChessboard,
     VChessVariant,
@@ -12,6 +11,8 @@ import {
     type VPieces,
     type VPlayer,
 } from "~/types";
+
+const { isChessboardSpinAutomatic } = useSettings();
 
 export const useChessStore = defineStore("chess", {
     state: () => ({
@@ -80,6 +81,9 @@ export const useChessStore = defineStore("chess", {
                     this.lastMoveIndex = this.chess?.currentMoveIndex ?? 0;
                     this.currentMoveIndex = this.chess?.currentMoveIndex ?? 0;
                     this.legalMoves = this.chess?.serializeLegalMoves() ?? {};
+                    if (isChessboardSpinAutomatic()) {
+                        this.playerInFrontIndex = this.activePlayerIndex;
+                    }
                 }
             }
         },
