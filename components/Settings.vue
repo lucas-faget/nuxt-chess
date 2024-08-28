@@ -9,10 +9,13 @@ defineProps({
     },
 });
 
-const selectedColor = ref(getChessboardColor());
-
-watch(selectedColor, () => {
-    setChessboardColor(selectedColor.value);
+const selectedColor = computed({
+    get() {
+        return getChessboardColor();
+    },
+    set(color) {
+        setChessboardColor(color);
+    },
 });
 </script>
 
