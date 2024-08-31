@@ -257,4 +257,39 @@ export abstract class Chessboard {
 
         return pieces;
     }
+
+    toString(): string {
+        const rows: string[] = [];
+
+        for (const rank of this.ranks) {
+            let row = "";
+            let emptySquareCount = 0;
+
+            for (const file of this.files) {
+                const square = this.getSquareByName(file + rank);
+
+                if (square?.isEmpty()) {
+                    emptySquareCount++;
+                } else {
+                    if (emptySquareCount > 0) {
+                        row += emptySquareCount.toString();
+                        emptySquareCount = 0;
+                    }
+                    if (square?.piece) {
+                        const playerColor = square.piece.color.toLowerCase();
+                        const pieceName = square.piece.getName().toUpperCase();
+                        row += playerColor + pieceName;
+                    }
+                }
+            }
+
+            if (emptySquareCount > 0) {
+                row += emptySquareCount.toString();
+            }
+
+            rows.push(row);
+        }
+
+        return rows.reverse().join("/");
+    }
 }
