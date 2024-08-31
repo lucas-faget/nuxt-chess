@@ -74,7 +74,17 @@ onBeforeMount(() => {
                             <Tab value="2">Settings</Tab>
                         </TabList>
                         <TabPanels>
-                            <TabPanel value="0"> </TabPanel>
+                            <TabPanel value="0">
+                                <div class="flex">
+                                    <Button
+                                        class="flex-1"
+                                        type="button"
+                                        label="Cancel last move"
+                                        severity="danger"
+                                        @click="chessStore.cancelLastMove"
+                                    ></Button>
+                                </div>
+                            </TabPanel>
                             <TabPanel value="1" class="">
                                 <div class="flex flex-col">
                                     <div class="flex justify-center items-center gap-8 py-8">

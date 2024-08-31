@@ -1,12 +1,12 @@
-import type { Side } from "../types/Sides";
+import type { CastlingSide } from "../types/CastlingSides";
 import type { Square } from "../squares/Square";
 import { Move } from "./Move";
 
 export class Castling extends Move {
-    side: Side;
+    side: CastlingSide;
     rookMove: Move;
 
-    constructor(fromSquare: Square, toSquare: Square, rookMove: Move, side: Side) {
+    constructor(fromSquare: Square, toSquare: Square, rookMove: Move, side: CastlingSide) {
         super(fromSquare, toSquare);
         this.rookMove = rookMove;
         this.side = side;

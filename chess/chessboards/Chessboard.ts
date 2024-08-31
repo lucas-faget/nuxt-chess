@@ -10,7 +10,6 @@ import { Square } from "../squares/Square";
 import type { Move } from "../moves/Move";
 import { King } from "../pieces/King";
 import type { LegalMoves } from "../types/LegalMoves";
-import type { SerializedPieces } from "../serialization/SerializedPieces";
 
 const isInteger = (char: string) => !isNaN(parseInt(char));
 const isPlayerColor = (char: string) =>
@@ -241,21 +240,6 @@ export abstract class Chessboard {
         }
 
         return false;
-    }
-
-    serializePieces(): SerializedPieces {
-        const pieces: SerializedPieces = {};
-
-        for (const [squareName, square] of this.squares.entries()) {
-            if (square.piece) {
-                pieces[squareName] = {
-                    name: square.piece.getName() as string,
-                    color: square.piece.color as string,
-                };
-            }
-        }
-
-        return pieces;
     }
 
     toString(): string {

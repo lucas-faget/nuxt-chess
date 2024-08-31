@@ -39,27 +39,30 @@ export class Chess {
     players: Player[];
     chessboard: Chessboard;
     legalMoves: LegalMoves = {};
-    gameStates: GameState[] = [];
-
+    history: GameState[] = [];
     activePlayerIndex = 0;
-    currentMoveIndex: number = 0;
 
     constructor(variant: string = "", fenPosition: string = "") {
         this.variant = isChessVariant(variant) ? (variant as ChessVariant) : ChessVariant.Standard;
+
         this.players =
             variant === ChessVariant.FourPlayer
                 ? [Whites, Silvers, Blacks, Golds]
                 : [Whites, Blacks];
+
+        if (!fenPosition) {
+            fenPosition =
+                variant === ChessVariant.FourPlayer
+                    ? Chess.FourPlayerFenPosition
+                    : Chess.TwoPlayerFenPosition;
+        }
+
         this.chessboard =
             variant === ChessVariant.FourPlayer
-                ? new FourPlayerChessboard(
-                      fenPosition !== "" ? fenPosition : Chess.FourPlayerFenPosition
-                  )
-                : new TwoPlayerChessboard(
-                      fenPosition !== "" ? fenPosition : Chess.TwoPlayerFenPosition
-                  );
+                ? new FourPlayerChessboard(fenPosition)
+                : new TwoPlayerChessboard(fenPosition);
 
-        this.addNewGameState();
+        this.addGameState(fenPosition);
 
         this.setLegalMoves();
     }
@@ -68,7 +71,7 @@ export class Chess {
         const player: Player = this.players[this.activePlayerIndex];
         const kingSquare: Square | null = this.chessboard.findKingSquare(player.color);
         const enPassantTarget: string | null =
-            this.gameStates[this.currentMoveIndex].enPassantTarget;
+            this.history[this.history.length - 1].enPassantTarget;
 
         this.legalMoves = this.chessboard.calculateLegalMoves(player, kingSquare, enPassantTarget);
     }
@@ -83,12 +86,8 @@ export class Chess {
             : null;
     }
 
-    isActiveMoveTheLast(): boolean {
-        return this.currentMoveIndex === this.gameStates.length - 1;
-    }
-
     isPlayerActive(color: PlayerColor): boolean {
-        return this.isActiveMoveTheLast() && this.players[this.activePlayerIndex].color === color;
+        return this.players[this.activePlayerIndex].color === color;
     }
 
     setNextPlayer(): void {
@@ -100,29 +99,41 @@ export class Chess {
             (this.activePlayerIndex - 1 + this.players.length) % this.players.length;
     }
 
-    addNewGameState(enPassantTarget: string | null = null): void {
-        this.gameStates.push({
-            move: null,
+    addGameState(
+        fenPosition: string,
+        enPassantTarget: string | null = null,
+        move: Move | null = null
+    ): void {
+        this.history.push({
+            fenPosition: fenPosition,
             enPassantTarget: enPassantTarget,
+            move: move,
+            serializedMove: move?.serialize() ?? null,
         });
     }
 
     getMoveByIndex(index: number): SerializedMove | null {
-        if (index >= 0 && index < this.gameStates.length) {
-            return this.gameStates[index].move?.serialize() ?? null;
+        if (index >= 0 && index < this.history.length) {
+            return this.history[index].move?.serialize() ?? null;
         }
 
         return null;
     }
 
+    getPositionByIndex(moveIndex: number = this.history.length - 1): string {
+        if (moveIndex >= 0 && moveIndex < this.history.length) {
+            return this.history[moveIndex].fenPosition;
+        } else {
+            return this.history[this.history.length - 1].fenPosition;
+        }
+    }
+
     tryMove(fromSquareName: string, toSquareName: string): SerializedMove | null {
-        if (this.isActiveMoveTheLast()) {
-            if (this.isLegalMove(fromSquareName, toSquareName)) {
-                const move = this.getLegalMove(fromSquareName, toSquareName);
-                if (move) {
-                    this.move(move);
-                    return move.serialize();
-                }
+        if (this.isLegalMove(fromSquareName, toSquareName)) {
+            const move = this.getLegalMove(fromSquareName, toSquareName);
+            if (move) {
+                this.move(move);
+                return this.history[this.history.length - 1].serializedMove;
             }
         }
 
@@ -131,24 +142,19 @@ export class Chess {
 
     move(move: Move): void {
         move.carryOutMove();
-        this.gameStates[this.currentMoveIndex].move = move;
-        this.addNewGameState(move.enPassantTarget);
-        this.currentMoveIndex++;
+        this.addGameState(this.chessboard.toString(), move.enPassantTarget, move);
         this.setNextPlayer();
         this.setLegalMoves();
     }
 
     cancelLastMove(): SerializedMove | null {
-        if (this.isActiveMoveTheLast()) {
-            if (this.gameStates.length > 1) {
-                this.gameStates.pop();
-                this.currentMoveIndex--;
-                const move: Move | null = this.gameStates[this.currentMoveIndex].move;
-                move?.undoMove();
-                this.gameStates[this.currentMoveIndex].move = null;
+        if (this.history.length > 1) {
+            const gameState: GameState | null = this.history.pop() ?? null;
+            if (gameState) {
+                gameState.move?.undoMove();
                 this.setPreviousPlayer();
                 this.setLegalMoves();
-                return move?.serialize() ?? null;
+                return gameState.serializedMove;
             }
         }
 
@@ -156,39 +162,7 @@ export class Chess {
     }
 
     resetGame(): void {
-        if (!this.isActiveMoveTheLast()) {
-            this.goToLastMove();
-        }
-
-        while (this.gameStates.length > 1) {
-            this.cancelLastMove();
-        }
-    }
-
-    goToPreviousMove(): void {
-        if (this.currentMoveIndex > 0) {
-            this.currentMoveIndex--;
-            this.gameStates[this.currentMoveIndex].move!.undoMove();
-        }
-    }
-
-    goToFirstMove(): void {
-        while (this.currentMoveIndex > 0) {
-            this.goToPreviousMove();
-        }
-    }
-
-    goToNextMove(): void {
-        if (this.currentMoveIndex < this.gameStates.length - 1) {
-            this.gameStates[this.currentMoveIndex].move!.carryOutMove();
-            this.currentMoveIndex++;
-        }
-    }
-
-    goToLastMove(): void {
-        while (this.currentMoveIndex < this.gameStates.length - 1) {
-            this.goToNextMove();
-        }
+        // TODO
     }
 
     static areEqualCoordinates(corrdinates1: Coordinates, coordinates2: Coordinates): boolean {

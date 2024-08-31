@@ -1,8 +1,11 @@
 import type { VMove } from "./Move";
 import type { VPiece } from "./Piece";
-import type { VPieces } from "./Pieces";
+
+const isInteger = (char: string) => !isNaN(parseInt(char));
 
 export class VChessboard {
+    static Regex = /([a-zA-Z]{2}|\d+)/g;
+
     ranks: string[];
     files: string[];
     reversedRanks: string[];
@@ -10,20 +13,43 @@ export class VChessboard {
 
     squares: Map<string, VPiece | null> = new Map();
 
-    constructor(ranks: string[], files: string[], pieces: VPieces) {
+    constructor(ranks: string[], files: string[], position: string) {
         this.ranks = ranks;
         this.files = files;
         this.reversedRanks = [...this.ranks].reverse();
         this.reversedFiles = [...this.files].reverse();
 
-        this.fillChessboard(pieces);
+        this.fill(position);
     }
 
-    fillChessboard(pieces: VPieces) {
+    fill(position: string) {
         for (const rank of this.ranks) {
             for (const file of this.files) {
                 const squareName: string = file + rank;
-                this.squares.set(squareName, pieces[squareName] ?? null);
+                this.squares.set(squareName, null);
+            }
+        }
+
+        if (position) {
+            const rows = position.split("/");
+            for (const [y, row] of rows.reverse().entries()) {
+                let x = 0;
+                const segments: string[] = row.match(VChessboard.Regex) || [];
+                for (const segment of segments) {
+                    if (isInteger(segment)) {
+                        x += parseInt(segment);
+                    } else {
+                        if (segment.length === 2) {
+                            const color: string = segment[0].toLowerCase();
+                            const name: string = segment[1].toLowerCase();
+                            this.squares.set(this.files[x] + this.ranks[y], {
+                                color: color,
+                                name: name,
+                            });
+                        }
+                        x++;
+                    }
+                }
             }
         }
     }
