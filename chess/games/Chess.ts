@@ -1,16 +1,40 @@
-import type { ChessVariant } from "../types/ChessVariant";
+import { ChessVariant } from "../types/ChessVariant";
 import type { Coordinates } from "../coordinates/Position";
 import type { PlayerColor } from "../types/PlayerColor";
 import type { Player } from "../players/Player";
+import { Blacks, Golds, Silvers, Whites } from "../players/Players";
 import type { Square } from "../squares/Square";
 import type { Move } from "../moves/Move";
 import type { LegalMoves } from "../types/LegalMoves";
 import type { GameState } from "../types/GameState";
 import type { Chessboard } from "../chessboards/Chessboard";
+import { TwoPlayerChessboard } from "../chessboards/TwoPlayerChessboard";
+import { FourPlayerChessboard } from "../chessboards/FourPlayerChessboard";
 import type { SerializedMove } from "../serialization/SerializedMove";
 import type { SerializedLegalMoves } from "../serialization/SerializedLegalMoves";
 
-export abstract class Chess {
+const isChessVariant = (variant: string) =>
+    Object.values(ChessVariant).includes(variant.toLowerCase() as ChessVariant);
+
+export class Chess {
+    static TwoPlayerFenPosition: string =
+        "bRbNbBbQbKbBbNbR/bPbPbPbPbPbPbPbP/8/8/8/8/wPwPwPwPwPwPwPwP/wRwNwBwQwKwBwNwR";
+    static FourPlayerFenPosition: string =
+        "3bRbNbBbKbQbBbNbR3/" +
+        "3bPbPbPbPbPbPbPbP3/" +
+        "14/" +
+        "sRsP10gPgR/" +
+        "sNsP10gPgN/" +
+        "sBsP10gPgB/" +
+        "sQsP10gPgK/" +
+        "sKsP10gPgQ/" +
+        "sBsP10gPgB/" +
+        "sNsP10gPgN/" +
+        "sRsP10gPgR/" +
+        "14/" +
+        "3wPwPwPwPwPwPwPwP3/" +
+        "3wRwNwBwQwKwBwNwR3";
+
     variant: ChessVariant;
     players: Player[];
     chessboard: Chessboard;
@@ -20,10 +44,24 @@ export abstract class Chess {
     activePlayerIndex = 0;
     currentMoveIndex: number = 0;
 
-    constructor(variant: ChessVariant, players: Player[], chessboard: Chessboard) {
-        this.variant = variant;
-        this.players = players;
-        this.chessboard = chessboard;
+    constructor(variant: string = "", fenPosition: string = "") {
+        this.variant = isChessVariant(variant) ? (variant as ChessVariant) : ChessVariant.Standard;
+        this.players =
+            variant === ChessVariant.FourPlayer
+                ? [Whites, Silvers, Blacks, Golds]
+                : [Whites, Blacks];
+        this.chessboard =
+            variant === ChessVariant.FourPlayer
+                ? new FourPlayerChessboard(
+                      fenPosition !== "" ? fenPosition : Chess.FourPlayerFenPosition
+                  )
+                : new TwoPlayerChessboard(
+                      fenPosition !== "" ? fenPosition : Chess.TwoPlayerFenPosition
+                  );
+
+        this.addNewGameState();
+
+        this.setLegalMoves();
     }
 
     setLegalMoves(): void {

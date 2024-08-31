@@ -1,26 +1,24 @@
+import type { Side } from "../types/Sides";
 import type { Square } from "../squares/Square";
-import { MoveType } from "../types/MoveType";
 import { Move } from "./Move";
 
 export class Castling extends Move {
+    side: Side;
     rookMove: Move;
 
-    constructor(fromSquare: Square, toSquare: Square, rookMove: Move) {
+    constructor(fromSquare: Square, toSquare: Square, rookMove: Move, side: Side) {
         super(fromSquare, toSquare);
         this.rookMove = rookMove;
+        this.side = side;
     }
 
-    carryOutMove(): void {
+    override carryOutMove(): void {
         super.carryOutMove();
         this.rookMove.carryOutMove();
     }
 
-    undoMove(): void {
+    override undoMove(): void {
         super.undoMove();
         this.rookMove.undoMove();
-    }
-
-    getMoveType(): MoveType {
-        return MoveType.Castling;
     }
 }

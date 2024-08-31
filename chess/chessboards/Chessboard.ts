@@ -1,5 +1,5 @@
 import type { Coordinates } from "../coordinates/Position";
-import type { PlayerColor } from "../types/PlayerColor";
+import { PlayerColor } from "../types/PlayerColor";
 import { PieceName } from "../types/PieceName";
 import { Bishop } from "../pieces/Bishop";
 import { Knight } from "../pieces/Knight";
@@ -12,12 +12,20 @@ import { King } from "../pieces/King";
 import type { LegalMoves } from "../types/LegalMoves";
 import type { SerializedPieces } from "../serialization/SerializedPieces";
 
+const isInteger = (char: string) => !isNaN(parseInt(char));
+const isPlayerColor = (char: string) =>
+    Object.values(PlayerColor).includes(char.toLowerCase() as PlayerColor);
+const isPieceName = (char: string) =>
+    Object.values(PieceName).includes(char.toLowerCase() as PieceName);
+
 export abstract class Chessboard {
+    static Regex = /([a-zA-Z]{2}|\d+)/g;
+
     ranks: string[];
     files: string[];
     squares: Map<string, Square> = new Map();
 
-    constructor(ranks: string[], files: string[]) {
+    constructor(ranks: string[], files: string[], fenPosition: string = "") {
         this.ranks = ranks;
         this.files = files;
 
@@ -25,6 +33,40 @@ export abstract class Chessboard {
             for (const [x, file] of this.files.entries()) {
                 let square: Square = new Square(file + rank, { x, y });
                 this.squares.set(square.name, square);
+            }
+        }
+
+        if (fenPosition) {
+            this.fill(fenPosition);
+        }
+    }
+
+    fill(fenPosition: string) {
+        if (fenPosition) {
+            const rows = fenPosition.split("/");
+            for (const [y, row] of rows.reverse().entries()) {
+                let x = 0;
+                const segments: string[] = row.match(Chessboard.Regex) || [];
+                for (const segment of segments) {
+                    if (isInteger(segment)) {
+                        x += parseInt(segment);
+                    } else {
+                        if (
+                            segment.length === 2 &&
+                            isPlayerColor(segment[0]) &&
+                            isPieceName(segment[1])
+                        ) {
+                            const playerColor: PlayerColor =
+                                segment[0].toLowerCase() as PlayerColor;
+                            const pieceName: PieceName = segment[1].toLowerCase() as PieceName;
+                            this.getSquareByName(this.files[x] + this.ranks[y])?.setPiece(
+                                pieceName,
+                                playerColor
+                            );
+                        }
+                        x++;
+                    }
+                }
             }
         }
     }

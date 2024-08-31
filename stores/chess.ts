@@ -1,8 +1,6 @@
 import { defineStore } from "pinia";
 import { useSettings } from "~/composables/useSettings";
-import type { Chess } from "~/chess/games/Chess";
-import { TwoPlayerChess } from "~/chess/games/TwoPlayerChess";
-import { FourPlayerChess } from "~/chess/games/FourPlayerChess";
+import { Chess } from "~/chess/games/Chess";
 import {
     VChessboard,
     VChessVariant,
@@ -34,8 +32,7 @@ export const useChessStore = defineStore("chess", {
             return this.chess !== null;
         },
         createChessGame(variant: VChessVariant = VChessVariant.Standard) {
-            const chess: Chess =
-                variant === VChessVariant.Standard ? new TwoPlayerChess() : new FourPlayerChess();
+            const chess: Chess = new Chess(variant as string);
             const chessboard: VChessboard = new VChessboard(
                 chess.chessboard.ranks,
                 chess.chessboard.files,
@@ -64,7 +61,10 @@ export const useChessStore = defineStore("chess", {
             );
         },
         getLegalMove(fromSquareName: string, toSquareName: string): VMove | null {
-            return this.chess?.getLegalMove(fromSquareName, toSquareName)?.serialize() ?? null;
+            return (
+                (this.chess?.getLegalMove(fromSquareName, toSquareName)?.serialize() as VMove) ??
+                null
+            );
         },
         carryOutMove(move: VMove) {
             this.chessboard?.carryOutMove(move);
@@ -74,7 +74,7 @@ export const useChessStore = defineStore("chess", {
         },
         tryMove(fromSquareName: string, toSquareName: string) {
             if (this.isActiveMoveTheLast) {
-                const move = this.chess?.tryMove(fromSquareName, toSquareName);
+                const move: VMove = this.chess?.tryMove(fromSquareName, toSquareName) as VMove;
                 if (move) {
                     this.carryOutMove(move);
                     this.activePlayerIndex = this.chess?.activePlayerIndex ?? 0;
@@ -89,7 +89,7 @@ export const useChessStore = defineStore("chess", {
         },
         cancelLastMove() {
             if (this.isActiveMoveTheLast) {
-                const move = this.chess?.cancelLastMove();
+                const move: VMove = this.chess?.cancelLastMove() as VMove;
                 if (move) {
                     this.undoMove(move);
                     this.activePlayerIndex = this.chess?.activePlayerIndex ?? 0;
@@ -111,7 +111,7 @@ export const useChessStore = defineStore("chess", {
         goToPreviousMove() {
             if (this.currentMoveIndex > 0) {
                 this.currentMoveIndex -= 1;
-                const move = this.chess?.getMoveByIndex(this.currentMoveIndex);
+                const move: VMove = this.chess?.getMoveByIndex(this.currentMoveIndex) as VMove;
                 if (move) {
                     this.undoMove(move);
                 }
@@ -119,7 +119,7 @@ export const useChessStore = defineStore("chess", {
         },
         goToNextMove() {
             if (this.currentMoveIndex < this.lastMoveIndex) {
-                const move = this.chess?.getMoveByIndex(this.currentMoveIndex);
+                const move: VMove = this.chess?.getMoveByIndex(this.currentMoveIndex) as VMove;
                 if (move) {
                     this.carryOutMove(move);
                 }
