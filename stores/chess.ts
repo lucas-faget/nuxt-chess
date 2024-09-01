@@ -8,17 +8,18 @@ const { isChessboardSpinAutomatic } = useSettings();
 export const useChessStore = defineStore("chess", {
     state: () => ({
         variant: null as VChessVariant | null,
-        lastMoveIndex: 0,
-        currentMoveIndex: 0,
+        lastHalfmoveIndex: 0,
+        activeHalfmoveIndex: 0,
         chess: null as Chess | null,
         players: [] as VPlayer[],
         chessboard: null as VChessboard | null,
+        halfmoves: [] as string[],
         activePlayerIndex: 0,
         playerInFrontIndex: 0,
         legalMoves: {} as VLegalMoves,
     }),
     getters: {
-        isActiveMoveTheLast: (state) => state.lastMoveIndex === state.currentMoveIndex,
+        isActiveMoveTheLast: (state) => state.lastHalfmoveIndex === state.activeHalfmoveIndex,
     },
     actions: {
         gameExists(): boolean {
@@ -26,8 +27,8 @@ export const useChessStore = defineStore("chess", {
         },
         createChessGame(variant: VChessVariant = VChessVariant.Standard) {
             this.variant = variant;
-            this.lastMoveIndex = 0;
-            this.currentMoveIndex = 0;
+            this.lastHalfmoveIndex = 0;
+            this.activeHalfmoveIndex = 0;
             this.chess = new Chess(variant as string);
             this.players = this.chess.players.map((player) => {
                 return {
@@ -38,7 +39,7 @@ export const useChessStore = defineStore("chess", {
             this.chessboard = new VChessboard(
                 this.chess.chessboard.ranks,
                 this.chess.chessboard.files,
-                this.chess.getPositionByIndex(this.currentMoveIndex)
+                this.chess.getPositionByIndex(this.activeHalfmoveIndex)
             );
             this.activePlayerIndex = this.chess.activePlayerIndex;
             this.legalMoves = this.chess.serializeLegalMoves();
@@ -69,8 +70,9 @@ export const useChessStore = defineStore("chess", {
                 if (move) {
                     this.carryOutMove(move);
                     this.activePlayerIndex = this.chess.activePlayerIndex;
-                    this.lastMoveIndex++;
-                    this.currentMoveIndex++;
+                    this.lastHalfmoveIndex++;
+                    this.activeHalfmoveIndex++;
+                    this.halfmoves = this.chess.getHalfMoves();
                     this.legalMoves = this.chess.serializeLegalMoves() ?? {};
                     if (isChessboardSpinAutomatic()) {
                         this.playerInFrontIndex = this.activePlayerIndex;
@@ -85,33 +87,33 @@ export const useChessStore = defineStore("chess", {
         goToMove(moveIndex: number) {
             if (
                 this.chess &&
-                moveIndex !== this.currentMoveIndex &&
-                moveIndex >= 0 &&
-                moveIndex <= this.lastMoveIndex
+                moveIndex !== this.activeHalfmoveIndex &&
+                moveIndex > 0 &&
+                moveIndex <= this.lastHalfmoveIndex
             ) {
                 const position: string = this.chess.getPositionByIndex(moveIndex);
                 this.fillChessboard(position);
-                this.currentMoveIndex = moveIndex;
+                this.activeHalfmoveIndex = moveIndex;
             }
         },
         goToFirstMove() {
-            if (this.currentMoveIndex > 0) {
-                this.goToMove(0);
+            if (this.activeHalfmoveIndex > 1) {
+                this.goToMove(1);
             }
         },
         goToPreviousMove() {
-            if (this.currentMoveIndex > 0) {
-                this.goToMove(this.currentMoveIndex - 1);
+            if (this.activeHalfmoveIndex > 1) {
+                this.goToMove(this.activeHalfmoveIndex - 1);
             }
         },
         goToNextMove() {
-            if (this.currentMoveIndex < this.lastMoveIndex) {
-                this.goToMove(this.currentMoveIndex + 1);
+            if (this.activeHalfmoveIndex < this.lastHalfmoveIndex) {
+                this.goToMove(this.activeHalfmoveIndex + 1);
             }
         },
         goToLastMove() {
-            if (this.currentMoveIndex < this.lastMoveIndex) {
-                this.goToMove(this.lastMoveIndex);
+            if (this.activeHalfmoveIndex < this.lastHalfmoveIndex) {
+                this.goToMove(this.lastHalfmoveIndex);
             }
         },
         cancelLastMove() {
@@ -120,8 +122,9 @@ export const useChessStore = defineStore("chess", {
                 if (move) {
                     this.undoMove(move);
                     this.activePlayerIndex = this.chess.activePlayerIndex;
-                    this.lastMoveIndex--;
-                    this.currentMoveIndex--;
+                    this.lastHalfmoveIndex--;
+                    this.activeHalfmoveIndex--;
+                    this.halfmoves = this.chess.getHalfMoves();
                     this.legalMoves = this.chess.serializeLegalMoves() ?? {};
                 }
             }

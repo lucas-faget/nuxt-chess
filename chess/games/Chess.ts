@@ -5,21 +5,22 @@ import type { Player } from "../players/Player";
 import { Blacks, Golds, Silvers, Whites } from "../players/Players";
 import type { Square } from "../squares/Square";
 import type { Move } from "../moves/Move";
+import type { SerializedMove } from "../serialization/SerializedMove";
+import type { MoveState } from "../types/MoveState";
 import type { LegalMoves } from "../types/LegalMoves";
-import type { GameState } from "../types/GameState";
+import type { SerializedLegalMoves } from "../serialization/SerializedLegalMoves";
+import type { ChessboardState } from "../types/ChessboardState";
 import type { Chessboard } from "../chessboards/Chessboard";
 import { TwoPlayerChessboard } from "../chessboards/TwoPlayerChessboard";
 import { FourPlayerChessboard } from "../chessboards/FourPlayerChessboard";
-import type { SerializedMove } from "../serialization/SerializedMove";
-import type { SerializedLegalMoves } from "../serialization/SerializedLegalMoves";
 
 const isChessVariant = (variant: string) =>
     Object.values(ChessVariant).includes(variant.toLowerCase() as ChessVariant);
 
 export class Chess {
-    static TwoPlayerFenPosition: string =
+    static TwoPlayerChessboardPosition: string =
         "bRbNbBbQbKbBbNbR/bPbPbPbPbPbPbPbP/8/8/8/8/wPwPwPwPwPwPwPwP/wRwNwBwQwKwBwNwR";
-    static FourPlayerFenPosition: string =
+    static FourPlayerChessboardPosition: string =
         "3bRbNbBbKbQbBbNbR3/" +
         "3bPbPbPbPbPbPbPbP3/" +
         "14/" +
@@ -39,10 +40,11 @@ export class Chess {
     players: Player[];
     chessboard: Chessboard;
     legalMoves: LegalMoves = {};
-    history: GameState[] = [];
+    chessboardHistory: ChessboardState[] = [];
+    moveHistory: MoveState[] = [];
     activePlayerIndex = 0;
 
-    constructor(variant: string = "", fenPosition: string = "") {
+    constructor(variant: string = "", position: string = "") {
         this.variant = isChessVariant(variant) ? (variant as ChessVariant) : ChessVariant.Standard;
 
         this.players =
@@ -50,19 +52,19 @@ export class Chess {
                 ? [Whites, Silvers, Blacks, Golds]
                 : [Whites, Blacks];
 
-        if (!fenPosition) {
-            fenPosition =
+        if (!position) {
+            position =
                 variant === ChessVariant.FourPlayer
-                    ? Chess.FourPlayerFenPosition
-                    : Chess.TwoPlayerFenPosition;
+                    ? Chess.FourPlayerChessboardPosition
+                    : Chess.TwoPlayerChessboardPosition;
         }
 
         this.chessboard =
             variant === ChessVariant.FourPlayer
-                ? new FourPlayerChessboard(fenPosition)
-                : new TwoPlayerChessboard(fenPosition);
+                ? new FourPlayerChessboard(position)
+                : new TwoPlayerChessboard(position);
 
-        this.addGameState(fenPosition);
+        this.addPositionToHistory(position);
 
         this.setLegalMoves();
     }
@@ -71,7 +73,7 @@ export class Chess {
         const player: Player = this.players[this.activePlayerIndex];
         const kingSquare: Square | null = this.chessboard.findKingSquare(player.color);
         const enPassantTarget: string | null =
-            this.history[this.history.length - 1].enPassantTarget;
+            this.chessboardHistory[this.chessboardHistory.length - 1].enPassantTarget;
 
         this.legalMoves = this.chessboard.calculateLegalMoves(player, kingSquare, enPassantTarget);
     }
@@ -99,32 +101,30 @@ export class Chess {
             (this.activePlayerIndex - 1 + this.players.length) % this.players.length;
     }
 
-    addGameState(
-        fenPosition: string,
-        enPassantTarget: string | null = null,
-        move: Move | null = null
-    ): void {
-        this.history.push({
-            fenPosition: fenPosition,
-            enPassantTarget: enPassantTarget,
-            move: move,
-            serializedMove: move?.serialize() ?? null,
+    addPositionToHistory(position: string, enPassantTarget: string | null = null) {
+        this.chessboardHistory.push({
+            position,
+            enPassantTarget,
         });
     }
 
-    getMoveByIndex(index: number): SerializedMove | null {
-        if (index >= 0 && index < this.history.length) {
-            return this.history[index].move?.serialize() ?? null;
-        }
-
-        return null;
+    addMoveToHistory(move: Move) {
+        this.moveHistory.push({
+            move,
+            serialized: move.serialize(),
+            algebraic: move.toString(),
+        });
     }
 
-    getPositionByIndex(moveIndex: number = this.history.length - 1): string {
-        if (moveIndex >= 0 && moveIndex < this.history.length) {
-            return this.history[moveIndex].fenPosition;
+    getHalfMoves(): string[] {
+        return this.moveHistory.map((moveState) => moveState.algebraic);
+    }
+
+    getPositionByIndex(moveIndex: number = this.chessboardHistory.length - 1): string {
+        if (moveIndex >= 0 && moveIndex < this.chessboardHistory.length) {
+            return this.chessboardHistory[moveIndex].position;
         } else {
-            return this.history[this.history.length - 1].fenPosition;
+            return this.chessboardHistory[this.chessboardHistory.length - 1].position;
         }
     }
 
@@ -133,7 +133,7 @@ export class Chess {
             const move = this.getLegalMove(fromSquareName, toSquareName);
             if (move) {
                 this.move(move);
-                return this.history[this.history.length - 1].serializedMove;
+                return this.moveHistory[this.moveHistory.length - 1].serialized;
             }
         }
 
@@ -141,21 +141,20 @@ export class Chess {
     }
 
     move(move: Move): void {
+        this.addMoveToHistory(move);
         move.carryOutMove();
-        this.addGameState(this.chessboard.toString(), move.enPassantTarget, move);
+        this.addPositionToHistory(this.chessboard.toString(), move.enPassantTarget);
         this.setNextPlayer();
         this.setLegalMoves();
     }
 
     cancelLastMove(): SerializedMove | null {
-        if (this.history.length > 1) {
-            const gameState: GameState | null = this.history.pop() ?? null;
-            if (gameState) {
-                gameState.move?.undoMove();
-                this.setPreviousPlayer();
-                this.setLegalMoves();
-                return gameState.serializedMove;
-            }
+        if (this.moveHistory.length > 0) {
+            const moveState: any = this.moveHistory.pop();
+            moveState.move?.undoMove();
+            this.setPreviousPlayer();
+            this.setLegalMoves();
+            return moveState.serialized;
         }
 
         return null;

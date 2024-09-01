@@ -18,7 +18,6 @@ export class Capture extends Move {
     }
 
     override serialize(): SerializedMove {
-        console;
         return {
             fromSquare: this.fromSquare.name,
             toSquare: this.toSquare.name,
@@ -31,16 +30,16 @@ export class Capture extends Move {
         let move: string = "";
 
         if (this.fromSquare.piece) {
-            const piece: Piece | null = this.fromSquare.piece;
+            const piece: Piece = this.fromSquare.piece;
             const pieceName: string = piece.getName();
 
             if (pieceName !== PieceName.Pawn) {
-                move += pieceName.charAt(0).toUpperCase();
+                move += pieceName.toUpperCase();
             }
 
             if (this.capturedPiece) {
                 if (pieceName === PieceName.Pawn) {
-                    move += this.fromSquare.name.charAt(0);
+                    move += this.fromSquare.name;
                 }
                 move += "x";
             }

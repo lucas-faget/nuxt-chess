@@ -24,7 +24,7 @@ export abstract class Chessboard {
     files: string[];
     squares: Map<string, Square> = new Map();
 
-    constructor(ranks: string[], files: string[], fenPosition: string = "") {
+    constructor(ranks: string[], files: string[], position: string = "") {
         this.ranks = ranks;
         this.files = files;
 
@@ -35,14 +35,14 @@ export abstract class Chessboard {
             }
         }
 
-        if (fenPosition) {
-            this.fill(fenPosition);
+        if (position) {
+            this.fill(position);
         }
     }
 
-    fill(fenPosition: string) {
-        if (fenPosition) {
-            const rows = fenPosition.split("/");
+    fill(position: string) {
+        if (position) {
+            const rows = position.split("/");
             for (const [y, row] of rows.reverse().entries()) {
                 let x = 0;
                 const segments: string[] = row.match(Chessboard.Regex) || [];

@@ -19,7 +19,7 @@ export class FourPlayerChessboard extends Chessboard {
     ];
     static Files: string[] = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n"];
 
-    constructor(fenPosition: string = "") {
-        super(FourPlayerChessboard.Ranks, FourPlayerChessboard.Files, fenPosition);
+    constructor(position: string = "") {
+        super(FourPlayerChessboard.Ranks, FourPlayerChessboard.Files, position);
     }
 }

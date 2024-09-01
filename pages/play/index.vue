@@ -63,7 +63,7 @@ onBeforeMount(() => {
         </div>
 
         <div
-            class="w-96 max-lg:w-full lg:min-h-screen shrink-0 p-2 flex lg:flex-col flex-col-reverse gap-2"
+            class="w-96 max-lg:w-full lg:h-screen lg:min-h-[calc(20rem+2*var(--chessboard-head-h))] shrink-0 p-2 flex lg:flex-col flex-col-reverse gap-2"
         >
             <Panel class="flex-1 overflow-hidden">
                 <template #header>
@@ -75,9 +75,14 @@ onBeforeMount(() => {
                         </TabList>
                         <TabPanels>
                             <TabPanel value="0">
-                                <div class="flex">
-                                    <Button
+                                <div class="flex flex-col gap-4">
+                                    <MoveHistory
                                         class="flex-1"
+                                        :playerCount="2"
+                                        :halfmoves="chessStore.halfmoves"
+                                        :activeHalfmoveIndex="chessStore.activeHalfmoveIndex"
+                                    />
+                                    <Button
                                         type="button"
                                         label="Cancel last move"
                                         severity="danger"

@@ -37,11 +37,11 @@ export class Move {
         let move: string = "";
 
         if (this.fromSquare.piece) {
-            const piece: Piece | null = this.fromSquare.piece;
+            const piece: Piece = this.fromSquare.piece;
             const pieceName: string = piece.getName();
 
             if (pieceName !== PieceName.Pawn) {
-                move += pieceName.charAt(0).toUpperCase();
+                move += pieceName.toUpperCase();
             }
 
             move += this.toSquare.name;
