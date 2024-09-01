@@ -42,6 +42,7 @@ const fullmoves = computed(() => {
                         },
                         'relative py-1 hover:bg-surface-800 rounded-lg cursor-pointer',
                     ]"
+                    @click="$emit('goToMove', 2 * fullmoveIndex + halfmoveIndex + 1)"
                     v-for="(halfmove, halfmoveIndex) in fullmove"
                 >
                     <span class="relative left-[40%] text-sm">{{ halfmove }}</span>

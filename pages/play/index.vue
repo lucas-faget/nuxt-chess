@@ -78,9 +78,10 @@ onBeforeMount(() => {
                                 <div class="flex flex-col gap-4">
                                     <MoveHistory
                                         class="flex-1"
-                                        :playerCount="2"
+                                        :playerCount="chessStore.players.length"
                                         :halfmoves="chessStore.halfmoves"
                                         :activeHalfmoveIndex="chessStore.activeHalfmoveIndex"
+                                        @goToMove="chessStore.goToMove($event)"
                                     />
                                     <Button
                                         type="button"
@@ -144,11 +145,11 @@ onBeforeMount(() => {
             </Panel>
 
             <Controls
-                @go-to-first-move="chessStore.goToFirstMove"
-                @go-to-previous-move="chessStore.goToPreviousMove"
-                @spin-chessboard="chessStore.spinChessboard"
-                @go-to-next-move="chessStore.goToNextMove"
-                @go-to-last-move="chessStore.goToLastMove"
+                @goToFirst-Move="chessStore.goToFirstMove"
+                @goToPrevious-move="chessStore.goToPreviousMove"
+                @spinChessboard="chessStore.spinChessboard"
+                @goToNextMove="chessStore.goToNextMove"
+                @goToLastMove="chessStore.goToLastMove"
             />
         </div>
     </div>
