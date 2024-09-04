@@ -13,13 +13,13 @@ import type { ChessboardState } from "../types/ChessboardState";
 import type { Chessboard } from "../chessboards/Chessboard";
 import { TwoPlayerChessboard } from "../chessboards/TwoPlayerChessboard";
 import { FourPlayerChessboard } from "../chessboards/FourPlayerChessboard";
+import type { Piece } from "../pieces/Piece";
 
 const isChessVariant = (variant: string) =>
     Object.values(ChessVariant).includes(variant.toLowerCase() as ChessVariant);
 
 export class Chess {
-    static TwoPlayerChessboardPosition: string =
-        "bRbNbBbQbKbBbNbR/bPbPbPbPbPbPbPbP/8/8/8/8/wPwPwPwPwPwPwPwP/wRwNwBwQwKwBwNwR";
+    static TwoPlayerChessboardPosition: string = "8/8/8/8/8/8/4wQwK2/7bk";
     static FourPlayerChessboardPosition: string =
         "3bRbNbBbKbQbBbNbR3/" +
         "3bPbPbPbPbPbPbPbP3/" +
@@ -38,11 +38,13 @@ export class Chess {
 
     variant: ChessVariant;
     players: Player[];
+    activePlayerIndex: number = 0;
     chessboard: Chessboard;
     legalMoves: LegalMoves = {};
     chessboardHistory: ChessboardState[] = [];
     moveHistory: MoveState[] = [];
-    activePlayerIndex = 0;
+    gameOver: boolean = false;
+    checkmatePiece: Piece | undefined = undefined;
 
     constructor(variant: string = "", position: string = "") {
         this.variant = isChessVariant(variant) ? (variant as ChessVariant) : ChessVariant.Standard;
@@ -72,10 +74,30 @@ export class Chess {
     setLegalMoves(): void {
         const player: Player = this.players[this.activePlayerIndex];
         const kingSquare: Square | null = this.chessboard.findKingSquare(player.color);
-        const enPassantTarget: string | null =
-            this.chessboardHistory[this.chessboardHistory.length - 1].enPassantTarget;
+        if (kingSquare) {
+            const enPassantTarget: string | null =
+                this.chessboardHistory[this.chessboardHistory.length - 1].enPassantTarget;
 
-        this.legalMoves = this.chessboard.calculateLegalMoves(player, kingSquare, enPassantTarget);
+            this.legalMoves = this.chessboard.calculateLegalMoves(
+                player,
+                kingSquare,
+                enPassantTarget
+            );
+
+            if (Object.keys(this.legalMoves).length === 0) {
+                this.gameOver = true;
+                const checkmatePiece: Piece | false = this.chessboard.isChecked(
+                    this.players[this.activePlayerIndex],
+                    kingSquare
+                );
+                if (checkmatePiece) {
+                    this.checkmatePiece = checkmatePiece;
+                }
+            } else {
+                this.gameOver = false;
+                this.checkmatePiece = undefined;
+            }
+        }
     }
 
     isLegalMove(fromSquareName: string, toSquareName: string): boolean {
@@ -86,6 +108,23 @@ export class Chess {
         return this.isLegalMove(fromSquareName, toSquareName)
             ? this.legalMoves[fromSquareName][toSquareName]
             : null;
+    }
+
+    serializeLegalMoves(): SerializedLegalMoves {
+        const legalMoves: SerializedLegalMoves = {};
+
+        for (const from in this.legalMoves) {
+            if (this.legalMoves.hasOwnProperty(from)) {
+                legalMoves[from] = {};
+                for (const to in this.legalMoves[from]) {
+                    if (this.legalMoves[from].hasOwnProperty(to)) {
+                        legalMoves[from][to] = true;
+                    }
+                }
+            }
+        }
+
+        return legalMoves;
     }
 
     isPlayerActive(color: PlayerColor): boolean {
@@ -120,12 +159,20 @@ export class Chess {
         return this.moveHistory.map((moveState) => moveState.algebraic);
     }
 
-    getPositionByIndex(moveIndex: number = this.chessboardHistory.length - 1): string {
+    getChessboardPositionByIndex(moveIndex: number = this.chessboardHistory.length - 1): string {
         if (moveIndex >= 0 && moveIndex < this.chessboardHistory.length) {
             return this.chessboardHistory[moveIndex].position;
         } else {
             return this.chessboardHistory[this.chessboardHistory.length - 1].position;
         }
+    }
+
+    move(move: Move): void {
+        this.addMoveToHistory(move);
+        move.carryOutMove();
+        this.addPositionToHistory(this.chessboard.toString(), move.enPassantTarget);
+        this.setNextPlayer();
+        this.setLegalMoves();
     }
 
     tryMove(fromSquareName: string, toSquareName: string): SerializedMove | null {
@@ -138,14 +185,6 @@ export class Chess {
         }
 
         return null;
-    }
-
-    move(move: Move): void {
-        this.addMoveToHistory(move);
-        move.carryOutMove();
-        this.addPositionToHistory(this.chessboard.toString(), move.enPassantTarget);
-        this.setNextPlayer();
-        this.setLegalMoves();
     }
 
     cancelLastMove(): SerializedMove | null {
@@ -166,22 +205,5 @@ export class Chess {
 
     static areEqualCoordinates(corrdinates1: Coordinates, coordinates2: Coordinates): boolean {
         return corrdinates1.x === coordinates2.x && coordinates2.y === coordinates2.y;
-    }
-
-    serializeLegalMoves(): SerializedLegalMoves {
-        const legalMoves: SerializedLegalMoves = {};
-
-        for (const from in this.legalMoves) {
-            if (this.legalMoves.hasOwnProperty(from)) {
-                legalMoves[from] = {};
-                for (const to in this.legalMoves[from]) {
-                    if (this.legalMoves[from].hasOwnProperty(to)) {
-                        legalMoves[from][to] = true;
-                    }
-                }
-            }
-        }
-
-        return legalMoves;
     }
 }

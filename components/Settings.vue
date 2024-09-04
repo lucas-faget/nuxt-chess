@@ -8,12 +8,14 @@ const {
     toggleChessboardSpin,
 } = useSettings();
 
-defineProps({
-    global: {
-        type: Boolean,
-        default: false,
-    },
-});
+withDefaults(
+    defineProps<{
+        global?: boolean;
+    }>(),
+    {
+        global: false,
+    }
+);
 
 const selectedColor = computed({
     get() {

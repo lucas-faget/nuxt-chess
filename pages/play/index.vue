@@ -8,9 +8,6 @@ definePageMeta({
 
 const chessStore = useChessStore();
 
-const value = ref("1");
-const options = ref(["0", "0"]);
-
 const bottomPlayer = computed<VPlayer>(() => {
     return chessStore.players[chessStore.playerInFrontIndex];
 });
@@ -37,10 +34,7 @@ onBeforeMount(() => {
                 class="w-full max-w-[calc(100vh-2*var(--chessboard-head-h))] min-w-[20rem] flex flex-col p-2"
             >
                 <div class="h-[var(--chessboard-head-h)] flex items-start shrink-0">
-                    <div class="flex items-center gap-4">
-                        <Avatar icon="pi pi-user" size="large" shape="circle" />
-                        <span>Player 1</span>
-                    </div>
+                    <Player :player="topPlayer" />
                 </div>
                 <div class="aspect-square">
                     <Chessboard
@@ -54,10 +48,7 @@ onBeforeMount(() => {
                     />
                 </div>
                 <div class="h-[var(--chessboard-head-h)] flex items-end shrink-0">
-                    <div class="flex items-center gap-4">
-                        <Avatar icon="pi pi-user" size="large" shape="circle" />
-                        <span>Player 2</span>
-                    </div>
+                    <Player :player="bottomPlayer" />
                 </div>
             </div>
         </div>
@@ -91,50 +82,12 @@ onBeforeMount(() => {
                                     ></Button>
                                 </div>
                             </TabPanel>
-                            <TabPanel value="1" class="">
-                                <div class="flex flex-col">
-                                    <div class="flex justify-center items-center gap-8 py-8">
-                                        <div class="flex flex-col items-center gap-2">
-                                            <Avatar
-                                                icon="pi pi-user"
-                                                size="xlarge"
-                                                shape="circle"
-                                            />
-                                            <span>Player 1</span>
-                                        </div>
-                                        <SelectButton v-model="value" :options="options" disabled />
-                                        <div class="flex flex-col items-center gap-2">
-                                            <Avatar
-                                                icon="pi pi-user"
-                                                size="xlarge"
-                                                shape="circle"
-                                            />
-                                            <span>Player 2</span>
-                                        </div>
-                                    </div>
-
-                                    <Divider />
-
-                                    <div class="flex justify-between">
-                                        <span class="text-muted-color">Variant</span>
-                                        <Tag
-                                            icon="pi pi-tag"
-                                            value="Standard"
-                                            severity="secondary"
-                                        ></Tag>
-                                    </div>
-
-                                    <Divider />
-
-                                    <div class="flex justify-between">
-                                        <span class="text-muted-color">Speed</span>
-                                        <Tag
-                                            icon="pi pi-clock"
-                                            value="Unlimited"
-                                            severity="secondary"
-                                        ></Tag>
-                                    </div>
-                                </div>
+                            <TabPanel value="1">
+                                <GameData
+                                    :players="chessStore.players"
+                                    :gameOver="chessStore.gameOver"
+                                    :winnerPlayerIndex="chessStore.winnerPlayerIndex"
+                                />
                             </TabPanel>
                             <TabPanel value="2">
                                 <Settings />
@@ -153,4 +106,11 @@ onBeforeMount(() => {
             />
         </div>
     </div>
+
+    <GameOverDialog
+        :gameOver="chessStore.gameOver"
+        :players="chessStore.players"
+        :winnerPlayerIndex="chessStore.winnerPlayerIndex"
+        :checkmatePiece="chessStore.checkmatePiece"
+    />
 </template>

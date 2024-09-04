@@ -8,7 +8,6 @@ import { Bishop } from "../pieces/Bishop";
 import { Rook } from "../pieces/Rook";
 import { Queen } from "../pieces/Queen";
 import { King } from "../pieces/King";
-import type { SerializedPiece } from "../serialization/SerializedPiece";
 
 export class Square {
     name: string;
@@ -58,14 +57,5 @@ export class Square {
 
     isOccupiedByPieceName(pieceName: PieceName): boolean {
         return this.piece !== null && this.piece.getName() === pieceName;
-    }
-
-    serialize(): SerializedPiece | null {
-        return this.piece
-            ? {
-                  color: this.piece.color as string,
-                  name: this.piece.getName() as string,
-              }
-            : null;
     }
 }

@@ -3,12 +3,17 @@ import type { VPiece } from "@/types";
 import { useSettings } from "~/composables/useSettings";
 const { getChessboardColor } = useSettings();
 
-defineProps<{
-    name?: string;
-    piece: VPiece | null;
-    isDark: boolean;
-    isLegal: boolean;
-}>();
+withDefaults(
+    defineProps<{
+        name?: string;
+        piece: VPiece | null;
+        isDark: boolean;
+        isLegal?: boolean;
+    }>(),
+    {
+        isLegal: false,
+    }
+);
 </script>
 
 <template>

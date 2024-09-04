@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { type VChessboard, VChessVariant } from "@/types";
+import { type VChessboard, VChessVariant, type VLegalMoves } from "@/types";
 
 const props = withDefaults(
     defineProps<{
         variant: VChessVariant;
         playerInFrontIndex: number;
         chessboard: VChessboard;
-        legalMoves: any;
+        legalMoves: VLegalMoves;
         canPlay: boolean;
     }>(),
     {

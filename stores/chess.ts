@@ -1,22 +1,32 @@
 import { defineStore } from "pinia";
 import { useSettings } from "~/composables/useSettings";
 import { Chess } from "~/chess/games/Chess";
-import { VChessboard, VChessVariant, type VLegalMoves, type VMove, type VPlayer } from "~/types";
+import {
+    VChessboard,
+    VChessVariant,
+    type VLegalMoves,
+    type VMove,
+    type VPlayer,
+    type VPiece,
+} from "~/types";
 
 const { isChessboardSpinAutomatic } = useSettings();
 
 export const useChessStore = defineStore("chess", {
     state: () => ({
         variant: null as VChessVariant | null,
-        lastHalfmoveIndex: 0,
-        activeHalfmoveIndex: 0,
         chess: null as Chess | null,
         players: [] as VPlayer[],
-        chessboard: null as VChessboard | null,
-        halfmoves: [] as string[],
         activePlayerIndex: 0,
-        playerInFrontIndex: 0,
+        lastHalfmoveIndex: 0,
+        activeHalfmoveIndex: 0,
+        halfmoves: [] as string[],
         legalMoves: {} as VLegalMoves,
+        chessboard: null as VChessboard | null,
+        playerInFrontIndex: 0,
+        gameOver: false as boolean,
+        checkmatePiece: undefined as VPiece | undefined,
+        winnerPlayerIndex: undefined as number | undefined,
     }),
     getters: {
         isActiveMoveTheLast: (state) => state.lastHalfmoveIndex === state.activeHalfmoveIndex,
@@ -27,22 +37,22 @@ export const useChessStore = defineStore("chess", {
         },
         createChessGame(variant: VChessVariant = VChessVariant.Standard) {
             this.variant = variant;
-            this.lastHalfmoveIndex = 0;
-            this.activeHalfmoveIndex = 0;
             this.chess = new Chess(variant as string);
+            this.activePlayerIndex = this.chess.activePlayerIndex;
             this.players = this.chess.players.map((player) => {
                 return {
                     name: player.name,
                     color: player.color as string,
                 };
             });
+            this.lastHalfmoveIndex = 0;
+            this.activeHalfmoveIndex = 0;
+            this.legalMoves = this.chess.serializeLegalMoves();
             this.chessboard = new VChessboard(
                 this.chess.chessboard.ranks,
                 this.chess.chessboard.files,
-                this.chess.getPositionByIndex(this.activeHalfmoveIndex)
+                this.chess.getChessboardPositionByIndex(this.activeHalfmoveIndex)
             );
-            this.activePlayerIndex = this.chess.activePlayerIndex;
-            this.legalMoves = this.chess.serializeLegalMoves();
         },
         fillChessboard(position: string) {
             this.chessboard?.fill(position);
@@ -77,6 +87,14 @@ export const useChessStore = defineStore("chess", {
                     if (isChessboardSpinAutomatic()) {
                         this.playerInFrontIndex = this.activePlayerIndex;
                     }
+                    this.gameOver = this.chess.gameOver;
+                    this.checkmatePiece = this.chess.checkmatePiece?.serialize() ?? undefined;
+                    if (this.checkmatePiece) {
+                        this.winnerPlayerIndex = this.players.findIndex(
+                            (player) =>
+                                this.checkmatePiece && player.color === this.checkmatePiece.color
+                        );
+                    }
                 }
             }
         },
@@ -91,7 +109,7 @@ export const useChessStore = defineStore("chess", {
                 moveIndex > 0 &&
                 moveIndex <= this.lastHalfmoveIndex
             ) {
-                const position: string = this.chess.getPositionByIndex(moveIndex);
+                const position: string = this.chess.getChessboardPositionByIndex(moveIndex);
                 this.fillChessboard(position);
                 this.activeHalfmoveIndex = moveIndex;
             }
@@ -126,6 +144,9 @@ export const useChessStore = defineStore("chess", {
                     this.activeHalfmoveIndex--;
                     this.halfmoves = this.chess.getHalfMoves();
                     this.legalMoves = this.chess.serializeLegalMoves() ?? {};
+                    this.gameOver = this.chess.gameOver;
+                    this.checkmatePiece = undefined;
+                    this.winnerPlayerIndex = undefined;
                 }
             }
         },

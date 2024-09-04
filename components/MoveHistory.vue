@@ -1,9 +1,9 @@
 <script setup lang="ts">
 const props = withDefaults(
     defineProps<{
-        playerCount: number;
         halfmoves: string[];
-        activeHalfmoveIndex: number;
+        playerCount?: number;
+        activeHalfmoveIndex?: number;
     }>(),
     {
         playerCount: 2,

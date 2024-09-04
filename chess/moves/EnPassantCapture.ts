@@ -27,7 +27,7 @@ export class EnPassantCapture extends Capture {
             fromSquare: this.fromSquare.name,
             toSquare: this.toSquare.name,
             captureSquare: this.captureSquare.name,
-            capturedPiece: this.captureSquare.serialize(),
+            capturedPiece: this.captureSquare.piece?.serialize() ?? null,
         };
     }
 }

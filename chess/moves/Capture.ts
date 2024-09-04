@@ -22,7 +22,7 @@ export class Capture extends Move {
             fromSquare: this.fromSquare.name,
             toSquare: this.toSquare.name,
             captureSquare: this.toSquare.name,
-            capturedPiece: this.toSquare.serialize(),
+            capturedPiece: this.toSquare.piece?.serialize() ?? null,
         };
     }
 
