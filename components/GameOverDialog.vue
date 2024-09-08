@@ -29,29 +29,41 @@ watch(
 </script>
 
 <template>
-    <Dialog v-model:visible="visible" modal header="Game over">
+    <Dialog
+        v-model:visible="visible"
+        modal
+        header="Game over"
+        :style="{ width: 'min(100vw,46rem)' }"
+        class="app-font"
+    >
         <div class="flex flex-col gap-4">
-            <img src="/images/chess_banner.png" alt="Image" class="w-full" />
+            <div class="relative">
+                <img src="/images/game_over.png" alt="Image" class="relative w-full blur-sm" />
 
-            <div class="flex flex-col text-center">
-                <template v-if="winnerPlayerIndex !== undefined">
-                    <span class="text-2xl font-medium">
-                        {{ players[winnerPlayerIndex].name }} won
-                    </span>
-                    <span class="text-lg text-muted-color">by checkmate</span>
-                </template>
+                <div class="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2">
+                    <div class="flex flex-col gap-4">
+                        <div class="flex flex-col text-center">
+                            <template v-if="winnerPlayerIndex !== undefined">
+                                <span class="text-2xl font-medium">
+                                    {{ players[winnerPlayerIndex].name }} won
+                                </span>
+                                <span class="text-lg text-muted-color">by checkmate</span>
+                            </template>
 
-                <template v-else>
-                    <span class="text-2xl font-medium">Draw</span>
-                    <span class="text-lg text-muted-color">by stalemate</span>
-                </template>
+                            <template v-else>
+                                <span class="text-2xl font-medium">Draw</span>
+                                <span class="text-lg text-muted-color">by stalemate</span>
+                            </template>
+                        </div>
+
+                        <GameResult
+                            :players="players"
+                            :gameOver="gameOver"
+                            :winnerPlayerIndex="winnerPlayerIndex"
+                        />
+                    </div>
+                </div>
             </div>
-
-            <GameResult
-                :players="players"
-                :gameOver="gameOver"
-                :winnerPlayerIndex="winnerPlayerIndex"
-            />
         </div>
     </Dialog>
 </template>

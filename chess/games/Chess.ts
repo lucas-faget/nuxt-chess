@@ -19,7 +19,8 @@ const isChessVariant = (variant: string) =>
     Object.values(ChessVariant).includes(variant.toLowerCase() as ChessVariant);
 
 export class Chess {
-    static TwoPlayerChessboardPosition: string = "8/8/8/8/8/8/4wQwK2/7bk";
+    static TwoPlayerChessboardPosition: string =
+        "bRbNbBbQbKbBbNbR/bPbPbPbPbPbPbPbP/8/8/8/8/wPwPwPwPwPwPwPwP/wRwNwBwQwKwBwNwR";
     static FourPlayerChessboardPosition: string =
         "3bRbNbBbKbQbBbNbR3/" +
         "3bPbPbPbPbPbPbPbP3/" +
