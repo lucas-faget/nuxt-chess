@@ -2,12 +2,12 @@ import { defineStore } from "pinia";
 import { useSettings } from "~/composables/useSettings";
 import { Chess } from "~/chess/games/Chess";
 import {
-    VChessboard,
     VChessVariant,
-    type VLegalMoves,
-    type VMove,
     type VPlayer,
     type VPiece,
+    type VMove,
+    type VLegalMoves,
+    VChessboard,
 } from "~/types";
 
 const { isChessboardSpinAutomatic } = useSettings();
@@ -20,7 +20,7 @@ export const useChessStore = defineStore("chess", {
         activePlayerIndex: 0,
         lastHalfmoveIndex: 0,
         activeHalfmoveIndex: 0,
-        halfmoves: [] as string[],
+        algebraicMoves: [] as string[],
         legalMoves: {} as VLegalMoves,
         chessboard: null as VChessboard | null,
         playerInFrontIndex: 0,
@@ -57,16 +57,16 @@ export const useChessStore = defineStore("chess", {
         fillChessboard(position: string) {
             this.chessboard?.fill(position);
         },
+        getActiveMove(): VMove | null {
+            return this.chess?.getHalfmove(this.activeHalfmoveIndex) ?? null;
+        },
         checkLegalMove(fromSquareName: string, toSquareName: string): boolean {
             return (
                 fromSquareName in this.legalMoves && toSquareName in this.legalMoves[fromSquareName]
             );
         },
         getLegalMove(fromSquareName: string, toSquareName: string): VMove | null {
-            return (
-                (this.chess?.getLegalMove(fromSquareName, toSquareName)?.serialize() as VMove) ??
-                null
-            );
+            return this.chess?.getLegalMove(fromSquareName, toSquareName)?.serialize() ?? null;
         },
         carryOutMove(move: VMove) {
             this.chessboard?.carryOutMove(move);
@@ -82,7 +82,7 @@ export const useChessStore = defineStore("chess", {
                     this.activePlayerIndex = this.chess.activePlayerIndex;
                     this.lastHalfmoveIndex++;
                     this.activeHalfmoveIndex++;
-                    this.halfmoves = this.chess.getHalfMoves();
+                    this.algebraicMoves = this.chess.getAlgebraicMoves();
                     this.legalMoves = this.chess.serializeLegalMoves() ?? {};
                     if (isChessboardSpinAutomatic()) {
                         this.playerInFrontIndex = this.activePlayerIndex;
@@ -142,7 +142,7 @@ export const useChessStore = defineStore("chess", {
                     this.activePlayerIndex = this.chess.activePlayerIndex;
                     this.lastHalfmoveIndex--;
                     this.activeHalfmoveIndex--;
-                    this.halfmoves = this.chess.getHalfMoves();
+                    this.algebraicMoves = this.chess.getAlgebraicMoves();
                     this.legalMoves = this.chess.serializeLegalMoves() ?? {};
                     this.gameOver = this.chess.gameOver;
                     this.checkmatePiece = undefined;

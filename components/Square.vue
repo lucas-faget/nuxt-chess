@@ -8,9 +8,11 @@ withDefaults(
         name?: string;
         piece: VPiece | null;
         isDark: boolean;
+        isActive: boolean;
         isLegal?: boolean;
     }>(),
     {
+        isActive: false,
         isLegal: false,
     }
 );
@@ -21,10 +23,14 @@ withDefaults(
         :class="[
             isDark
                 ? isLegal
-                    ? 'bg-neutral-600'
+                    ? getChessboardColor().darkLegalClassName
+                    : isActive
+                    ? getChessboardColor().darkActiveClassName
                     : getChessboardColor().darkClassName
                 : isLegal
-                ? 'bg-neutral-500'
+                ? getChessboardColor().lightLegalClassName
+                : isActive
+                ? getChessboardColor().lightActiveClassName
                 : getChessboardColor().lightClassName,
         ]"
     >

@@ -1,13 +1,14 @@
 <script setup lang="ts">
-import { type VChessboard, VChessVariant, type VLegalMoves } from "@/types";
+import { VChessVariant, type VChessboard, type VMove, type VLegalMoves } from "@/types";
 
 const props = withDefaults(
     defineProps<{
         variant: VChessVariant;
         playerInFrontIndex: number;
         chessboard: VChessboard;
-        legalMoves: VLegalMoves;
         canPlay: boolean;
+        activeMove: VMove | null;
+        legalMoves: VLegalMoves;
     }>(),
     {
         canPlay: false,
@@ -75,6 +76,10 @@ const getSquareName = (column: string, row: string): string =>
 const isDarkSquare = (x: number, y: number): boolean =>
     isPerpendicular.value ? (x + y) % 2 === 0 : (x + y) % 2 !== 0;
 
+const isActiveSquare = (squareName: string): boolean =>
+    props.activeMove !== null &&
+    (squareName === props.activeMove.fromSquare || squareName === props.activeMove.toSquare);
+
 const hasLegalMove = (squareName: string): boolean => squareName in props.legalMoves;
 
 const isLegalMove = (fromSquareName: string, toSquareName: string): boolean =>
@@ -107,6 +112,7 @@ function handleSquareClick(squareName: string): void {
                     :name="getSquareName(column, row)"
                     :piece="chessboard.squares.get(getSquareName(column, row)) ?? null"
                     :isDark="isDarkSquare(x, y)"
+                    :isActive="isActiveSquare(getSquareName(column, row))"
                     :isLegal="isLegalSquare(getSquareName(column, row))"
                     @click="handleSquareClick(getSquareName(column, row))"
                 />

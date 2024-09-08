@@ -128,6 +128,24 @@ export class Chess {
         return legalMoves;
     }
 
+    getHalfmove(moveIndex: number): SerializedMove | null {
+        return moveIndex > 0 && moveIndex <= this.moveHistory.length
+            ? this.moveHistory[moveIndex - 1].serialized
+            : null;
+    }
+
+    getAlgebraicMoves(): string[] {
+        return this.moveHistory.map((moveState) => moveState.algebraic);
+    }
+
+    getChessboardPositionByIndex(moveIndex: number = this.chessboardHistory.length - 1): string {
+        if (moveIndex >= 0 && moveIndex < this.chessboardHistory.length) {
+            return this.chessboardHistory[moveIndex].position;
+        } else {
+            return this.chessboardHistory[this.chessboardHistory.length - 1].position;
+        }
+    }
+
     isPlayerActive(color: PlayerColor): boolean {
         return this.players[this.activePlayerIndex].color === color;
     }
@@ -154,18 +172,6 @@ export class Chess {
             serialized: move.serialize(),
             algebraic: move.toString(),
         });
-    }
-
-    getHalfMoves(): string[] {
-        return this.moveHistory.map((moveState) => moveState.algebraic);
-    }
-
-    getChessboardPositionByIndex(moveIndex: number = this.chessboardHistory.length - 1): string {
-        if (moveIndex >= 0 && moveIndex < this.chessboardHistory.length) {
-            return this.chessboardHistory[moveIndex].position;
-        } else {
-            return this.chessboardHistory[this.chessboardHistory.length - 1].position;
-        }
     }
 
     move(move: Move): void {

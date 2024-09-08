@@ -42,8 +42,9 @@ onBeforeMount(() => {
                         :variant="chessStore.variant"
                         :playerInFrontIndex="chessStore.playerInFrontIndex"
                         :chessboard="chessStore.chessboard"
-                        :legalMoves="chessStore.legalMoves"
                         :canPlay="chessStore.isActiveMoveTheLast"
+                        :activeMove="chessStore.getActiveMove()"
+                        :legalMoves="chessStore.legalMoves"
                         @handle-move="handleMove"
                     />
                 </div>
@@ -70,7 +71,7 @@ onBeforeMount(() => {
                                     <MoveHistory
                                         class="flex-1"
                                         :playerCount="chessStore.players.length"
-                                        :halfmoves="chessStore.halfmoves"
+                                        :halfmoves="chessStore.algebraicMoves"
                                         :activeHalfmoveIndex="chessStore.activeHalfmoveIndex"
                                         @goToMove="chessStore.goToMove($event)"
                                     />
