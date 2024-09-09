@@ -11,6 +11,7 @@ export class Player {
     pawnCaptureDirections: Coordinates[];
     enPassantCaptureDirections: Coordinates[];
     kingSquare: Square | null = null;
+    isChecked: boolean = false;
 
     constructor(color: PlayerColor, name: string, direction: Coordinates) {
         this.color = color;

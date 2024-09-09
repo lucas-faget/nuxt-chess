@@ -43,8 +43,9 @@ onBeforeMount(() => {
                         :playerInFrontIndex="chessStore.playerInFrontIndex"
                         :chessboard="chessStore.chessboard"
                         :canPlay="chessStore.isActiveMoveTheLast"
-                        :activeMove="chessStore.getActiveMove()"
                         :legalMoves="chessStore.legalMoves"
+                        :activeMove="chessStore.getActiveMove()"
+                        :checkSquare="chessStore.getCheckedSquare()"
                         @handle-move="handleMove"
                     />
                 </div>

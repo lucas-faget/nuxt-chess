@@ -6,12 +6,15 @@ const props = withDefaults(
         variant: VChessVariant;
         playerInFrontIndex: number;
         chessboard: VChessboard;
-        canPlay: boolean;
-        activeMove: VMove | null;
+        canPlay?: boolean;
         legalMoves: VLegalMoves;
+        activeMove?: VMove | null;
+        checkSquare?: string | null;
     }>(),
     {
         canPlay: false,
+        activeMove: null,
+        checkSquare: null,
     }
 );
 
@@ -80,6 +83,9 @@ const isActiveSquare = (squareName: string): boolean =>
     props.activeMove !== null &&
     (squareName === props.activeMove.fromSquare || squareName === props.activeMove.toSquare);
 
+const isCheckedSquare = (squareName: string): boolean =>
+    props.checkSquare !== null && squareName === props.checkSquare;
+
 const hasLegalMove = (squareName: string): boolean => squareName in props.legalMoves;
 
 const isLegalMove = (fromSquareName: string, toSquareName: string): boolean =>
@@ -112,8 +118,9 @@ function handleSquareClick(squareName: string): void {
                     :name="getSquareName(column, row)"
                     :piece="chessboard.squares.get(getSquareName(column, row)) ?? null"
                     :isDark="isDarkSquare(x, y)"
-                    :isActive="isActiveSquare(getSquareName(column, row))"
                     :isLegal="isLegalSquare(getSquareName(column, row))"
+                    :isActive="isActiveSquare(getSquareName(column, row))"
+                    :isChecked="isCheckedSquare(getSquareName(column, row))"
                     @click="handleSquareClick(getSquareName(column, row))"
                 />
             </template>

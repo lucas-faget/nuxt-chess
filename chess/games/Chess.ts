@@ -4,7 +4,6 @@ import type { PlayerColor } from "../types/PlayerColor";
 import { PieceName } from "../types/PieceName";
 import type { Player } from "../players/Player";
 import { Blacks, Golds, Silvers, Whites } from "../players/Players";
-import type { Square } from "../squares/Square";
 import type { Move } from "../moves/Move";
 import type { SerializedMove } from "../serialization/SerializedMove";
 import type { MoveState } from "../types/MoveState";
@@ -45,6 +44,7 @@ export class Chess {
     legalMoves: LegalMoves = {};
     chessboardHistory: ChessboardState[] = [];
     moveHistory: MoveState[] = [];
+    isActivePlayerChecked: boolean = false;
     gameOver: boolean = false;
     checkmatePiece: Piece | undefined = undefined;
 
@@ -102,6 +102,23 @@ export class Chess {
         }
     }
 
+    getActivePlayer(): Player {
+        return this.players[this.activePlayerIndex];
+    }
+
+    isPlayerActive(color: PlayerColor): boolean {
+        return this.getActivePlayer().color === color;
+    }
+
+    setNextPlayer(): void {
+        this.activePlayerIndex = (this.activePlayerIndex + 1) % this.players.length;
+    }
+
+    setPreviousPlayer(): void {
+        this.activePlayerIndex =
+            (this.activePlayerIndex - 1 + this.players.length) % this.players.length;
+    }
+
     setLegalMoves(): void {
         const player: Player = this.getActivePlayer();
         if (player.kingSquare !== null) {
@@ -109,28 +126,7 @@ export class Chess {
                 this.chessboardHistory[this.chessboardHistory.length - 1].enPassantTarget;
 
             this.legalMoves = this.chessboard.calculateLegalMoves(player, enPassantTarget, this);
-
-            if (Object.keys(this.legalMoves).length === 0) {
-                this.gameOver = true;
-                const checkmatePiece: Piece | false = this.chessboard.isChecked(player);
-                if (checkmatePiece) {
-                    this.checkmatePiece = checkmatePiece;
-                }
-            } else {
-                this.gameOver = false;
-                this.checkmatePiece = undefined;
-            }
         }
-    }
-
-    isLegalMove(fromSquareName: string, toSquareName: string): boolean {
-        return fromSquareName in this.legalMoves && toSquareName in this.legalMoves[fromSquareName];
-    }
-
-    getLegalMove(fromSquareName: string, toSquareName: string): Move | null {
-        return this.isLegalMove(fromSquareName, toSquareName)
-            ? this.legalMoves[fromSquareName][toSquareName]
-            : null;
     }
 
     serializeLegalMoves(): SerializedLegalMoves {
@@ -148,6 +144,16 @@ export class Chess {
         }
 
         return legalMoves;
+    }
+
+    isLegalMove(fromSquareName: string, toSquareName: string): boolean {
+        return fromSquareName in this.legalMoves && toSquareName in this.legalMoves[fromSquareName];
+    }
+
+    getLegalMove(fromSquareName: string, toSquareName: string): Move | null {
+        return this.isLegalMove(fromSquareName, toSquareName)
+            ? this.legalMoves[fromSquareName][toSquareName]
+            : null;
     }
 
     getHalfmove(moveIndex: number): SerializedMove | null {
@@ -168,21 +174,23 @@ export class Chess {
         }
     }
 
-    isPlayerActive(color: PlayerColor): boolean {
-        return this.players[this.activePlayerIndex].color === color;
+    getCheckedSquare(): string | null {
+        const player: Player = this.getActivePlayer();
+        return player.isChecked && player.kingSquare !== null ? player.kingSquare.name : null;
     }
 
-    getActivePlayer(): Player {
-        return this.players[this.activePlayerIndex];
+    move(move: Move): void {
+        move.carryOutMove();
+        if (move.toSquare.piece?.getName() === PieceName.King) {
+            this.getActivePlayer().kingSquare = move.toSquare;
+        }
     }
 
-    setNextPlayer(): void {
-        this.activePlayerIndex = (this.activePlayerIndex + 1) % this.players.length;
-    }
-
-    setPreviousPlayer(): void {
-        this.activePlayerIndex =
-            (this.activePlayerIndex - 1 + this.players.length) % this.players.length;
+    undoMove(move: Move): void {
+        move.undoMove();
+        if (move.fromSquare.piece?.getName() === PieceName.King) {
+            this.getActivePlayer().kingSquare = move.fromSquare;
+        }
     }
 
     addPositionToHistory(position: string, enPassantTarget: string | null = null) {
@@ -200,19 +208,32 @@ export class Chess {
         });
     }
 
-    move(move: Move): void {
-        move.carryOutMove();
-        if (move.toSquare.piece?.getName() === PieceName.King) {
-            this.getActivePlayer().kingSquare = move.toSquare;
+    evaluateGameState(): void {
+        const player: Player = this.getActivePlayer();
+        const checkPiece: Piece | false = this.chessboard.isChecked(player);
+        const noLegalMove: boolean = Object.keys(this.legalMoves).length === 0;
+
+        this.gameOver = false;
+        this.checkmatePiece = undefined;
+
+        player.isChecked = !!checkPiece;
+
+        if (noLegalMove) {
+            this.gameOver = true;
+            if (!!checkPiece) {
+                this.checkmatePiece = checkPiece;
+            }
         }
     }
 
     performMove(move: Move): void {
+        this.getActivePlayer().isChecked = false;
         this.addMoveToHistory(move);
         this.move(move);
         this.addPositionToHistory(this.chessboard.toString(), move.enPassantTarget);
         this.setNextPlayer();
         this.setLegalMoves();
+        this.evaluateGameState();
     }
 
     tryMove(fromSquareName: string, toSquareName: string): SerializedMove | null {
@@ -227,19 +248,15 @@ export class Chess {
         return null;
     }
 
-    undoMove(move: Move): void {
-        move.undoMove();
-        if (move.fromSquare.piece?.getName() === PieceName.King) {
-            this.getActivePlayer().kingSquare = move.fromSquare;
-        }
-    }
-
     cancelLastMove(): SerializedMove | null {
         if (this.moveHistory.length > 0) {
+            this.chessboardHistory.pop();
             const moveState: any = this.moveHistory.pop();
+            this.getActivePlayer().isChecked = false;
             this.undoMove(moveState.move);
             this.setPreviousPlayer();
             this.setLegalMoves();
+            this.evaluateGameState();
             return moveState.serialized;
         }
 

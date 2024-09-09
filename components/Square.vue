@@ -8,12 +8,14 @@ withDefaults(
         name?: string;
         piece: VPiece | null;
         isDark: boolean;
-        isActive: boolean;
         isLegal?: boolean;
+        isActive?: boolean;
+        isChecked?: boolean;
     }>(),
     {
-        isActive: false,
         isLegal: false,
+        isActive: false,
+        isChecked: false,
     }
 );
 </script>
@@ -26,11 +28,15 @@ withDefaults(
                     ? getChessboardColor().darkLegal
                     : isActive
                     ? getChessboardColor().darkActive
+                    : isChecked
+                    ? getChessboardColor().darkChecked
                     : getChessboardColor().dark
                 : isLegal
                 ? getChessboardColor().lightLegal
                 : isActive
                 ? getChessboardColor().lightActive
+                : isChecked
+                ? getChessboardColor().lightChecked
                 : getChessboardColor().light,
         ]"
     >

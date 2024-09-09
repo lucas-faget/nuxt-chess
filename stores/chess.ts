@@ -60,6 +60,9 @@ export const useChessStore = defineStore("chess", {
         getActiveMove(): VMove | null {
             return this.chess?.getHalfmove(this.activeHalfmoveIndex) ?? null;
         },
+        getCheckedSquare(): string | null {
+            return this.chess?.getCheckedSquare() ?? null;
+        },
         checkLegalMove(fromSquareName: string, toSquareName: string): boolean {
             return (
                 fromSquareName in this.legalMoves && toSquareName in this.legalMoves[fromSquareName]

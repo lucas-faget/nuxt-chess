@@ -6,4 +6,6 @@ export type ChessboardColor = {
     darkLegal: string;
     lightActive: string;
     darkActive: string;
+    lightChecked: string;
+    darkChecked: string;
 };
