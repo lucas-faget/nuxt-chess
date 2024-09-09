@@ -54,7 +54,7 @@ const chessboardSpin = computed({
             >
                 <template #value="slotProps">
                     <div v-if="slotProps.value" class="flex items-center gap-2">
-                        <div :class="[slotProps.value.darkClassName, 'w-5 h-5 rounded-md']"></div>
+                        <div :class="[slotProps.value.dark, 'w-5 h-5 rounded-md']"></div>
                         <div class="capitalize">{{ slotProps.value.name }}</div>
                     </div>
                     <span v-else>
@@ -63,7 +63,7 @@ const chessboardSpin = computed({
                 </template>
                 <template #option="slotProps">
                     <div class="flex items-center gap-2">
-                        <div :class="[slotProps.option.darkClassName, 'w-5 h-5 rounded-md']"></div>
+                        <div :class="[slotProps.option.dark, 'w-5 h-5 rounded-md']"></div>
                         <div class="capitalize">{{ slotProps.option.name }}</div>
                     </div>
                 </template>

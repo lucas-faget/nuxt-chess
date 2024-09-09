@@ -2,6 +2,7 @@ import type { Coordinates } from "../coordinates/Position";
 import { Direction } from "../coordinates/Direction";
 import type { PlayerColor } from "../types/PlayerColor";
 import { Pawn } from "../pieces/Pawn";
+import type { Square } from "../squares/Square";
 
 export class Player {
     name: string;
@@ -9,6 +10,7 @@ export class Player {
     direction: Coordinates;
     pawnCaptureDirections: Coordinates[];
     enPassantCaptureDirections: Coordinates[];
+    kingSquare: Square | null = null;
 
     constructor(color: PlayerColor, name: string, direction: Coordinates) {
         this.color = color;

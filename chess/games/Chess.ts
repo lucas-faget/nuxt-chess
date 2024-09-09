@@ -1,6 +1,7 @@
 import { ChessVariant } from "../types/ChessVariant";
 import type { Coordinates } from "../coordinates/Position";
 import type { PlayerColor } from "../types/PlayerColor";
+import { PieceName } from "../types/PieceName";
 import type { Player } from "../players/Player";
 import { Blacks, Golds, Silvers, Whites } from "../players/Players";
 import type { Square } from "../squares/Square";
@@ -67,30 +68,51 @@ export class Chess {
                 ? new FourPlayerChessboard(position)
                 : new TwoPlayerChessboard(position);
 
+        this.setKingSquares();
+
         this.addPositionToHistory(position);
 
         this.setLegalMoves();
     }
 
+    setKingSquares(): void {
+        for (const [squareName, square] of this.chessboard.squares.entries()) {
+            const piece = square.piece;
+            if (piece !== null) {
+                if (piece.getName() === PieceName.King) {
+                    const player: Player | undefined = this.players.find(
+                        (player) => player.color === piece.color
+                    );
+
+                    if (player) {
+                        if (player.kingSquare !== null) {
+                            throw new Error(`Two kings found for player ${player.color}`);
+                        } else {
+                            player.kingSquare = square;
+                        }
+                    }
+                }
+            }
+        }
+
+        for (const player of this.players) {
+            if (player.kingSquare === null) {
+                throw new Error(`No king found for player ${player.color}`);
+            }
+        }
+    }
+
     setLegalMoves(): void {
-        const player: Player = this.players[this.activePlayerIndex];
-        const kingSquare: Square | null = this.chessboard.findKingSquare(player.color);
-        if (kingSquare) {
+        const player: Player = this.getActivePlayer();
+        if (player.kingSquare !== null) {
             const enPassantTarget: string | null =
                 this.chessboardHistory[this.chessboardHistory.length - 1].enPassantTarget;
 
-            this.legalMoves = this.chessboard.calculateLegalMoves(
-                player,
-                kingSquare,
-                enPassantTarget
-            );
+            this.legalMoves = this.chessboard.calculateLegalMoves(player, enPassantTarget, this);
 
             if (Object.keys(this.legalMoves).length === 0) {
                 this.gameOver = true;
-                const checkmatePiece: Piece | false = this.chessboard.isChecked(
-                    this.players[this.activePlayerIndex],
-                    kingSquare
-                );
+                const checkmatePiece: Piece | false = this.chessboard.isChecked(player);
                 if (checkmatePiece) {
                     this.checkmatePiece = checkmatePiece;
                 }
@@ -150,6 +172,10 @@ export class Chess {
         return this.players[this.activePlayerIndex].color === color;
     }
 
+    getActivePlayer(): Player {
+        return this.players[this.activePlayerIndex];
+    }
+
     setNextPlayer(): void {
         this.activePlayerIndex = (this.activePlayerIndex + 1) % this.players.length;
     }
@@ -175,8 +201,15 @@ export class Chess {
     }
 
     move(move: Move): void {
-        this.addMoveToHistory(move);
         move.carryOutMove();
+        if (move.toSquare.piece?.getName() === PieceName.King) {
+            this.getActivePlayer().kingSquare = move.toSquare;
+        }
+    }
+
+    performMove(move: Move): void {
+        this.addMoveToHistory(move);
+        this.move(move);
         this.addPositionToHistory(this.chessboard.toString(), move.enPassantTarget);
         this.setNextPlayer();
         this.setLegalMoves();
@@ -186,7 +219,7 @@ export class Chess {
         if (this.isLegalMove(fromSquareName, toSquareName)) {
             const move = this.getLegalMove(fromSquareName, toSquareName);
             if (move) {
-                this.move(move);
+                this.performMove(move);
                 return this.moveHistory[this.moveHistory.length - 1].serialized;
             }
         }
@@ -194,10 +227,17 @@ export class Chess {
         return null;
     }
 
+    undoMove(move: Move): void {
+        move.undoMove();
+        if (move.fromSquare.piece?.getName() === PieceName.King) {
+            this.getActivePlayer().kingSquare = move.fromSquare;
+        }
+    }
+
     cancelLastMove(): SerializedMove | null {
         if (this.moveHistory.length > 0) {
             const moveState: any = this.moveHistory.pop();
-            moveState.move?.undoMove();
+            this.undoMove(moveState.move);
             this.setPreviousPlayer();
             this.setLegalMoves();
             return moveState.serialized;

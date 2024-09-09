@@ -11,6 +11,7 @@ import type { Move } from "../moves/Move";
 import { King } from "../pieces/King";
 import type { LegalMoves } from "../types/LegalMoves";
 import { Piece } from "../pieces/Piece";
+import type { Chess } from "../games/Chess";
 
 const isInteger = (char: string) => !isNaN(parseInt(char));
 const isPlayerColor = (char: string) =>
@@ -95,21 +96,7 @@ export abstract class Chessboard {
         });
     }
 
-    findKingSquare(color: PlayerColor): Square | null {
-        for (const square of this.squares.values()) {
-            if (square.isOccupiedByPieceName(PieceName.King) && square.isOccupiedByAlly(color)) {
-                return square;
-            }
-        }
-
-        return null;
-    }
-
-    calculateLegalMoves(
-        player: Player,
-        kingSquare: Square | null,
-        enPassantTarget: string | null
-    ): LegalMoves {
+    calculateLegalMoves(player: Player, enPassantTarget: string | null, chess: Chess): LegalMoves {
         let legalMoves: LegalMoves = {};
 
         for (const square of this.squares.values()) {
@@ -118,7 +105,7 @@ export abstract class Chessboard {
 
                 if (moves) {
                     for (const move of moves) {
-                        if (!this.isCheckedByMoving(player, move, kingSquare)) {
+                        if (!this.isCheckedByMoving(player, move, chess)) {
                             if (!legalMoves[move.fromSquare.name]) {
                                 legalMoves[move.fromSquare.name] = {};
                             }
@@ -132,40 +119,63 @@ export abstract class Chessboard {
         return legalMoves;
     }
 
-    isCheckedByMoving(player: Player, move: Move, kingSquare: Square | null): boolean {
+    isCheckedByMoving(player: Player, move: Move, chess: Chess): boolean {
         let isChecked: boolean = false;
 
-        if (kingSquare) {
-            move.carryOutMove();
-            isChecked = !!this.isChecked(
-                player,
-                move.toSquare.piece?.getName() === PieceName.King ? move.toSquare : kingSquare
-            );
-            move.undoMove();
+        if (player.kingSquare !== null) {
+            chess.move(move);
+            isChecked = !!this.isChecked(player);
+            chess.undoMove(move);
         }
 
         return isChecked;
     }
 
-    isChecked(player: Player, kingSquare: Square): Piece | false {
-        return (
-            this.isCheckedByMobilePiece(player, kingSquare) ||
-            this.isCheckedByKnight(player, kingSquare) ||
-            this.isCheckedByPawn(player, kingSquare) ||
-            this.isCheckedByKing(player, kingSquare)
-        );
+    isChecked(player: Player): Piece | false {
+        if (player.kingSquare !== null) {
+            return (
+                this.isCheckedByMobilePiece(player) ||
+                this.isCheckedByKnight(player) ||
+                this.isCheckedByPawn(player) ||
+                this.isCheckedByKing(player)
+            );
+        }
+
+        return false;
     }
 
-    isCheckedByPawn(player: Player, kingSquare: Square): Piece | false {
-        let square: Square | null = null;
+    isCheckedByPawn(player: Player): Piece | false {
+        if (player.kingSquare !== null) {
+            let square: Square | null = null;
 
-        for (const direction of Bishop.Directions) {
-            if (direction.x === player.direction.x || direction.y === player.direction.y) {
-                square = this.getSquareByDirection(kingSquare, direction);
+            for (const direction of Bishop.Directions) {
+                if (direction.x === player.direction.x || direction.y === player.direction.y) {
+                    square = this.getSquareByDirection(player.kingSquare, direction);
+                    if (
+                        square &&
+                        square.piece &&
+                        square.isOccupiedByPieceName(PieceName.Pawn) &&
+                        square.isOccupiedByOpponent(player.color)
+                    ) {
+                        return square.piece;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    isCheckedByKnight(player: Player): Piece | false {
+        if (player.kingSquare !== null) {
+            let square: Square | null = null;
+
+            for (const direction of Knight.Directions) {
+                square = this.getSquareByDirection(player.kingSquare, direction);
                 if (
                     square &&
                     square.piece &&
-                    square.isOccupiedByPieceName(PieceName.Pawn) &&
+                    square.isOccupiedByPieceName(PieceName.Knight) &&
                     square.isOccupiedByOpponent(player.color)
                 ) {
                     return square.piece;
@@ -176,70 +186,56 @@ export abstract class Chessboard {
         return false;
     }
 
-    isCheckedByKnight(player: Player, kingSquare: Square): Piece | false {
-        let square: Square | null = null;
+    isCheckedByMobilePiece(player: Player): Piece | false {
+        if (player.kingSquare !== null) {
+            let square: Square | null = null;
 
-        for (const direction of Knight.Directions) {
-            square = this.getSquareByDirection(kingSquare, direction);
-            if (
-                square &&
-                square.piece &&
-                square.isOccupiedByPieceName(PieceName.Knight) &&
-                square.isOccupiedByOpponent(player.color)
-            ) {
-                return square.piece;
-            }
-        }
-
-        return false;
-    }
-
-    isCheckedByMobilePiece(player: Player, kingSquare: Square): Piece | false {
-        let square: Square | null = null;
-
-        // test if checked by queen, rook or bishop
-        for (const direction of Queen.Directions) {
-            square = this.getSquareByDirection(kingSquare, direction);
-            while (square) {
-                if (square.piece) {
-                    if (square.isOccupiedByOpponent(player.color)) {
-                        if (Rook.Directions.includes(direction)) {
-                            if (
-                                square.isOccupiedByPieceName(PieceName.Queen) ||
-                                square.isOccupiedByPieceName(PieceName.Rook)
-                            ) {
-                                return square.piece;
-                            }
-                        } else {
-                            if (
-                                square.isOccupiedByPieceName(PieceName.Queen) ||
-                                square.isOccupiedByPieceName(PieceName.Bishop)
-                            ) {
-                                return square.piece;
+            // test if checked by queen, rook or bishop
+            for (const direction of Queen.Directions) {
+                square = this.getSquareByDirection(player.kingSquare, direction);
+                while (square) {
+                    if (square.piece) {
+                        if (square.isOccupiedByOpponent(player.color)) {
+                            if (Rook.Directions.includes(direction)) {
+                                if (
+                                    square.isOccupiedByPieceName(PieceName.Queen) ||
+                                    square.isOccupiedByPieceName(PieceName.Rook)
+                                ) {
+                                    return square.piece;
+                                }
+                            } else {
+                                if (
+                                    square.isOccupiedByPieceName(PieceName.Queen) ||
+                                    square.isOccupiedByPieceName(PieceName.Bishop)
+                                ) {
+                                    return square.piece;
+                                }
                             }
                         }
+                        break;
                     }
-                    break;
+                    square = this.getSquareByDirection(square, direction);
                 }
-                square = this.getSquareByDirection(square, direction);
             }
         }
 
         return false;
     }
 
-    isCheckedByKing(player: Player, kingSquare: Square): Piece | false {
-        let square: Square | null = null;
+    isCheckedByKing(player: Player): Piece | false {
+        if (player.kingSquare !== null) {
+            let square: Square | null = null;
 
-        for (const direction of King.Directions) {
-            square = this.getSquareByDirection(kingSquare, direction);
-            if (
-                square &&
-                square.piece &&
-                square.isOccupiedByPieceName(PieceName.King) &&
-                square.isOccupiedByOpponent(player.color)
-            ) {
-                return square.piece;
+            for (const direction of King.Directions) {
+                square = this.getSquareByDirection(player.kingSquare, direction);
+                if (
+                    square &&
+                    square.piece &&
+                    square.isOccupiedByPieceName(PieceName.King) &&
+                    square.isOccupiedByOpponent(player.color)
+                ) {
+                    return square.piece;
+                }
             }
         }
 

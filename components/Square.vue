@@ -23,15 +23,15 @@ withDefaults(
         :class="[
             isDark
                 ? isLegal
-                    ? getChessboardColor().darkLegalClassName
+                    ? getChessboardColor().darkLegal
                     : isActive
-                    ? getChessboardColor().darkActiveClassName
-                    : getChessboardColor().darkClassName
+                    ? getChessboardColor().darkActive
+                    : getChessboardColor().dark
                 : isLegal
-                ? getChessboardColor().lightLegalClassName
+                ? getChessboardColor().lightLegal
                 : isActive
-                ? getChessboardColor().lightActiveClassName
-                : getChessboardColor().lightClassName,
+                ? getChessboardColor().lightActive
+                : getChessboardColor().light,
         ]"
     >
         <img
