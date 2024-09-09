@@ -84,7 +84,7 @@ const isActiveSquare = (squareName: string): boolean =>
     (squareName === props.activeMove.fromSquare || squareName === props.activeMove.toSquare);
 
 const isCheckedSquare = (squareName: string): boolean =>
-    props.checkSquare !== null && squareName === props.checkSquare;
+    props.canPlay && props.checkSquare !== null && squareName === props.checkSquare;
 
 const hasLegalMove = (squareName: string): boolean => squareName in props.legalMoves;
 
