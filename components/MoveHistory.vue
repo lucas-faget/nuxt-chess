@@ -37,10 +37,10 @@ const fullmoves = computed(() => {
                     :style="halfmoveClass"
                     :class="[
                         {
-                            'bg-surface-800':
+                            'bg-surface-200 dark:bg-surface-800':
                                 2 * fullmoveIndex + halfmoveIndex + 1 === props.activeHalfmoveIndex,
                         },
-                        'relative py-1 hover:bg-surface-800 rounded-lg cursor-pointer',
+                        'relative py-1 hover:bg-surface-200 dark:hover:bg-surface-800 rounded-lg cursor-pointer',
                     ]"
                     @click="$emit('goToMove', 2 * fullmoveIndex + halfmoveIndex + 1)"
                     v-for="(halfmove, halfmoveIndex) in fullmove"

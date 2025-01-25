@@ -1,4 +1,6 @@
 <script setup lang="ts">
+const openGameCreationDialog: any = inject("openGameCreationDialog");
+
 const items = ref([
     {
         label: "Home",
@@ -8,7 +10,7 @@ const items = ref([
     {
         label: "Play",
         icon: "pi pi-play-circle",
-        route: "/play",
+        command: () => openGameCreationDialog(),
     },
     {
         label: "3D Chess",
@@ -42,9 +44,10 @@ const items = ref([
                             fill="var(--p-text-color)"
                         />
                     </svg>
-                    <span class="text-xl font-semibold"
-                        >PRIME<span class="text-primary">CHESS</span></span
-                    >
+                    <span class="text-xl font-semibold">
+                        PRIME
+                        <span class="text-primary">CHESS</span>
+                    </span>
                 </span>
             </div>
 

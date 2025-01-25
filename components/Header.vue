@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import { Opponent } from "~/types/Opponent";
+
+const openGameCreationDialog: any = inject("openGameCreationDialog");
+
 const items = ref([
     {
         label: "Home",
@@ -12,14 +16,17 @@ const items = ref([
             {
                 label: "Anybody",
                 icon: "pi pi-users",
-            },
-            {
-                label: "Computer",
-                icon: "pi pi-microchip-ai",
+                command: () => openGameCreationDialog(Opponent.Anybody),
             },
             {
                 label: "Friend",
                 icon: "pi pi-face-smile",
+                command: () => openGameCreationDialog(Opponent.Friend),
+            },
+            {
+                label: "Computer",
+                icon: "pi pi-microchip-ai",
+                command: () => openGameCreationDialog(Opponent.Computer),
             },
         ],
     },

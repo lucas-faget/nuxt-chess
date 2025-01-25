@@ -1,16 +1,5 @@
 <script setup lang="ts">
-interface GameCreationDialog {
-    open: () => void;
-    close: () => void;
-}
-
-const gameCreationDialog = ref<GameCreationDialog | null>(null);
-
-const play = (): void => {
-    if (gameCreationDialog.value) {
-        gameCreationDialog.value.open();
-    }
-};
+const openGameCreationDialog: any = inject("openGameCreationDialog");
 </script>
 
 <template>
@@ -24,7 +13,7 @@ const play = (): void => {
             </span>
             <Button
                 label="Play"
-                @click="play"
+                @click="openGameCreationDialog"
                 severity="contrast"
                 icon="pi pi-arrow-right"
                 iconPos="right"
@@ -32,6 +21,4 @@ const play = (): void => {
             />
         </div>
     </div>
-
-    <GameCreationDialog ref="gameCreationDialog" />
 </template>

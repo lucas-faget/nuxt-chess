@@ -3,6 +3,7 @@ import { useConfirm } from "primevue/useconfirm";
 import { useChessStore } from "~/stores/chess";
 import { VChessVariant } from "@/types";
 import ConfirmDialog from "primevue/confirmdialog";
+import { Opponent } from "~/types/Opponent";
 
 const { isSmallScreen } = useMediaQuery();
 
@@ -12,9 +13,9 @@ const confirm = useConfirm();
 const visible = ref<boolean>(false);
 
 const opponents = [
-    { name: "Anybody", icon: "pi-users" },
-    { name: "Computer", icon: "pi-microchip-ai" },
-    { name: "Friend", icon: "pi-face-smile" },
+    { name: "Anybody", icon: "pi-users", type: Opponent.Anybody },
+    { name: "Friend", icon: "pi-face-smile", type: Opponent.Friend },
+    { name: "Computer", icon: "pi-microchip-ai", type: Opponent.Computer },
 ];
 
 const variants = [
@@ -54,10 +55,14 @@ const openConfirmDialog = (): void => {
     });
 };
 
-const open = (): void => {
+const open = (opponent: Opponent | null = null): void => {
     if (chessStore.gameExists()) {
         openConfirmDialog();
     } else {
+        if (opponent) {
+            let newOpponent = opponents.find((item) => item.type === opponent);
+            if (newOpponent) selectedOpponent.value = newOpponent;
+        }
         visible.value = true;
     }
 };
@@ -70,6 +75,11 @@ const createChessGame = (): void => {
     chessStore.createChessGame(selectedVariant.value.type);
     navigateTo("/play");
 };
+
+export interface GameCreationDialog {
+    open: (opponent: Opponent | null) => void;
+    close: () => void;
+}
 
 defineExpose({
     open,
