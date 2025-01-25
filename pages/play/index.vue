@@ -3,6 +3,7 @@ import { useChessStore } from "~/stores/chess";
 import { type VPlayer } from "@/types";
 
 definePageMeta({
+    middleware: "game-exists",
     layout: "aside",
 });
 
@@ -19,12 +20,6 @@ const topPlayer = computed<VPlayer>(() => {
 function handleMove(fromSquareName: string, toSquareName: string): void {
     chessStore.tryMove(fromSquareName, toSquareName);
 }
-
-onBeforeMount(() => {
-    if (!chessStore.gameExists()) {
-        navigateTo("/");
-    }
-});
 </script>
 
 <template>
