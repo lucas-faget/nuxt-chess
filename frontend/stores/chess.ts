@@ -1,20 +1,20 @@
 import { defineStore } from "pinia";
 import { useSettings } from "~/composables/useSettings";
-import { Chess } from "~/chess/games/Chess";
+import { Chess } from "@shared/chess/games/Chess.ts";
 import {
-    VChessVariant,
     type VPlayer,
     type VPiece,
     type VMove,
     type VLegalMoves,
     VChessboard,
 } from "~/types";
+import { ChessVariant } from "@shared/chess/types/ChessVariant.ts";
 
 const { isChessboardSpinAutomatic } = useSettings();
 
 export const useChessStore = defineStore("chess", {
     state: () => ({
-        variant: null as VChessVariant | null,
+        variant: null as ChessVariant | null,
         chess: null as Chess | null,
         players: [] as VPlayer[],
         activePlayerIndex: 0,
@@ -35,7 +35,7 @@ export const useChessStore = defineStore("chess", {
         gameExists(): boolean {
             return this.chess !== null;
         },
-        createChessGame(variant: VChessVariant = VChessVariant.Standard) {
+        async createChessGame(variant: ChessVariant = ChessVariant.Standard) {
             this.variant = variant;
             this.chess = new Chess(variant as string);
             this.activePlayerIndex = this.chess.activePlayerIndex;
@@ -53,6 +53,7 @@ export const useChessStore = defineStore("chess", {
                 this.chess.chessboard.files,
                 this.chess.getChessboardPositionByIndex(this.activeHalfmoveIndex)
             );
+            this.playerInFrontIndex = this.activePlayerIndex;
         },
         fillChessboard(position: string) {
             this.chessboard?.fill(position);

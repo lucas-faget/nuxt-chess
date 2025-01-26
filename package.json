@@ -1,30 +1,9 @@
 {
-    "name": "nuxt-app",
-    "private": true,
-    "type": "module",
+    "name": "prime-chess",
+    "version": "1.0.0",
     "scripts": {
-        "build": "nuxt build",
-        "dev": "nuxt dev",
-        "generate": "nuxt generate",
-        "preview": "nuxt preview",
-        "postinstall": "nuxt prepare"
+        "dev:frontend": "pnpm --filter ./frontend dev",
+        "dev:backend": "pnpm --filter ./backend dev"
     },
-    "dependencies": {
-        "@nuxtjs/tailwindcss": "^6.12.1",
-        "@pinia/nuxt": "^0.5.1",
-        "@primevue/themes": "^4.0.2",
-        "nuxt": "^3.12.4",
-        "pinia": "^2.1.7",
-        "primeicons": "^7.0.0",
-        "primevue": "^4.0.2",
-        "tailwindcss-primeui": "^0.3.4",
-        "three": "^0.167.1",
-        "vue": "latest"
-    },
-    "overrides": {
-        "vue": "latest"
-    },
-    "devDependencies": {
-        "@primevue/nuxt-module": "^4.0.2"
-    }
+    "packageManager": "pnpm@9.15.4+sha512.b2dc20e2fc72b3e18848459b37359a32064663e5627a51e4c74b2c29dd8e8e0491483c3abb40789cfd578bf362fb6ba8261b05f0387d76792ed6e23ea3b1b6a0"
 }

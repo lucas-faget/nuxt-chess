@@ -1,6 +1,6 @@
 <script setup lang="ts">
+import { ChessVariant } from "@shared/chess/types/ChessVariant.ts";
 import { useChessStore } from "~/stores/chess";
-import { VChessVariant, type VMove } from "@/types";
 
 const chessStore = useChessStore();
 
@@ -15,7 +15,7 @@ const handleMove = (fromSquareName: string, toSquareName: string): void => {
 };
 
 onBeforeMount(() => {
-    if (!chessStore.gameExists() || chessStore.variant !== VChessVariant.Standard) {
+    if (!chessStore.gameExists() || chessStore.variant !== ChessVariant.Standard) {
         chessStore.createChessGame();
     }
 });

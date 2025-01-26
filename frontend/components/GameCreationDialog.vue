@@ -1,9 +1,9 @@
 <script setup lang="ts">
+import { ChessVariant } from "@shared/chess/types/ChessVariant.ts";
+import { Opponent } from "~/types/Opponent";
 import { useConfirm } from "primevue/useconfirm";
 import { useChessStore } from "~/stores/chess";
-import { VChessVariant } from "@/types";
 import ConfirmDialog from "primevue/confirmdialog";
-import { Opponent } from "~/types/Opponent";
 
 const { isSmallScreen } = useMediaQuery();
 
@@ -11,6 +11,7 @@ const chessStore = useChessStore();
 const confirm = useConfirm();
 
 const visible = ref<boolean>(false);
+const loading = ref<boolean>(false);
 
 const opponents = [
     { name: "Anybody", icon: "pi-users", type: Opponent.Anybody },
@@ -19,10 +20,10 @@ const opponents = [
 ];
 
 const variants = [
-    { name: "Standard", type: VChessVariant.Standard },
-    { name: "Fischer random", type: VChessVariant.FischerRandom },
-    { name: "Fog of War", type: VChessVariant.FogOfWar },
-    { name: "Four Player chess", type: VChessVariant.FourPlayer },
+    { name: "Standard", type: ChessVariant.Standard },
+    { name: "Fischer random", type: ChessVariant.FischerRandom },
+    { name: "Fog of War", type: ChessVariant.FogOfWar },
+    { name: "Four Player chess", type: ChessVariant.FourPlayer },
 ];
 
 const speeds = [{ name: "10+0" }, { name: "5+0" }, { name: "3+0" }, { name: "1+0" }];
@@ -71,9 +72,18 @@ const close = (): void => {
     visible.value = false;
 };
 
-const createChessGame = (): void => {
-    chessStore.createChessGame(selectedVariant.value.type);
-    navigateTo("/play");
+const createChessGame = async (): void => {
+    try {
+        loading.value = true;
+        await chessStore.createChessGame(selectedVariant.value.type);
+    } catch (error) {
+        console.error("An error occurred while creating the chess game: ", error);
+        alert("Failed to create your chess game. Please try again.");
+    } finally {
+        loading.value = false;
+        close();
+        navigateTo("/play");
+    }
 };
 
 export interface GameCreationDialog {
@@ -161,7 +171,7 @@ defineExpose({
                 type="button"
                 label="Create"
                 severity="contrast"
-                icon="pi pi-angle-right"
+                :icon="loading ? 'pi pi-spinner pi-spin' : 'pi pi-angle-right'"
                 iconPos="right"
                 @click="createChessGame"
             ></Button>

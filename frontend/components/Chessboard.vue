@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { VChessVariant, type VChessboard, type VMove, type VLegalMoves } from "@/types";
+import { VChessboard, type VMove, type VLegalMoves } from "@/types";
+import { ChessVariant } from "@shared/chess/types/ChessVariant.ts";
 
 const props = withDefaults(
     defineProps<{
-        variant: VChessVariant;
+        variant: ChessVariant;
         playerInFrontIndex: number;
         chessboard: VChessboard;
         canPlay?: boolean;
@@ -26,14 +27,14 @@ const fromSquareName = ref<string | null>(null);
 
 const isPerpendicular = computed(
     () =>
-        (props.variant === VChessVariant.FourPlayer && props.playerInFrontIndex === 1) ||
+        (props.variant === ChessVariant.FourPlayer && props.playerInFrontIndex === 1) ||
         props.playerInFrontIndex === 3
 );
 
 const rows = computed(() => {
     switch (props.playerInFrontIndex) {
         case 1:
-            return props.variant === VChessVariant.FourPlayer
+            return props.variant === ChessVariant.FourPlayer
                 ? props.chessboard.reversedFiles
                 : props.chessboard.ranks;
         case 2:
@@ -49,7 +50,7 @@ const rows = computed(() => {
 const columns = computed(() => {
     switch (props.playerInFrontIndex) {
         case 1:
-            return props.variant === VChessVariant.FourPlayer
+            return props.variant === ChessVariant.FourPlayer
                 ? props.chessboard.reversedRanks
                 : props.chessboard.reversedFiles;
         case 2:

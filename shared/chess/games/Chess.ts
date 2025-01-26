@@ -1,9 +1,9 @@
 import { ChessVariant } from "../types/ChessVariant";
 import type { Coordinates } from "../coordinates/Position";
-import type { PlayerColor } from "../types/PlayerColor";
+import { Direction } from "../coordinates/Direction";
+import { PlayerColor } from "../types/PlayerColor";
 import { PieceName } from "../types/PieceName";
-import type { Player } from "../players/Player";
-import { Blacks, Golds, Silvers, Whites } from "../players/Players";
+import { Player } from "../players/Player";
 import type { Move } from "../moves/Move";
 import type { SerializedMove } from "../serialization/SerializedMove";
 import type { MoveState } from "../types/MoveState";
@@ -53,8 +53,8 @@ export class Chess {
 
         this.players =
             variant === ChessVariant.FourPlayer
-                ? [Whites, Silvers, Blacks, Golds]
-                : [Whites, Blacks];
+                ? [new Player(PlayerColor.White, "Whites", Direction.Up), new Player(PlayerColor.Silver, "Silvers", Direction.Right), new Player(PlayerColor.Black, "Blacks", Direction.Down), new Player(PlayerColor.Gold, "Golds", Direction.Left)]
+                : [new Player(PlayerColor.White, "Whites", Direction.Up), new Player(PlayerColor.Black, "Blacks", Direction.Down)];
 
         if (!position) {
             position =
